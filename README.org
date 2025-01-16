@@ -1,0 +1,14 @@
+#+title: Malleus Note Type
+
+#+begin_src sh :results output :exports results
+tree --gitignore
+#+end_src
+
+#+RESULTS:
+: .
+: ├── LICENSE
+: ├── README.org
+: └── malleus-cloze
+:     └── front.html
+:
+: 2 directories, 3 files
