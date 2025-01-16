@@ -1,5 +1,8 @@
 #+title: Malleus Note Type
 
+This is the note type for the [[www.malleus.org.au][Malleus Clinical Medicine Project]], an Anki Deck designed for Australian medical students. Please see the website for more details.
+
+We aim to create multiple note types to cover different use cases with each note type having particular features.
 #+begin_src sh :results output :exports results
 tree --gitignore
 #+end_src
@@ -9,6 +12,19 @@ tree --gitignore
 : ├── LICENSE
 : ├── README.org
 : └── malleus-cloze
-:     └── front.html
+:     ├── back.html
+:     ├── front.html
+:     └── styling.css
 :
-: 2 directories, 3 files
+: 2 directories, 5 files
+
+** Features for Implementation
+*** Malleus Cloze
+- Custom malleus colour theme
+- Readable font
+- One by one
+- Randomisation of content in the card (e.g. create randomised ABG interpretation cards, like ABG Ninja)
+
+*** Malleus Overlapping Cloze
+
+*** Malleus Pharmacology
