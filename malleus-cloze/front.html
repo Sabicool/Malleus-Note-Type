@@ -1,224 +1,376 @@
-<!-- version 0.0.1 -->
 <div id="text">{{cloze:Text}}</div>
-
 <br>
 
-<!-- ##############  Text-to-speech  ##############
-     replace the arrows/dashes from the statement below with double curly brackets-->
-
-<!--tts en_US voices=Apple_Samantha speed=1.4:cloze:Text-->
 
 
+<!-- User Config -->
 <script>
-  // ############## USER CONFIGURATION START ##############
-  // Auto flip to back when One by one mode.
-  var autoflip = true 
+var USERCONFIG = {
+	"clozeHider" : "🦘"
+}
+</script>
 
-  // Timer config (timer length, timer finished message)
-  var minutes = 0
-  var seconds = 15
-  var timeOverMsg = "<span style='color:#CC5B5B'>!<br/>!<br/>!<br/>!<br/>!<br/>!</span>"
 
-  // ##############  TAG SHORTCUT  ##############
-  var toggleTagsShortcut = "C";
-
-  // ENTER THE TAG TERM WHICH, WHEN PRESENT, WILL TRIGGER A RED BACKGROUND
-  var tagID = "XXXYYYZZZ"
-
-  // WHETHER THE WHOLE TAG OR ONLY THE LAST PART SHOULD BE SHOWN
-
-  var numTagLevelsToShow = -1;
-
-  // ############## USER CONFIGURATION END ##############
-  </script>
+<!-- Buttons visible when clozeByOne is enabled -->
+<div id="1by1-btns" style="display: none;">
+  <button id="button-reveal-next" class="button-general" onclick="revealNextCloze()">Reveal Next<span class="AnkiDesktopShortcutTip"> (N)</span></button>
+  <button id="button-toggle-all" class="button-general" onclick="flipToBack()">Toggle All</button>
+</div>
 
 
 
-<!-- CLOZE ONE BY ONE FRONT -->
+<!-- Hidden element for querying to see if its a One-By-One -->
 <div id="one-by-one" style="display: none;">{{One by one}}</div>
 
-<script>
-  var clozeOneByOneEnabled = true;
-  clozeOneByOneEnabled = document.getElementById("one-by-one").textContent !== "";
-  window.clozeHints = [];
-  if (clozeOneByOneEnabled) {
-      // Save cloze hints to display in the back
-      let clozes = document.getElementsByClassName("cloze")
-      for(var i = 0; i < clozes.length; i++) {
-          if (clozes[i].innerHTML === "[...]") {
-              window.clozeHints.push("")
-          } else {
-              window.clozeHints.push(clozes[i].innerHTML)
-          }
-      }
 
-      if (autoflip) {
-          // avoid flickering. Must unset this in the back.
-          document.getElementById("qa").style.display = "none";
+<script data-name="Cloze Interactive" data-version="v1.4.0">
+//Firstly we check if it is a one by one
+clozeOneByOneEnabled = document.getElementById("one-by-one").textContent !== "";
 
-          if (window.pycmd) {
-              pycmd("ans")
-          } else if (window.showAnswer) {
-              showAnswer()
-          }
-      }
-      // AnkiMobile JS API doesn't have one for show answer.
-      // Best alternative is to use Taps/Swipes to show answer.
-  }
+if (clozeOneByOneEnabled)
+{
+	// Make the buttons to control "reveal next" and "toggle all visible"
+	document.getElementById("1by1-btns").style.display = "block";
+		
+	// the following is thanks to https://github.com/huandney/Anki-Cloze-Interactive/blob/main/card/front-template.html
+
+	// User Settings
+	var userSettings = {
+	    gesturesEnabled: true,    // Set to "false" to disable gestures on AnkiDesktop and AnkiWeb with touch screens
+	    invertGestures: false,    // Set to "true" to invert the gestures
+	    swipeThreshold: 50,       // Adjust this value to change the swipe sensitivity
+	    scrollDuration: 500,      // Scroll duration in milliseconds
+	    autoFlip: "all", // "all", "off", ["AnkiDesktop", "AnkiDroid", "AnkiMobile", "AnkiWeb"]
+	    revealNextKeys: ["KeyN", "ArrowRight"], // Keys to reveal the next cloze - for custom keycodes: https://keycode.info/
+	    hideLastKeys: ["KeyQ", "ArrowLeft"],    // Keys to hide the last cloze
+	    highlightCloze: true // Set to "false" to disable next cloze highlighting
+	};
+
+	// Detects where the script is being executed
+	function detectAnkiPlatform() {
+	    if (window.anki && window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.cb !== undefined) {
+		return "AnkiMobile";
+	    } else if (document.querySelector("span.align-middle") && document.querySelector("span.align-middle").textContent.includes("AnkiWeb")) {
+		return "AnkiWeb";
+	    } else if (typeof AnkiDroidJS !== "undefined") {
+		return "AnkiDroid";
+	    } else if (typeof pycmd !== "undefined") {
+		return "AnkiDesktop";
+	    } else {
+		return "Unknown";
+	    }
+	}
+	
+	
+	
+
+	// Updates the gesture configuration, only for AnkiDesktop and AnkiWeb
+	function updateGestureSetting() {
+	    var platform = detectAnkiPlatform();
+	    // AnkiMobile and AnkiDroid are managed by their own app settings through User Actions
+	    if (platform !== "AnkiWeb" && platform !== "AnkiDesktop") {
+		userSettings.gesturesEnabled = false;
+	    }
+	}
+
+	// Converts span to a links for direct cloze activation on touch devices, avoiding gesture conflicts
+	function convertSpanToLink() {
+	    const clozeSpans = document.querySelectorAll("span.cloze");
+
+	    clozeSpans.forEach((span, i) => {
+		const link = document.createElement("a");
+		
+		for (let attr of span.attributes) {
+		    link.setAttribute(attr.name, attr.value);
+		}
+
+		link.setAttribute("href", "#");
+		link.setAttribute("onclick", `revealCloze(${i}); return false;`);
+		link.innerHTML = span.innerHTML;
+		span.parentNode.replaceChild(link, span);
+	    });
+	}
+
+	// Calculates overlay heights to adjust layouts for both AnkiWeb and AnkiMobile, considering fixed/sticky elements and AnkiMobile UI specifics
+	function getOverlayHeights() {
+	    const heights = {
+		top: 0,
+		bottom: 0
+	    };
+
+	    // Captures and adds the height of fixed or sticky elements
+	    document.querySelectorAll("*").forEach(el => {
+		const style = window.getComputedStyle(el);
+		if (style.position === "fixed" || style.position === "sticky") {
+		    const position = parseFloat(style.top) === 0 ? "top" : "bottom";
+		    heights[position] += el.offsetHeight;
+		}
+	    });
+
+	    // Checks and adds the heights defined by CSS variables only in AnkiMobile
+	    if (detectAnkiPlatform() === "AnkiMobile" && window.getComputedStyle) {
+		const rootStyle = getComputedStyle(document.documentElement);
+		const bottomInset = parseInt(rootStyle.getPropertyValue("--bottom-inset"), 10) || 0;
+		
+		heights.bottom += bottomInset;
+	    }
+
+	    return heights;
+	}
+
+	function isElementInViewport(el) {
+	    const rect = el.getBoundingClientRect();
+	    const overlayHeights = getOverlayHeights(); // Considers heights of "fixed"/"sticky" elements
+
+	    return (
+		rect.left >= 0 &&
+		rect.right <= window.innerWidth &&
+		rect.bottom <= (window.innerHeight - overlayHeights.bottom) &&
+		rect.top >= overlayHeights.top
+	    );
+	}
+
+	var touchStartX = 0;
+
+	function touchHandler(e) {
+	    if (!userSettings.gesturesEnabled) return;
+	    
+	    if (e.type === "touchstart") {
+		touchStartX = e.touches[0].clientX;
+	    } else if (e.type === "touchend") {
+		const touchEndX = e.changedTouches[0].clientX;
+		const touchDeltaX = touchStartX - touchEndX;
+
+		if (touchDeltaX > userSettings.swipeThreshold) {
+		    userSettings.invertGestures ? revealNextCloze() : hideLastCloze();
+		} else if (touchDeltaX < -userSettings.swipeThreshold) {
+		    userSettings.invertGestures ? hideLastCloze() : revealNextCloze();
+		}
+	    }
+	}
+
+	if ("ontouchstart" in window) {
+	    window.addEventListener("touchstart", touchHandler);
+	    window.addEventListener("touchend", touchHandler);
+	}
+
+	var elements;
+	var clozes;
+	var revealed = [];
+	var originalClozeHTML = [];
+	var revealOrder = [];
+
+	// In AnkiDroid, fixes the error of some Mathjax not rendering and also autoFlip not working
+	if (detectAnkiPlatform() === "AnkiDroid") {
+	    // Required for rendering MathJax, only on AnkiDroid
+	    function replaceMathJax(mathjaxString) {
+		return mathjaxString.replace(/\\\\\\[.+\\\\]/g, "").replace(/\\\\\\(.+\\\\\\)/g, "");
+	    }
+	}
+
+	// Checks if all clozes have been revealed
+	function allClozesRevealed() {
+	    return revealed.every(el => el);
+	}
+
+	function revealCloze(i) {
+	    if (!revealed[i]) {
+		originalClozeHTML[i] = elements[i].innerHTML;
+		elements[i].innerHTML = clozes[i];
+		revealed[i] = true;
+
+		// Add the class "revealed" to the element
+		elements[i].classList.add("revealed");
+
+		// Add the index to revealOrder
+		revealOrder.push(i);
+
+		// Render MathJax, will only run if it is defined
+		// Additional prevention, AnkiDroid error with autoFlip
+		if (typeof MathJax !== "undefined") {
+		    MathJax.typesetPromise([elements[i]]);
+		}
+
+		// Update the highlight of the next cloze
+		highlightCloze();
+
+		if (allClozesRevealed()) {
+		    flipToBack();
+		}
+	    }
+	}
+
+	function revealNextCloze() {
+	    const firstUnrevealed = revealed.findIndex((el) => !el);
+	    if (firstUnrevealed != -1) {
+		if (!isElementInViewport(elements[firstUnrevealed])) {
+		    smoothScrollTo(elements[firstUnrevealed]);
+		} else {
+		    revealCloze(firstUnrevealed);
+		}
+	    }
+	}
+
+	function hideLastCloze() {
+	    if (allClozesRevealed()) {
+		return;
+	    }
+	    
+	    let i = revealOrder.length - 1;
+	    if (i !== -1) {
+		if (!isElementInViewport(elements[revealOrder[i]])) {
+		    smoothScrollTo(elements[revealOrder[i]]);
+		} else {
+		    elements[revealOrder[i]].innerHTML = originalClozeHTML[revealOrder[i]];
+		    revealed[revealOrder[i]] = false;
+
+		    // Remove the "revealed" class from the element
+		    elements[revealOrder[i]].classList.remove("revealed");
+
+		    // Remove the last element from revealOrder
+		    revealOrder.pop();
+
+		    // Remove a “highlight-cloze” class
+		    highlightCloze();
+		}
+	    }
+	}
+
+	function highlightCloze() {
+	    if (!userSettings.highlightCloze) return;
+	    
+	    const firstUnrevealed = revealed.findIndex(el => !el);
+	    
+	    elements.forEach((el, i) => 
+		el.classList.toggle('highlight-cloze', i === firstUnrevealed)
+	    );
+	}
+
+	function smoothScrollTo(element) {
+	    const yOffset = element.getBoundingClientRect().top + window.pageYOffset - (window.innerHeight / 2);
+	    const startTime = performance.now();
+	    const duration = userSettings.scrollDuration;
+
+	    function animateScroll(currentTime) {
+		const elapsedTime = currentTime - startTime;
+		const easing = easeInOutQuad(elapsedTime, 0, 1, duration);
+
+		window.scrollTo(0, (1 - easing) * window.pageYOffset + easing * yOffset);
+
+		if (elapsedTime < duration) {
+		    requestAnimationFrame(animateScroll);
+		}
+	    }
+
+	    function easeInOutQuad(t, b, c, d) {
+		t /= d / 2;
+		if (t < 1) return (c / 2) * t * t + b;
+		t--;
+		return (-c / 2) * (t * (t - 2) - 1) + b;
+	    }
+
+	    requestAnimationFrame(animateScroll);
+	}
+
+	function flipToBack() {
+	    const platform = detectAnkiPlatform();
+	    let shouldFlip = false; // Assumes we shouldn't flip the card initially
+
+	    // Checks the autoFlip configuration
+	    if (userSettings.autoFlip === "all") {
+		shouldFlip = true;
+	    } else if (userSettings.autoFlip === "off") {
+		shouldFlip = false;
+	    } else if (Array.isArray(userSettings.autoFlip)) {
+		shouldFlip = userSettings.autoFlip.includes(platform);
+	    }
+
+	    const executeFlip = () => {
+		switch (platform) {
+		    case "AnkiMobile":
+		        // AnkiMobile doesn't have a public JS API for show answers
+		        // In app set "topCenter," "midCenter," or "bottomCenter" as tap gestures to show answers and adjust "msg" bellow accordingly
+		        window.webkit.messageHandlers.cb.postMessage(JSON.stringify({scheme: "ankitap", msg: "midCenter"}));
+		        break;
+		    case "AnkiWeb":
+		        const showAnswerButton = document.querySelector(".btn.btn-primary.btn-lg");
+		        if (showAnswerButton) {
+		            showAnswerButton.click();
+		        }
+		        break;
+		    case "AnkiDroid":
+		        showAnswer();
+		        break;
+		    case "AnkiDesktop":
+		        pycmd("ans");
+		        break;
+		    default:
+		        console.log("Platform not recognized by flipToBack.");
+		}
+	    };
+
+	    if (shouldFlip) {
+		if (platform === "AnkiMobile") {
+		    // For AnkiMobile, apply a delay to ensure compatibility with touch gestures
+		    setTimeout(executeFlip, 200); // Delay of 200ms, adjustable as needed
+		} else {
+		    executeFlip();
+		}
+	    }
+	}
+
+	function initialize() {
+	    updateGestureSetting();
+	    convertSpanToLink();
+	    elements = document.querySelectorAll(".cloze");
+	    
+	    
+	    clozes = Array.from(elements).map(el => el.getAttribute("data-cloze"));
+
+	    elements.forEach((el, i) => {
+		el.addEventListener("click", () => revealCloze(i));
+		
+		// Convert [...] to USERCONFIG[clozeHider] If the cloze is not "[...]" that means that it has a hint in it and should be kept as is. 
+		if (el.textContent === "[...]"){
+			el.textContent = USERCONFIG["clozeHider"];
+		}
+	    });
+
+	    revealed.length = elements.length;
+	    revealed.fill(false);
+	    originalClozeHTML.length = elements.length;
+	    originalClozeHTML.fill("");
+
+	    // Highlight the first cloze to be revealed
+	    highlightCloze();
+	}
+
+	if (typeof onUpdateHook !== "undefined") {
+	    onUpdateHook.push(initialize);
+	} else {
+	    initialize();
+	}
+
+	// Listen for key presses to trigger keyboard shortcuts.
+	document.addEventListener("keydown", handleKeyboardShortcuts, false);
+
+	function handleKeyboardShortcuts(event) {
+	    if (event.defaultPrevented) {
+		return;
+	    }
+
+	    if (userSettings.revealNextKeys.includes(event.code)) {
+		event.preventDefault();
+		revealNextCloze();
+	    } else if (userSettings.hideLastKeys.includes(event.code)) {
+		event.preventDefault();
+		hideLastCloze();
+	    }
+	}
+
+	// User Actions
+	// In AnkiMobile (v2.0.88+) and AnkiDroid (v2.17.0+), it's possible to map JavaScript functions to gestures or gamepad actions to enhance card interactivity
+	var userJs1 = revealNextCloze; // User Action 1
+	var userJs2 = hideLastCloze;   // User Action 2
+	}
 </script>
-
-<!-- NOT-PERSISTING EVENT LISTENER -->
-<script>
-  if (window.ankingEventListeners) {
-      for (const listener of ankingEventListeners) {
-          const type = listener[0]
-          const handler = listener[1]
-          document.removeEventListener(type, handler)
-      }
-  }
-  window.ankingEventListeners = []
-
-  window.ankingAddEventListener = function(type, handler) {
-      document.addEventListener(type, handler)
-      window.ankingEventListeners.push([type, handler])
-  }
-</script>
-
-<!-- Shortcut Matcher Function -->
-<script>
-  var specialCharCodes = {
-      "-": "minus",
-      "=": "equal",
-      "[": "bracketleft",
-      "]": "bracketright",
-      ";": "semicolon",
-      "'": "quote",
-      "`": "backquote",
-      "\\": "backslash",
-      ",": "comma",
-      ".": "period",
-      "/": "slash",
-  };
-  // Returns function that match keyboard event to see if it matches given shortcut.
-  function shortcutMatcher(shortcut) {
-      let shortcutKeys = shortcut.toLowerCase().split(/[+]/).map(key => key.trim())
-      let mainKey = shortcutKeys[shortcutKeys.length - 1]
-      if (mainKey.length === 1) {
-          if (/\d/.test(mainKey)) {
-              mainKey = "digit" + mainKey
-          } else if (/[a-zA-Z]/.test(mainKey)) {
-              mainKey = "key" + mainKey
-          } else {
-              let code = specialCharCodes[mainKey];
-              if (code) {
-                  mainKey = code
-              }
-          }
-      }
-      let ctrl = shortcutKeys.includes("ctrl")
-      let shift = shortcutKeys.includes("shift")
-      let alt = shortcutKeys.includes("alt")
-
-      let matchShortcut = function (ctrl, shift, alt, mainKey, event) {
-          if (mainKey !== event.code.toLowerCase()) return false
-          if (ctrl !== (event.ctrlKey || event.metaKey)) return false
-          if (shift !== event.shiftKey) return false
-          if (alt !== event.altKey) return false
-          return true
-      }.bind(window, ctrl, shift, alt, mainKey)
-
-      return matchShortcut
-  }
-</script>
-
-<!-- COUNTDOWN TIMER -->
-<div class="timer" id="s2"></div>
-<script>
-  function countdown(elementName, minutes, seconds) {
-      var element, endTime, mins, msLeft, time;
-      function twoDigits( n ) {
-          return (n <= 9 ? "0" + n : n);
-      }
-      function updateTimer() {
-          msLeft = endTime - (+new Date);
-
-          if ( msLeft < 1000 ) {
-              element.innerHTML = timeOverMsg;
-          } else {
-              time = new Date( msLeft );
-              mins = time.getUTCMinutes();
-              element.innerHTML = mins + ':' + twoDigits(time.getUTCSeconds());
-              setTimeout( updateTimer, time.getUTCMilliseconds() + 500 );
-          }
-      }
-      element = document.getElementById(elementName);
-      endTime = (+new Date) + 1000 * (60*minutes + seconds) + 500;
-      updateTimer();
-  }
-  countdown("s2", minutes, seconds ); //2nd value is the minute, 3rd is the seconds
-</script>
-
-
-<!-- ANKING HYPERLINK IMAGE -->
-<a href="https://www.ankingmed.com"><img src="_AnKingRound.png" alt="The AnKing" id="pic"></a>
-
-
-<script>
-  //DONT FADE BETWEEN CARDS
-  qFade=0; if (typeof anki !== 'undefined') anki.qFade=qFade;
-</script>
-
-<!-- CLICKABLE COLORFUL TAGS -->
-{{#Tags}}
-<div id="tags-container">{{clickable::Tags}}</div>
-<script>
-  var tagContainer = document.getElementById("tags-container")
-  if (tagContainer.childElementCount == 0) {
-      var tagList = tagContainer.innerHTML.split(" ");
-      var kbdList = [];
-      var newTagContent = document.createElement("div");
-
-      for (var i = 0; i < tagList.length; i++) {
-          var newTag = document.createElement("kbd");
-          var tag = tagList[i];
-          // numTagLevelsToShow == 0 means the whole tag should be shown
-          if(numTagLevelsToShow != 0){
-              tag = tag.split('::').slice(-numTagLevelsToShow).join("::");
-          }
-          newTag.innerHTML = tag;
-          newTagContent.append(newTag)
-      }
-      tagContainer.innerHTML = newTagContent.innerHTML;
-      tagContainer.style.cursor = "default";
-  }
-  if (tagContainer.innerHTML.indexOf(tagID) != -1) {
-      tagContainer.style.backgroundColor = "rgba(251,11,11,.15)";
-  }
-
-  function showtags() {
-      var tagContainerShortcut = document.getElementById("tags-container");
-
-      if (tagContainerShortcut.style.display
-          === "none") {
-          tagContainerShortcut.style.display = "block";
-      } else {
-          tagContainerShortcut.style.display =
-              "none";
-      }
-  }
-
-  var isShortcut = shortcutMatcher(toggleTagsShortcut)
-  ankingAddEventListener('keyup', function (e) {
-      if (isShortcut(e)) {
-          showtags();
-      }
-  });
-
-</script>
-{{/Tags}}
-
-<!--
-    ANKIHUB_END
-    Text below this comment will not be modified by AnkiHub or AnKing add-ons.
-    Do not edit or remove this comment if you want to protect the content below.
-  -->
