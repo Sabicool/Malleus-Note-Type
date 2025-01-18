@@ -1,9 +1,9 @@
 /*    ANKINGOVERHAUL   */
 
 /* The AnKing wishes you the best of luck! Be sure to check out our YouTube channel and Instagram
- for all things Anki and Med School related (including how to customize this card type and use these decks):
+ for all things Anki and Med School related (including how to customize this card type and use these decks):  
 		www.AnKingMed.com
-			@ankingmed
+			@ankingmed    			
 */
 
 /*#########################################################
@@ -31,7 +31,7 @@
 
 
 /*~~~~~~~~~FONT SIZE~~~~~~~~~*/
-/*NOTE: anything with 'px' will keep a font that size indefinitely,
+/*NOTE: anything with 'px' will keep a font that size indefinitely, 
 'rem' is a fraction of this size above and allows all text to change size with the above setting */
 /* Desktop */
 html {
@@ -111,14 +111,14 @@ img {
 #amboss img,
 #etg img,
 #toc img,
-#additional img,
+#additional img, 
 #source img
 {
   max-width: 60%;
 }
 
 
-/*~~~~~~~~~COLORS~~~~~~~~~/
+/*~~~~~~~~~LIGHT MODE COLORS~~~~~~~~~/
 /* Default Text Color */
 .card {
   color: black;
@@ -130,7 +130,9 @@ img {
 /* Cloze Color */
 .cloze {
   color: #0000ff;
+  text-decoration-line: none; /* <-- the one by one script converts cloze elements to <a> which default to underlined on ankimobile */
 }
+
 /* "Extra" Field Color */
 #extra {
   color: navy;
@@ -224,15 +226,6 @@ hr { opacity: .7 }
   font-weight: bold;
 }
 
-/* Adjustments For Cloze Edit In Review On Mobile */
-.clozefield,
-.mobile .editcloze {
-  display: none;
-}
-.editcloze,
-.mobile .clozefield {
-  display: block;
-}
 
 /* Text When Hint Is Shown*/
 .hints {
@@ -241,7 +234,7 @@ hr { opacity: .7 }
 
 /*add spacing between hints and extra field*/
 .hints+#extra {
-  margin-top: 1rem;
+  margin-top: 1rem; 
 }
 
 /* Extra Field */
@@ -340,12 +333,12 @@ ol {
 }
 .mobile ul {
   display: inline-block;
-  text-align: left;
+  text-align: left; 
   max-width: 100%;
 }
 .mobile ol {
   display: inline-block;
-  text-align: left;
+  text-align: left; 
   max-width: 100%;
 }
 
