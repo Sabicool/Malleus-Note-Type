@@ -1,11 +1,3 @@
-/*    ANKINGOVERHAUL   */
-
-/* The AnKing wishes you the best of luck! Be sure to check out our YouTube channel and Instagram
- for all things Anki and Med School related (including how to customize this card type and use these decks):  
-		www.AnKingMed.com
-			@ankingmed    			
-*/
-
 /*#########################################################
 ################  USER CUSTOMIZATION START  ##############*/
 /* You can choose colors at www.htmlcolorcodes.com */
@@ -28,7 +20,6 @@
 #tags-container {
   padding-bottom: 0px; /* 0 normal, 55 to move up */
 }
-
 
 /*~~~~~~~~~FONT SIZE~~~~~~~~~*/
 /*NOTE: anything with 'px' will keep a font that size indefinitely, 
