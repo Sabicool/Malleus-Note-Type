@@ -1,4 +1,6 @@
-<div id="text">{{cloze:Text}}</div>
+<div id="text">
+	{{cloze:Text}}
+</div>
 <br>
 
 <!-- User Config -->
@@ -7,7 +9,6 @@
 		"clozeHider" : "🦘"
 	}
 </script>
-
 
 <!-- Buttons visible when clozeByOne is enabled -->
 <div id="1by1-btns" style="display: none;">
@@ -362,8 +363,232 @@
 		}
 
 		// User Actions
-		// In AnkiMobile (v2.0.88+) and AnkiDroid (v2.17.0+), it's possible to map JavaScript functions to gestures or gamepad actions to enhance card interactivity
+		// In AnkiMobile (v2.0.88+) and AnkiDroid (v2.17.0+), it is possible to map JavaScript functions to gestures or gamepad actions to enhance card interactivity
 		var userJs1 = revealNextCloze; // User Action 1
 		var userJs2 = hideLastCloze;   // User Action 2
 	}
+</script>
+
+
+<!-- Randomisation -->
+<script>
+function generateSeededRandom() {
+    const now = new Date();
+    const seed = `${now.getFullYear()}${String(now.getMonth()).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}${String(now.getHours()).padStart(2, '0')}`;
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+        hash = ((hash << 5) - hash) + seed.charCodeAt(i);
+        hash = hash & hash;
+    }
+    return () => {
+        hash = (hash * 9301 + 49297) % 233280;
+        return hash / 233280;
+    };
+}
+
+function processContent() {
+    const content = document.getElementById('text');
+    let processedText = content.innerHTML;
+    
+    // Extract target score from [score:X] or [score:X,Y] or [showscore:X] or [showscore:X,Y] patterns
+    let targetScore = null;
+    let targetScoreMax = null;
+    let showScore = false;
+
+    // Handle score ranges and visibility
+    processedText = processedText.replace(/\[(show)?score:(\d+)(?:,(\d+))?\]/g, (match, show, min, max) => {
+        targetScore = parseInt(min);
+        targetScoreMax = max ? parseInt(max) : targetScore;
+        showScore = !!show;
+        
+        // If it's a range, randomly select a target
+        if (targetScore !== null && targetScoreMax !== null && targetScore !== targetScoreMax) {
+            const random = generateSeededRandom();
+            targetScore = Math.floor(targetScore + random() * (targetScoreMax - targetScore + 1));
+        }
+        
+        // Return the actual target score if showScore is true
+        if (showScore) {
+            return `${targetScore}`;
+        }
+        return ''; // Remove the score text if not showing
+    });
+    
+    const random = generateSeededRandom();
+    let currentScore = 0;
+    let remainingTargetScore = targetScore;
+    
+    const scoredListCount = (processedText.match(/\[scoredlist:/g) || []).length;
+    const scoredNumberCount = (processedText.match(/\[scorednumber:/g) || []).length;
+    const totalScoredElements = scoredListCount + scoredNumberCount;
+    let processedElements = 0;
+
+    processedText = processedText.replace(
+        /\[random:([-\d.]+),([-\d.]+):(\d+)\]/g,
+        (match, min, max, decimals) => {
+            const minNum = parseFloat(min);
+            const maxNum = parseFloat(max);
+            const value = minNum + random() * (maxNum - minNum);
+            return value.toFixed(parseInt(decimals));
+        }
+    );
+
+    processedText = processedText.replace(
+        /\[random:([-\d.]+),([-\d.]+),(\d+)\]/g,
+        (match, min, max, decimals) => {
+            const minNum = parseFloat(min);
+            const maxNum = parseFloat(max);
+            const value = minNum + random() * (maxNum - minNum);
+            return value.toFixed(parseInt(decimals));
+        }
+    );
+
+    processedText = processedText.replace(
+        /\[list:([^\]]+)\]/g,
+        (match, items) => {
+            const options = items.split(',').map(item => item.trim());
+            const index = Math.floor(random() * options.length);
+            return options[index];
+        }
+    );
+
+    processedText = processedText.replace(
+        /\[scoredlist:([^\]]+)\]/g,
+        (match, items) => {
+            processedElements++;
+            const options = items.split(',').map(item => {
+                const [text, score] = item.split(':').map(s => s.trim());
+                return { text, score: parseInt(score) };
+            });
+
+            if (targetScore !== null) {
+                const remainingElements = totalScoredElements - processedElements;
+                const minRemainingPossibleScore = 0;
+                const maxRemainingPossibleScore = remainingElements;
+                
+                const idealScore = Math.round(remainingTargetScore / (remainingElements + 1));
+                
+                const validOptions = options.filter(opt => {
+                    const possibleRemainingScore = remainingTargetScore - opt.score;
+                    return possibleRemainingScore >= minRemainingPossibleScore && 
+                           possibleRemainingScore <= maxRemainingPossibleScore;
+                });
+
+                if (validOptions.length === 0) {
+                    const fallbackOptions = options.filter(opt => opt.score <= remainingTargetScore);
+                    if (fallbackOptions.length === 0) return options[0].text;
+                    const selected = fallbackOptions[Math.floor(random() * fallbackOptions.length)];
+                    currentScore += selected.score;
+                    remainingTargetScore -= selected.score;
+                    return selected.text;
+                }
+
+                const bestOptions = validOptions.sort((a, b) =>
+                    Math.abs(a.score - idealScore) - Math.abs(b.score - idealScore)
+                );
+
+                const selected = bestOptions[Math.floor(random() * Math.min(2, bestOptions.length))];
+                currentScore += selected.score;
+                remainingTargetScore -= selected.score;
+                return selected.text;
+            } else {
+                const index = Math.floor(random() * options.length);
+                const selected = options[index];
+                currentScore += selected.score;
+                return selected.text;
+            }
+        }
+    );
+
+    processedText = processedText.replace(
+        /\[scorednumber:([-\d.,]+):(\d+):([-\d.,]+)\]/g,
+        (match, ranges, decimals, scores) => {
+            processedElements++;
+            const rangeValues = ranges.split(',').map(v => parseFloat(v));
+            const scoreValues = scores.split(',').map(s => parseInt(s));
+            const decimalPoints = parseInt(decimals);
+
+            if (rangeValues.length !== scoreValues.length + 1) {
+                console.error('Mismatch between ranges and scores');
+                return 'ERROR';
+            }
+
+            if (targetScore !== null) {
+                const remainingElements = totalScoredElements - processedElements;
+                const idealScore = Math.round(remainingTargetScore / (remainingElements + 1));
+
+                let bestScoreIndex = 0;
+                let minDiff = Math.abs(scoreValues[0] - idealScore);
+                for (let i = 1; i < scoreValues.length; i++) {
+                    const diff = Math.abs(scoreValues[i] - idealScore);
+                    if (diff < minDiff) {
+                        minDiff = diff;
+                        bestScoreIndex = i;
+                    }
+                }
+
+                const rangeMin = rangeValues[bestScoreIndex];
+                const rangeMax = rangeValues[bestScoreIndex + 1];
+                const value = rangeMin + random() * (rangeMax - rangeMin);
+                currentScore += scoreValues[bestScoreIndex];
+                remainingTargetScore -= scoreValues[bestScoreIndex];
+                return value.toFixed(decimalPoints);
+            } else {
+                const value = rangeValues[0] + random() * (rangeValues[rangeValues.length - 1] - rangeValues[0]);
+
+                for (let i = 0; i < rangeValues.length - 1; i++) {
+                    if (value >= rangeValues[i] && value < rangeValues[i + 1]) {
+                        currentScore += scoreValues[i];
+                        return value.toFixed(decimalPoints);
+                    }
+                }
+
+                currentScore += scoreValues[scoreValues.length - 1];
+                return value.toFixed(decimalPoints);
+            }
+        }
+    );
+
+    processedText = processedText.replace(
+        /\[scorednumber:([-\d.]+),([-\d.]+),([-\d.]+):([-\d.]+),([-\d.]+)\]/g,
+        (match, min, max, threshold, score1, score2) => {
+            processedElements++;
+            const minNum = parseFloat(min);
+            const maxNum = parseFloat(max);
+            const thresholdNum = parseFloat(threshold);
+            const score1Num = parseFloat(score1);
+            const score2Num = parseFloat(score2);
+
+            if (targetScore !== null) {
+                const remainingElements = totalScoredElements - processedElements;
+                const idealScore = Math.round(remainingTargetScore / (remainingElements + 1));
+
+                let value;
+                if (Math.abs(score1Num - idealScore) < Math.abs(score2Num - idealScore)) {
+                    value = minNum + random() * (thresholdNum - minNum);
+                    currentScore += score1Num;
+                    remainingTargetScore -= score1Num;
+                } else {
+                    value = thresholdNum + random() * (maxNum - thresholdNum);
+                    currentScore += score2Num;
+                    remainingTargetScore -= score2Num;
+                }
+
+                return value.toFixed(1);
+            } else {
+                const value = minNum + random() * (maxNum - minNum);
+                if (value < thresholdNum) {
+                    currentScore += score1Num;
+                } else {
+                    currentScore += score2Num;
+                }
+                return value.toFixed(1);
+            }
+        }
+    );
+
+    content.innerHTML = processedText;
+}
+
+processContent();
 </script>
