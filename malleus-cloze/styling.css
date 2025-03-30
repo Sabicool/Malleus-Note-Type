@@ -1,57 +1,43 @@
-/* The Modal (background) */
-.modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  padding: 10px; /* Location of the box */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-}
-
-.modal-content {
-	overflow-y:scroll;
-	margin: auto;
-	text-align: center;
-	max-width:95%;
-	max-height:95%;
-}
-
-#modal-image {
-	margin: auto;
-  display: inline-block;
-  width:100%;
-  height:100%;
-}
+/* IMPORTANT INFO: 
+	Changing settings below will *not* work, as changes will be reset when syncing with AnkiHub. 
+	To change settings copy the below code from the line saying USER CONFIG 
+	until the line saying USER CONFIG END. Then scroll to the very bottom beneath the ankihub end comment
+	and paste it there. Changing the settings there will overwrite the default settings below.
+	Feel free to reach out on the Malleus Discord if you have any troubles.
+	At some point in the future we may develop an addon to make card config easier. */
 
 
-/*USER CONFIGERABLE SETTINGS ------------------------------------------------------------*/ 
-
-	/*Colors Light Mode* --------------------------*/ 
+  /*USER CONFIG - copy from this line ------------------------------------------------------------*/ 
+  
+	  /* Colors Light Mode* --------------------------  */
 	.cloze {
-		color: #ffaa00 !important;
-		}a
-	
-		.cloze-inactive {
-			color: #00ffe7
-		}
-	
-		#Personal-Notes {
-			background-color: #4848AD;
-		}
-	
-		#Missed-Questions { 	
-			background-color: #bd5e28;
-		}
-	
-		#Extra {
-			background-color: #107E7D;
-		}
+	color: #ffaa00 !important;
+	}
 
+	.cloze-inactive {
+		color: #00ffe7
+	}
+
+	#Personal-Notes {
+		background-color: #4848AD;
+	}
+
+	#Missed-Questions { 	
+		background-color: #bd5e28;
+	}
+
+	#Extra {
+		background-color: #107E7D;
+	}
+
+	.expanded-button {
+		background-color: #2d2d62;
+	}
+
+	.expanded-button:hover {
+		background:#414196;
+	} 
+		
 	/*Colors Dark Mode-----------------------------*/
 
 	/* NM Cloze Color */
@@ -81,129 +67,469 @@
 
 	}
 
-	/*---------------------------------------------------------------------------------------*/
-
-	/* body does not include the extra resource content */
-	body {
-		margin: auto; /*align to center*/
-		padding:10px;
-		text-align: center;
+	.night_mode .ExtraResourceContent,
+	.nightMode .ExtraResourceContent {
+		background-color: #323a81;
 	}
 
-	#main {
-		margin: auto; /*align to center*/
-		max-width: 850px;
-	}
+	/*USER CONFIG - until this line ---------------------------------------------------------------------------------------*/
 
-	#btns-1by1{
-		text-align: center;
-	}
 
-	#btns-1by1 > button {
-	outline: 0;
-	border-radius: 0.12em;
-	border: 1px solid #525253 !important;
-	padding: 5px 5px;
-	text-align: center;
+
+
+
+
+
+/* The Modal (big picture on doubleclick) CURRENTLY UNUSED*/
+.modal {
+	display: none; /* Hidden by default */
+	position: fixed; /* Stay in place */
+	z-index: 1; /* Sit on top */
+	padding: 10px; /* Location of the box */
+	left: 0;
+	top: 0;
+	width: 100%; /* Full width */
+	height: 100%; /* Full height */
+	overflow: auto; /* Enable scroll if needed */
+	background-color: rgb(0,0,0); /* Fallback color */
+	background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  }
+  
+  .modal-content {
+	  overflow-y:scroll;
+	  margin: auto;
+	  text-align: center;
+	  max-width:95%;
+	  max-height:95%;
+  }
+  
+  #modal-image {
+	  margin: auto;
 	display: inline-block;
-	font-size: 18px;
-	background-color: #424242;
-	color: #AFAFAF !important;
-	margin-top: 8px;
-	}
-
-	#clozecontainer{
-		display: flex;
-		justify-content: center;
-		margin-bottom: 0.5em;
-
-	}
-
-	.cloze {
-		font-weight: bold;
-		text-decoration: none; /*on ankidroid one-by-one clozes are made to be <a> elements, which by default are underlined*/
-	}
-
-	img {
-		max-height: 100%;
-	}
-
-	.container {
-		display: flex;
-		flex-direction: row;
-		justify-content: center;
-		flex-wrap: wrap;
-		width: 100%;
-		max-width: 1200px;
-	}
-
-	.element {
-		border-radius: 15px; /* Rounded corners */
-		padding: min(20px, 2%); /* Space inside the box */
-		margin: 8px; /* Center the box horizontally */
-		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional shadow for depth */
-			
-		flex: 1 1 auto;
-		min-width: 250px; 
+	width:100%;
+	height:100%;
+  }
+  
+  
+  /*USER CONFIGERABLE SETTINGS ------------------------------------------------------------*/ 
+  
+	  /* Colors Light Mode* --------------------------  */
+	      .cloze {
+		  color: #ffaa00 !important;
+		  }
+	  
+		  .cloze-inactive {
+			  color: #00ffe7
+		  }
+	  
+		  #Personal-Notes {
+			  background-color: #4848AD;
+		  }
+	  
+		  #Missed-Questions { 	
+			  background-color: #bd5e28;
+		  }
+	  
+		  #Extra {
+			  background-color: #107E7D;
+		  }
+  
+		  .expanded-button {
+			  background-color: #2d2d62;
+		  }
+	  
+		  .expanded-button:hover {
+			  background:#414196;
+		  } 
+		  
 		
-	}
+  
+	  /*Colors Dark Mode-----------------------------*/
+  
+	  /* NM Cloze Color */
+	  .nightMode .cloze,
+	  .night_mode .cloze {
+	  color: #ffaa00 !important;
+	  }
+  
+	  .night_mode .cloze-inactive,
+	  .nightMode .cloze-inactive {
+		  color: #00ffe7
+	  }
+  
+	  .night_mode #Personal-Notes,
+	  .nightMode #Personal-Notes {
+		  background-color: #4848AD;
+	  }
+  
+	  .night_mode #Missed-Questions,
+	  .nightMode #Missed-Questions { 	
+		  background-color: #bd5e28;
+	  }
+  
+	  .night_mode #Extra,
+	  .nightMode #Extra {
+		  background-color: #107E7D;
+  
+	  }
+  
+	  .night_mode .ExtraResourceContent,
+	  .nightMode .ExtraResourceContent {
+		  background-color: #323a81;
+	  }
+  
+	  /*---------------------------------------------------------------------------------------*/
+  
+	  /* body does not include the extra resource content */
+	  body {
+		  margin: auto; /*align to center*/
+		  padding:10px;
+		  text-align: center;
+	  }
+  
+	  #main {
+		  margin: auto; /*align to center*/
+		  max-width: 850px;
+	  }
+  
+	  #btns-1by1{
+		  text-align: center;
+	  }
+  
+	  #btns-1by1 > button {
+	  outline: 0;
+	  border-radius: 0.12em;
+	  border: 1px solid #525253 !important;
+	  padding: 5px 5px;
+	  text-align: center;
+	  display: inline-block;
+	  font-size: 18px;
+	  background-color: #424242;
+	  color: #AFAFAF !important;
+	  margin-top: 8px;
+	  }
+  
+	  #clozecontainer{
+		  display: flex;
+		  justify-content: center;
+		  margin-bottom: 0.5em;
+  
+	  }
+  
+	  .cloze {
+		  font-weight: bold;
+		  text-decoration: none; /*on ankidroid one-by-one clozes are made to be <a> elements, which by default are underlined*/
+	  }
+  
+	  img {
+		  max-height: 100%;
+	  }
+  
+	  .container {
+		  margin: auto;
+		  display: flex;
+		  flex-direction: row;
+		  justify-content: center;
+		  flex-wrap: wrap;
+		  width: 100%;
+		  max-width: 1200px;
+	  }
+  
+	  .element {
+		  border-radius: 15px; /* Rounded corners */
+		  padding: min(20px, 2%); /* Space inside the box */
+		  margin: 8px; /* Center the box horizontally */
+		  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional shadow for depth */
+			  
+		  flex: 1 1 auto;
+		  min-width: 250px; 
+		  
+	  }
+  
+	  .element > h2{
+		  margin-top: 0;
+		  margin-bottom: 8px;
+		  font-size: 15px;
+		  text-decoration: underline;
+	  }
+  
+	  html {
+  
+		  font-size: 28px;
+		  font-family: Arial;
+	  }
+  
+	  #ExtraResourceButtonContainer{
+		  display: flex;
+		  flex-wrap: wrap; 
+		  flex-direction: row;
+		  justify-content: center;
+	  }
+  
+	  .ExtraResourceButton{
+		  padding: 0.7em; /* Space inside the box */
+		  margin: 0px; 
+		  border-radius: 1em !important;
 
-	.element > h2{
-		margin-top: 0;
-		margin-bottom: 8px;
-		font-size: 15px;
-		text-decoration: underline;
-	}
+		  margin-top: 0.5em; /* Center the box horizontally */
 
-	#ExtraResourceContentContainer{
-		display: flex;
-		justify-content: center;	
-		width: 100%;
-	}
+		  margin-left: 2px;
+		  margin-right: 2px;
+		  margin-left: 0.2em;
+		  margin-right: 0.2em;
+
+		  display: flex;
+		  flex-direction:row;
+  
+		  height:4em;
+		  width: 6.5em;  
+	  }
+  
+	  .ExtraResourceButtonImg{
+		  margin-top: auto;
+		  margin-bottom: auto;
+		  width: 1em;
+		  height:1em;
+		  
+	  }
+  
+	  .ExtraResourceButtonTitle{
+		  text-align: center;
+		  margin-top: auto;
+		  margin-bottom: auto;
+		  width: 100%;
+	  }
+  
+	  #ExtraResourceContent{
+		  max-width: 100%;
+		  margin: auto;
+	  }
+  
+	  .ExtraResourceContent img{
+		  max-height: 100%;
+	  }
+	  
+	  /* ~~~~~~~~~ TAGS ~~~~~~~~~ */
+	  /* Container To Fix Tags At Bottom Of Screen */
+	  #tags-container {
+		  width: 90%;
+		  margin: auto;
+	  }
+	  /* Clickable Tags (need to download the add-on) */
+	  kbd {
+		  display: inline-block;
+		  letter-spacing: .1px;
+		  font-weight: bold;
+		  font-size: 16px !important;
+		  text-shadow: none !important;
+		  padding: 0.05rem 0.1rem !important;
+		  margin-top: 5px !important;
+		  margin-bottom: 4px !important;
+		  margin: 4px !important;
+		  border-radius: 4px;
+		  border-width: 1.5px !important;
+		  border-style: solid;
+		  background-color: transparent !important;
+		  box-shadow: none !important;
+		  opacity: 0.8;
+		  vertical-align: middle !important;
+		  line-height: auto !important;
+		  height: auto !important;
+	  }
+  
+	  /* Tag Becomes More Visible On Hover */
+	  kbd:hover {
+		  opacity: 1;
+		  transition: opacity 0.2s ease;
+	  }
+  
+	  /* Tag Colors */
+	  kbd:nth-of-type(1n+0) { border-color: #F44336; color: #F44336!important; }
+	  kbd:nth-of-type(2n+0) { border-color: #9C27B0; color: #9C27B0!important; }
+	  kbd:nth-of-type(3n+0) { border-color: #3F51B5; color: #3F51B5!important; }
+	  kbd:nth-of-type(4n+0) { border-color: #03A9F4; color: #03A9F4!important; }
+	  kbd:nth-of-type(5n+0) { border-color: #009688; color: #009688!important; }
+	  kbd:nth-of-type(6n+0) { border-color: #C0CA33; color: #C0CA33!important; }
+	  kbd:nth-of-type(7n+0) { border-color: #FF9800; color: #FF9800!important;}
+	  kbd:nth-of-type(8n+0) { border-color: #FF5722; color: #FF5722!important; }
+	  kbd:nth-of-type(9n+0) { border-color: #9E9E9E; color: #9E9E9E!important; }
+	  kbd:nth-of-type(10n+0) { border-color: #607D8B; color: #607D8B!important; }
+  
+	  /* Tag Mobile Adjustments */
+	  .mobile kbd {
+		  opacity: .9;
+		  margin: 1px !important;
+		  display: inline-block;
+		  font-size: 16px !important;
+	  }
+	  .mobile #tags-container {
+		  line-height: 0.6rem;
+		  margin-left: 0px;
+	  }
 
 
 
-	html {
-
-		font-size: 28px;
-		font-family: Arial;
-	}
 
 
+button{
+	  outline: none !important;
+	  background: var(--button-bg);
+	  border-radius: var(--border-radius);
+	  border: 1px solid var(--border-subtle);
+	  font-weight: 500;
+	  padding: 8px 10px;
+	  margin: 0 4px;
+	  -webkit-appearance: none;
+	  cursor: pointer;
+	  border: 1px solid var(--border-subtle);
+	  border-bottom-color: var(--shadow);
+	  background: var(--button-bg);
+	  color: var(--fg);
+  }
+
+/*
+ANKIHUB_END
+Text below this comment will not be modified by AnkiHub or AnKing add-ons.
+Do not edit or remove this comment if you want to protect the content below.
+*/
+  
+
+  /* Frost
+.nightMode .cloze,
+.night_mode .cloze {
+color: #ffaa00 !important;
+}
+
+.night_mode .cloze-inactive,
+.nightMode .cloze-inactive {
+	color: #8FBCBB
+}
+
+.night_mode #Personal-Notes,
+.nightMode #Personal-Notes {
+	background-color: #5E81AC;
+}
+
+.night_mode #Missed-Questions,
+.nightMode #Missed-Questions { 	
+	background-color: #5E81AC;
+}
+
+.night_mode #Extra,
+.nightMode #Extra {
+	background-color: #5E81AC;
+
+}
+
+.night_mode .ExtraResourceContent,
+.nightMode .ExtraResourceContent {
+	background-color: #323a81;
+
+} */
+
+/* 
+	  .cloze,
+	  {
+	  color: #ffaa00 !important;
+	  }
+  
+	  .cloze-inactive,
+	  .cloze-inactive {
+		  color: #BF616A !important;
+	  }
+  
+	  #Personal-Notes
+	   {
+		  background-color: #D08770 !important;
+	  }
+  
+	  .night_mode #Missed-Questions,
+	  .nightMode #Missed-Questions { 	
+		  background-color: #EBCB8B !important;
+	  }
+  
+	  
+	  #Extra {
+		  background-color: #A3Be8C !important;
+  
+	  }
+  
+	  
+	  .ExtraResourceContent {
+		  background-color: #323a81 !important;
+  
+	  } */
 
 
-	#ExtraResourceButtonContainer{
-		display: flex;
-		flex-direction: row;
-		justify-content: center;
-	}
+
+	  /* .cloze
+	  {
+	  color: #ffaa00 !important;
+	  }
+  
+	  .cloze-inactive,
+	  .cloze-inactive {
+		  color: #dd7878 !important;
+	  }
+  
+	  #Personal-Notes
+	   {
+		  background-color: #ea76cb !important;
+	  }
+  
+	  .night_mode #Missed-Questions,
+	  .nightMode #Missed-Questions { 	
+		  background-color: #8839ef !important;
+	  }
+  
+	  
+	  #Extra {
+		  background-color: #d20f39 !important;
+  
+	  }
+  
+	  
+	  .ExtraResourceContent {
+		  background-color: #e64553 !important;
+  
+	  } */
+
+
+	  .cloze
+	  {
+	  color: #ffaa00 !important;
+	  }
+  
+	  .cloze-inactive,
+	  .cloze-inactive {
+		  color: #009baf !important;
+	  }
+  
+	  #Personal-Notes
+	   {
+		  background-color: #f38ba8 !important;
+	  }
+  
+	  #Missed-Questions { 	
+		  background-color: #f9e2af !important;
+	  }
+  
+	  
+	  #Extra {
+		  background-color: #6c7c22 !important;
+  
+	  }
+  
+	  
+	  .ExtraResourceContent {
+		  background-color: #e64553 !important;
+  
+	  }
 
 	.expanded-button {
-		background-color: #4848AD;
+		background-color: #2d2d62;
 	}
 
 	.expanded-button:hover {
-		/* background-color: rgb(38, 38, 139) !important; */
 		background:#414196;
-	}
-
-	.ExtraResourceButton{
-		padding: 20px; /* Space inside the box */
-		margin: 0px; /* Center the box horizontally */
-		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional shadow for depth */		
-		flex: 1 0 0;
-		max-width: 100px;
-		border-radius: 15px;
-		margin-top: 8px; /* Center the box horizontally */
-		margin-left: 2px;
-		margin-right: 2px;
-	}
-
-	#ExtraResourceContentContainer {
-		max-width: 100%;
-		margin: auto;
-	}
-
-	.ExtraResourceContent img{
-		max-height: 100%;
-	}
+	} 
