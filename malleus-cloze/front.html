@@ -1,14 +1,17 @@
-	<div id="clozecontainer">
-		<div id="text">
-			{{cloze:Text}}
-		</div>
-	</div>
-		
-		<!-- User Config -->
+		<!-- IMPORTANT INFO: 
+			Changing settings within the userSettings variable below will *not* work, as changes will be reset
+			when syncing with AnkiHub. To change settings copy the below code from the line saying USER CONFIG 
+			until the line saying USER CONFIG END. Then scroll to the very bottom beneath the ankihub end comment
+			and paste it there. Changing the settings there will overwrite the default settings below.
+			Feel free to reach out on the Malleus Discord if you have any troubles.
+			At some point in the future we may develop an addon to make card config easier.
+		-->
+
+		<!-- USER CONFIG - copy from this line -->
 		<script>
-			// User Settings
+			// User Settings DO NOT EDIT HERE. Read info above.
 			var userSettings = {
-				clozeHider: "🦘",
+				clozeHider: "🦘", // Kangaroo emoji, may not render properly within the Anki Card Template editor
 				gesturesEnabled: true,    // Set to "false" to disable gestures on AnkiDesktop and AnkiWeb with touch screens
 				invertGestures: false,    // Set to "true" to invert the gestures
 				swipeThreshold: 50,       // Adjust this value to change the swipe sensitivity
@@ -19,7 +22,17 @@
 				highlightCloze: true // Set to "false" to disable next cloze highlighting
 			};
 		</script>
+		<!-- USER CONFIG END - until this line -->
 		
+
+
+
+		<div id="clozecontainer">
+			<div id="text">
+				{{cloze:Text}}
+			</div>
+		</div>
+
 		<!-- Buttons visible when clozeByOne is enabled -->
 		<div id="btns-1by1">
 			<button id="button-reveal-next" class="button-1by1" onclick="revealNextCloze()">Reveal Next<span class="AnkiDesktopShortcutTip"> (N)</span></button>
@@ -613,3 +626,9 @@
 
     processContent();
 </script>
+
+<!--
+ANKIHUB_END
+Text below this comment will not be modified by AnkiHub or AnKing add-ons.
+Do not edit or remove this comment if you want to protect the content below.
+-->
