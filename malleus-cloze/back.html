@@ -393,6 +393,16 @@ function processContent() {
     const random = generateSeededRandom(seed);
     let totalScore = 0;
 
+    // Random from list
+    processedText = processedText.replace(
+        /\[randomlist:([^\]]+)\]/g,
+        (match, options) => {
+            const optionsList = options.split(',').map(option => option.trim());
+            const selectedIndex = Math.floor(random() * optionsList.length);
+            return optionsList[selectedIndex];
+        }
+    );
+
     processedText = processedText.replace(
         /\[random:(-?\d+\.?\d*),(-?\d+\.?\d*),(\d+)\]/g,
         (match, min, max, decimals) => {

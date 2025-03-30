@@ -412,6 +412,16 @@
         const random = generateSeededRandom(seed);
         let totalScore = 0;
 
+        // Random from list
+        processedText = processedText.replace(
+            /\[randomlist:([^\]]+)\]/g,
+            (match, options) => {
+                const optionsList = options.split(',').map(option => option.trim());
+                const selectedIndex = Math.floor(random() * optionsList.length);
+                return optionsList[selectedIndex];
+            }
+        );
+
         // Process standalone random numbers
         processedText = processedText.replace(
             /\[random:(-?\d+\.?\d*),(-?\d+\.?\d*),(\d+)\]/g,
