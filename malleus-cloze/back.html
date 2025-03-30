@@ -1,358 +1,298 @@
-<div id="main">
-    <div id="clozecontainer"><div class="clozefield" id="text">{{cloze:Text}}</div></div>
+		<!-- IMPORTANT INFO: 
+			Changing settings within the userSettings variable below will *not* work, as changes will be reset
+			when syncing with AnkiHub. To change settings copy the below code from the line saying USER CONFIG 
+			until the line saying USER CONFIG END. Then scroll to the very bottom beneath the ankihub end comment
+			and paste it there. Changing the settings there will overwrite the default settings below.
+			Feel free to reach out on the Malleus Discord if you have any troubles.
+			At some point in the future we may develop an addon to make card config easier.
+		-->
 
-
-    <script>
-        // ##############  HINT REVEAL SHORTCUTS  ##############
-        // All shortcuts will also open with "H" if using the Hint Hotkeys add-on 
-        var ButtonShortcuts = {
-            "Personal Notes" : "Alt+1",
-            "Missed Questions" : "Alt+2",
-            "Oxford Handbook" : "Alt+3",
-            "AMBOSS" : "Alt+4",
-            "First Aid" : "Alt+5",
-            "eTG Complete" : "Alt+6",
-            "Talley & O'Connor" : "Alt+7",
-            "Additional Resources" : "Alt+8",
-            "Source" : "Alt+9",
+		<!-- USER CONFIG - copy from this line -->
+        <script>
+        var userSettings = {
+            keyboardShortcut_Show_Next_Additional_Resource: "KeyI",
+            keyboardShortcut_ShowTags: "KeyT",
+            ShowTagsByDefault: false //if false, tags can be shown using the keyboardshorcut above
         }
-
-        var ScrollToButton = true;
-
-        // ##############  TAG SHORTCUT  ##############
-        var toggleTagsShortcut = "C";
-
-        // ENTER THE TAG TERM WHICH, WHEN PRESENT, WILL TRIGGER A RED BACKGROUND
-        var tagID = "XXXYYYZZZ"
-
-        // WHETHER THE WHOLE TAG OR ONLY THE LAST PART SHOULD BE SHOWN
-        // -1 to show tags without "Malleus_CM::" at the beginning
-        var numTagLevelsToShow = -1;
-    </script>
+        </script>
+        <!-- USER CONFIG END - until this line -->
 
 
-    <!-- Extra FIELDS -->
-    <div class="container">
-        {{#Extra}}
-        <div class="element" id="Extra">
-            <h2>Extra</h2>
-            <div>{{edit:Extra}}</div>
+    <div id="clozecontainer">
+        <div id="text">
+            {{cloze:Text}}
         </div>
-        {{/Extra}}
+    </div>
 
-        {{#Personal Notes}}
-        <div class="element" id="Personal-Notes">
+
+        <script>
+        //When pressing a button for additional information e.g. eTG, it will automatically scroll down so the revealed content is in view
+        var ScrollToButton = true;     
+
+        // numTagLevelsToShow = -1 means it will show tags without "Malleus_CM::" at the beginning
+        var tagStrToRemove = "#Malleus_CM"
+        var numTagLevelsToShow = -1;
+        
+        </script>
+        <!-- Extra FIELDS -->
+        <div class="container">
+            {{#Extra}}
+            <div class="element" id="Extra">
+                <h2>Extra</h2>
+                <div>{{edit:Extra}}</div>
+            </div>
+            {{/Extra}}
+
+            {{#Personal Notes}}
+            <div class="element" id="Personal-Notes">
             <h2>Personal Notes</h2>
             <div>{{edit:Personal Notes}}</div>
-        </div>
-        {{/Personal Notes}}
+            </div>
+            {{/Personal Notes}}
 
-        {{#Missed Questions}}
-        <div class="element" id="Missed-Questions">
-            <h2>Missed Questions</h2>
+            {{#Missed Questions}}
+            <div class="element" id="Missed-Questions">
+                <h2>Missed Questions</h2>
             <div>{{edit:Missed Questions}}</div>
+            </div>
+            {{/Missed Questions}}
         </div>
-        {{/Missed Questions}}
+
+        <div id="ExtraResourceButtonContainer">
+            {{#Oxford Handbook}}
+            <button id="button-oxhbk" class="ExtraResourceButton" onclick="toggleHintBtn('oxhbk')">
+                <img src="oxford_handbook_clinical_medicine_12x9px.jpg" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle"> Oxford Handbook</div>
+            </button>
+            {{/Oxford Handbook}}
+
+
+            {{#AMBOSS}}
+            <button id="button-amboss" class="ExtraResourceButton" onclick="toggleHintBtn('amboss')">
+                <img src="AMBOSS_Logo_12x12px_v2.png" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">AMBOSS</div>
+            </button>
+            {{/AMBOSS}}
+
+
+            {{#First Aid}}
+            <button id="button-fa" class="ExtraResourceButton" onclick="toggleHintBtn('fa')">
+                <img src="_first-aid.icon_v2.1.png" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">First Aid</div>
+            </button>
+            {{/First Aid}}
+
+
+            {{#eTG Complete}}
+            <button id="button-etg" class="ExtraResourceButton" onclick="toggleHintBtn('etg')">
+                <img src="eTG_12x12px.png" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">eTG</div>
+            </button>
+            {{/eTG Complete}}
+
+            {{#Talley & O'Connor}}
+            <button id="button-toc" class="ExtraResourceButton" onclick="toggleHintBtn('toc')">
+                <img src="_first-aid.icon_v2.1.png" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">Talley O'Connor</div>
+            </button>
+            {{/Talley & O'Connor}}
+
+            {{#Additional Resources}}
+            <button id="button-ar" class="ExtraResourceButton" onclick="toggleHintBtn('ar')">
+                <img src="_Anking_v3.png" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">Additional Resources</div>
+            </button>
+            {{/Additional Resources}}
+
+            {{#Source}}
+            <button id="button-source" class="ExtraResourceButton" onclick="toggleHintBtn('source')">
+                <img src="_Anking_v3.png" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">Source</div>
+            </button>
+            {{/Source}}
+        </div>
+
+        <div id="ExtraResourceContentContainer">
+            {{#Oxford Handbook}}
+            <div id="content-oxhbk" class="ExtraResourceContent element" style="display:none">
+                {{Oxford Handbook}}
+            </div>
+            {{/Oxford Handbook}}
+            <div id="content-amboss" class="ExtraResourceContent element" style="display:none">
+                {{AMBOSS}}
+            </div>
+            <div id="content-fa" class="ExtraResourceContent element" style="display:none">
+                {{First Aid}}
+            </div>
+            <div id="content-etg" class="ExtraResourceContent element" style="display:none">
+                {{eTG Complete}}
+            </div>
+            <div id="content-toc" class="ExtraResourceContent element" style="display:none">
+                {{Talley & O'Connor}}
+            </div>
+            <div id="content-ar" class="ExtraResourceContent element" style="display:none">
+                {{Additional Resources}}
+            </div>
+            <div id="content-source" class="ExtraResourceContent element" style="display:none">
+                {{Source}}
+            </div>
+        </div>
+
     </div>
 
-    <div id="ExtraResourceButtonContainer">
-        {{#Oxford Handbook}}
-        <button id="button-oxhbk" class="ExtraResourceButton" onclick="toggleHintBtn('oxhbk')">
-            <img src="oxford_handbook_clinical_medicine_12x9px.jpg"> Oxford Handbook
-        </button>
-        {{/Oxford Handbook}}
-
-
-        {{#AMBOSS}}
-        <button id="button-amboss" class="ExtraResourceButton" onclick="toggleHintBtn('amboss')">
-            <img src="AMBOSS_Logo_12x12px_v2.png"> AMBOSS
-        </button>
-        {{/AMBOSS}}
-
-
-        {{#First Aid}}
-        <button id="button-fa" class="ExtraResourceButton" onclick="toggleHintBtn('fa')">
-            <img src="_first-aid.icon_v2.1.png"> First Aid
-        </button>
-        {{/First Aid}}
-
-
-        {{#eTG Complete}}
-        <button id="button-etg" class="ExtraResourceButton" onclick="toggleHintBtn('etg')">
-            <img src="eTG_12x12px.png"> eTG Complete
-        </button>
-        {{/eTG Complete}}
-
-        {{#Talley & O'Connor}}
-        <button id="button-toc" class="ExtraResourceButton" onclick="toggleHintBtn('toc')">
-            <img src="_first-aid.icon_v2.1.png"> Talley & O'Connor
-        </button>
-        {{/Talley & O'Connor}}
-
-        {{#Additional Resources}}
-        <button id="button-ar" class="ExtraResourceButton" onclick="toggleHintBtn('ar')">
-            <img src="_Anking_v3.png"> Additional Resources
-        </button>
-        {{/Additional Resources}}
-
-        {{#Source}}
-        <button id="button-source" class="ExtraResourceButton" onclick="toggleHintBtn('source')">
-            <img src="_Anking_v3.png"> Source
-        </button>
-        {{/Source}}
-    </div>
-
-    <div id="ExtraResourceContentContainer">
-        {{#Oxford Handbook}}
-        <div id="content-oxhbk" class="ExtraResourceContent" style="display:none">
-            {{Oxford Handbook}}
-        </div>
-        {{/Oxford Handbook}}
-        <div id="content-amboss" class="ExtraResourceContent" style="display:none">
-            {{AMBOSS}}
-        </div>
-        <div id="content-fa" class="ExtraResourceContent" style="display:none">
-            {{First Aid}}
-        </div>
-        <div id="content-etg" class="ExtraResourceContent" style="display:none">
-            {{eTG Complete}}
-        </div>
-        <div id="content-toc" class="ExtraResourceContent" style="display:none">
-            {{Talley & O'Connor}}
-        </div>
-        <div id="content-ar" class="ExtraResourceContent" style="display:none">
-            {{Additional Resources}}
-        </div>
-        <div id="content-source" class="ExtraResourceContent" style="display:none">
-            {{Source}}
-        </div>
-    </div>
-
-</div>
-
-
-<!-- NOT-PERSISTING EVENT LISTENER -->
-<script>
-    if (window.ankingEventListeners) {
-        for (const listener of ankingEventListeners) {
-            const type = listener[0]
-            const handler = listener[1]
-            document.removeEventListener(type, handler)
-        }
-    }
-    window.ankingEventListeners = []
-
-    window.ankingAddEventListener = function(type, handler) {
-        document.addEventListener(type, handler)
-        window.ankingEventListeners.push([type, handler])
-    }
-</script>
-
-<!-- Shortcut Matcher Function -->
-<script>
-    var specialCharCodes = {
-        "-": "minus",
-        "=": "equal",
-        "[": "bracketleft",
-        "]": "bracketright",
-        ";": "semicolon",
-        "'": "quote",
-        "`": "backquote",
-        "\\": "backslash",
-        ",": "comma",
-        ".": "period",
-        "/": "slash",
-    };
-    // Returns function that match keyboard event to see if it matches given shortcut.
-    function shortcutMatcher(shortcut) {
-        let shortcutKeys = shortcut.toLowerCase().split(/[+]/).map(key => key.trim())
-        let mainKey = shortcutKeys[shortcutKeys.length - 1]
-        if (mainKey.length === 1) {
-            if (/\d/.test(mainKey)) {
-                mainKey = "digit" + mainKey
-            } else if (/[a-zA-Z]/.test(mainKey)) {
-                mainKey = "key" + mainKey
-            } else {
-                let code = specialCharCodes[mainKey];
-                if (code) {
-                    mainKey = code
-                }
-            }
-        }
-        let ctrl = shortcutKeys.includes("ctrl")
-        let shift = shortcutKeys.includes("shift")
-        let alt = shortcutKeys.includes("alt")
-
-        let matchShortcut = function (ctrl, shift, alt, mainKey, event) {
-            if (mainKey !== event.code.toLowerCase()) return false
-            if (ctrl !== (event.ctrlKey || event.metaKey)) return false
-            if (shift !== event.shiftKey) return false
-            if (alt !== event.altKey) return false
-            return true
-        }.bind(window, ctrl, shift, alt, mainKey)
-
-        return matchShortcut
-    }
-</script>
-
-<!-- HINT BUTTONS SETUP -->
-<script>
+    <!-- HINT BUTTONS SETUP -->
+    <script>
     currentHintContainerId = null;
     currentHintBtn = null;
     currentHintContent = null;
 
-    (function() {
-        window.toggleHintBtn = function(containerId, noScrolling=false) 
+    
+    window.toggleHintBtn = function(containerId, noScrolling=false) 
+    {
+        const hintButton = document.getElementById("button-"+containerId)
+        const hintContent = document.getElementById("content-"+containerId)
+
+        if (currentHintContainerId === containerId) { //They are toggling the current hintbtn off.
+            hintButton.classList.remove("expanded-button")
+            hintContent.style.display = "none";
+            currentHintContainerId = null;
+            currentHintBtn = null;
+            currentHintContent = null;
+        }
+
+        else
         {
-            const hintButton = document.getElementById("button-"+containerId)
-            const hintContent = document.getElementById("content-"+containerId)
-
-            if (currentHintContainerId === containerId) { //They are toggling the current hintbtn off.
-                hintButton.classList.remove("expanded-button")
-                hintContent.style.display = "none";
-                currentHintContainerId = null;
-                currentHintBtn = null;
-                currentHintContent = null;
+            //Toggle on the new hint
+            hintButton.classList.add("expanded-button");
+            hintContent.style.display = "block"
+            
+            if (currentHintContainerId !== null){//Toggle off the current hint
+                currentHintBtn.classList.remove("expanded-button")
+                currentHintContent.style.display = "none";
             }
 
-            else
-            {
-                //Toggle on the new hint
-                hintButton.classList.add("expanded-button");
-                hintContent.style.display = "block"
+            //Set the current hint as the new hint
+            currentHintContent = hintContent;
+            currentHintBtn = hintButton;
+            currentHintContainerId = containerId;
 
-                if (currentHintContainerId !== null){//Toggle off the current hint
-                    currentHintBtn.classList.remove("expanded-button")
-                    currentHintContent.style.display = "none";
-                }
-
-                //Set the current hint as the new hint
-                currentHintContent = hintContent;
-                currentHintBtn = hintButton;
-                currentHintContainerId = containerId;
-
-                if (ScrollToButton && !noScrolling) {
-                    hintContent.scrollIntoView({
-                        behavior: "smooth", // "auto" for instant scrolling
-                        block: "start",
-                        inline: "nearest"
-                    });
-                }
+            if (ScrollToButton && !noScrolling) {   
+                hintButton.scrollIntoView({
+                behavior: "smooth", // "auto" for instant scrolling
+                block: "start",
+                inline: "nearest"
+                });
             }
         }
+    }
 
-        function getHintButtonOrder(){
-            hintButtonNodes = document.getElementById("ExtraResourceButtonContainer").children;
-            hintButtonNames = []
-            console.log(hintButtonNodes)
-            for (var i=0; i<hintButtonNodes.length; i++){
-                resourceName = hintButtonNodes[i].id.substr(7)
-                hintButtonNames.push(resourceName)
-            }
+    function getHintButtonOrder(){
+        hintButtonNodes = document.getElementById("ExtraResourceButtonContainer").children;
+        hintButtonNames = []
+        for (var i=0; i<hintButtonNodes.length; i++){
+            resourceName = hintButtonNodes[i].id.substr(7)
+            hintButtonNames.push(resourceName)
+        }
+        
+        return(hintButtonNames)
+    }
 
-            console.log("hintbuttonnames", hintButtonNames)
-            return(hintButtonNames)
-
+    hintButtonOrder = null;
+    window.toggleNextButton = function(){
+        if (hintButtonOrder === null) {
+            hintButtonOrder = getHintButtonOrder();
         }
 
-        hintButtonOrder = null;
-        window.toggleNextButton = function(){
-            if (hintButtonOrder === null) {
-                hintButtonOrder = getHintButtonOrder();
-            }
-
-            if (currentHintContainerId === null) {
-                newHintIndex = 0; // The first one
-            }
-            else {
-                currentHintIndex = hintButtonOrder.indexOf(currentHintContainerId)
-
-                newHintIndex = (currentHintIndex + 1) % hintButtonOrder.length // The modulo operator means if its at the end, it will go to the begining
-            }
-
-            toggleHintBtn(hintButtonOrder[newHintIndex])
+        if (currentHintContainerId === null) {
+            newHintIndex = 0; // The first one
         }
-        ToggleNextButtonShortcut = "h"
-        const isToggleNextShortcut = shortcutMatcher(ToggleNextButtonShortcut)
-        ankingAddEventListener("keydown", (evt) => {
-            if (evt.repeat) return
-            if (isToggleNextShortcut(evt)) {
-                toggleNextButton()
-            }
-        })
+        else {
+            currentHintIndex = hintButtonOrder.indexOf(currentHintContainerId)
 
-        const setupHintBtn = function(elem) {
-            const containerId = elem.id
-            const fieldName = elem.dataset.name
-            const button = elem.getElementsByClassName("button")[0]
-
-            const isShortcut = shortcutMatcher(ButtonShortcuts[fieldName])
-            const isToggleAllShortcut = shortcutMatcher(ToggleAllButtonsShortcut)
-            ankingAddEventListener("keydown", (evt) => {
-                if (evt.repeat) return
-                if (isShortcut(evt) || isToggleAllShortcut(evt)) {
-                    toggleHintBtn(containerId)
-                }
-            })
+            newHintIndex = (currentHintIndex + 1) % hintButtonOrder.length // The modulo operator means if its at the end, it will go to the begining 
         }
 
-        const hints = document.getElementsByClassName("hintBtn")
-        for (let i = 0; i < hints.length; i++) {
-            setupHintBtn(hints[i])
-        }
-    })()
-</script>
+        toggleHintBtn(hintButtonOrder[newHintIndex])
+    }    
+    </script>
 
-<!-- CLICKABLE COLORFUL TAGS -->
-<!--
+    <!-- CLICKABLE COLORFUL TAGS (click functionality requires Clickable Tags addon to be installed)
+    https://ankiweb.net/shared/info/1739176371 -->
     {{#Tags}}
-    <div id="tags-container">{{clickable::Tags}}</div>
+    <div id="tags-container" style="display: none">{{clickable::Tags}}</div>
     <script>
-        var tagContainer = document.getElementById("tags-container")
-        if (tagContainer.childElementCount == 0) {
-        var tagList = tagContainer.innerHTML.split(" ");
-        var kbdList = [];
-        var newTagContent = document.createElement("div");
+        var tagContainer = document.getElementById("tags-container");
+        var tagsAlreadyGenerated = false;
+        
+        function generateColorfulTags(){
+            if (tagsAlreadyGenerated) {return};
 
-        for (var i = 0; i < tagList.length; i++) {
-                            var newTag = document.createElement("kbd");
-                            var tag = tagList[i];
-                            // numTagLevelsToShow == 0 means the whole tag should be shown
-                            if(numTagLevelsToShow != 0){
-                            tag = tag.split('::').slice(-numTagLevelsToShow).join("::");
-                            }
-                            newTag.innerHTML = tag;
-                            newTagContent.append(newTag)
-                            }
-                            tagContainer.innerHTML = newTagContent.innerHTML;
-                            tagContainer.style.cursor = "default";
-                            }
-                            if (tagContainer.innerHTML.indexOf(tagID) != -1) {
-                            tagContainer.style.backgroundColor = "rgba(251,11,11,.15)";
-                            }
+            if (tagContainer.childElementCount == 0) {
+                var tagList = tagContainer.innerHTML.split(" ");
+                var kbdList = [];
+                var newTagContent = document.createElement("div");
 
-                            function showtags() {
-                            var tagContainerShortcut = document.getElementById("tags-container");
 
-                            if (tagContainerShortcut.style.display
-                            === "none") {
-                            tagContainerShortcut.style.display = "block";
-                            } else {
-                            tagContainerShortcut.style.display =
-                            "none";
-                            }
-                            }
+            for (var i = 0; i < tagList.length; i++) {
+                var newTag = document.createElement("kbd");
+                var tag = tagList[i];
 
-                            var isShortcut = shortcutMatcher(toggleTagsShortcut)
-                            ankingAddEventListener('keyup', function (e) {
-                            if (isShortcut(e)) {
-                            showtags();
-                            }
-                            });
+                // numTagLevelsToShow == 0 means the whole tag should be shown
+                tagSplit = tag.split('::')
+                if (tagSplit[0] == tagStrToRemove){ //if the tag parent is #Malleus_CM we remove it
+                    tagSplit = tagSplit.slice(-numTagLevelsToShow)
+                }        
+                tag = tagSplit.join("::&#8203;");
+                
+                newTag.innerHTML = tag;
+                newTagContent.append(newTag)
+            }
 
-                            </script>
+            tagContainer.innerHTML = newTagContent.innerHTML;
+            tagContainer.style.cursor = "default";
+            }
+            tagsAlreadyGenerated = true; 
+        }
+
+        function toggleTagVisibility() {
+
+            if (tagContainer.style.display === "none") {
+                generateColorfulTags();
+                tagContainer.style.display = "block";
+            } else {
+                tagContainer.style.display = "none";
+        }
+    }
+
+    </script>
     {{/Tags}}
-    -->
+
+
+    <!-- Handle keyboard shortcuts -->
+
+    <!-- NOT-PERSISTING EVENT LISTENER -->
+    <script>
+        if (window.ankingEventListeners) {
+            for (const listener of ankingEventListeners) {
+                const type = listener[0]
+                const handler = listener[1]
+                document.removeEventListener(type, handler)
+        }
+        }
+        window.ankingEventListeners = []
+
+        window.ankingAddEventListener = function(type, handler) {
+            document.addEventListener(type, handler)
+            window.ankingEventListeners.push([type, handler])
+        }
+    </script>
+    <script>
+    window.ankingAddEventListener("keydown", (event) => {
+            if (event.repeat) return // Is true if the key is held down for long enough that it automatically repeats
+
+            if (event.code == userSettings["keyboardShortcut_ShowTags"]){
+                toggleTagVisibility();
+            }
+            else if (event.code == userSettings["keyboardShortcut_Show_Next_Additional_Resource"]){
+                toggleNextButton();
+            }
+    })
+    </script>
+
+
 
     <!-- Include the Persistence script -->
 
@@ -604,3 +544,8 @@
 
         processContent();
     </script>
+<!--
+ANKIHUB_END
+Text below this comment will not be modified by AnkiHub or AnKing add-ons.
+Do not edit or remove this comment if you want to protect the content below.
+--> 
