@@ -1,574 +1,346 @@
-		<!-- IMPORTANT INFO: 
-			Changing settings within the userSettings variable below will *not* work, as changes will be reset
-			when syncing with AnkiHub. To change settings copy the below code from the line saying USER CONFIG 
+		/* IMPORTANT INFO:
+			Changing settings below will *not* work, as changes will be reset when syncing with AnkiHub.
+			To change settings copy the below code from the line saying USER CONFIG
 			until the line saying USER CONFIG END. Then scroll to the very bottom beneath the ankihub end comment
 			and paste it there. Changing the settings there will overwrite the default settings below.
 			Feel free to reach out on the Malleus Discord if you have any troubles.
-			At some point in the future we may develop an addon to make card config easier.
-		-->
-
-		<!-- USER CONFIG - copy from this line -->
-        <script>
-        var userSettings = {
-            keyboardShortcut_Show_Next_Additional_Resource: "KeyI",
-            keyboardShortcut_ShowTags: "KeyT",
-            ShowTagsByDefault: false //if false, tags can be shown using the keyboardshorcut above
-        }
-        </script>
-        <!-- USER CONFIG END - until this line -->
-
-    <div class="container">
-    <div id="clozecontainer" class="element">
-        <div id="text">
-            {{cloze:Text}}
-        </div>
-    </div>
-    </div>
-
-
-        <script>
-        //When pressing a button for additional information e.g. eTG, it will automatically scroll down so the revealed content is in view
-        var ScrollToButton = true;     
-
-        // numTagLevelsToShow = -1 means it will show tags without "Malleus_CM::" at the beginning
-        var tagStrToRemove = "#Malleus_CM"
-        var numTagLevelsToShow = -1;
-        
-        </script>
-        <!-- Extra FIELDS -->
-        <div class="container">
-            {{#Extra}}
-            <div class="element" id="Extra">
-                <h2>Extra</h2>
-                <div>{{edit:Extra}}</div>
-            </div>
-            {{/Extra}}
-
-            {{#Personal Notes}}
-            <div class="element" id="Personal-Notes">
-            <h2>Personal Notes</h2>
-            <div>{{edit:Personal Notes}}</div>
-            </div>
-            {{/Personal Notes}}
-
-            {{#Missed Questions}}
-            <div class="element" id="Missed-Questions">
-                <h2>Missed Questions</h2>
-            <div>{{edit:Missed Questions}}</div>
-            </div>
-            {{/Missed Questions}}
-        </div>
-
-        <div id="ExtraResourceButtonContainer">
-            {{#Oxford Handbook}}
-            <button id="button-oxhbk" class="ExtraResourceButton" onclick="toggleHintBtn('oxhbk')">
-                <img src="oxford_handbook_clinical_medicine_12x9px.jpg" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle"> Oxford Handbook</div>
-            </button>
-            {{/Oxford Handbook}}
-
-
-            {{#AMBOSS}}
-            <button id="button-amboss" class="ExtraResourceButton" onclick="toggleHintBtn('amboss')">
-                <img src="AMBOSS_Logo_12x12px_v2.png" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">AMBOSS</div>
-            </button>
-            {{/AMBOSS}}
-
-
-            {{#First Aid}}
-            <button id="button-fa" class="ExtraResourceButton" onclick="toggleHintBtn('fa')">
-                <img src="_first-aid.icon_v2.1.png" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">First Aid</div>
-            </button>
-            {{/First Aid}}
-
-
-            {{#eTG Complete}}
-            <button id="button-etg" class="ExtraResourceButton" onclick="toggleHintBtn('etg')">
-                <img src="eTG_12x12px.png" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">eTG</div>
-            </button>
-            {{/eTG Complete}}
-
-            {{#Talley & O'Connor}}
-            <button id="button-toc" class="ExtraResourceButton" onclick="toggleHintBtn('toc')">
-                <img src="_first-aid.icon_v2.1.png" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">Talley O'Connor</div>
-            </button>
-            {{/Talley & O'Connor}}
-
-            {{#Additional Resources}}
-            <button id="button-ar" class="ExtraResourceButton" onclick="toggleHintBtn('ar')">
-                <img src="_Anking_v3.png" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">Additional Resources</div>
-            </button>
-            {{/Additional Resources}}
-
-            {{#Source}}
-            <button id="button-source" class="ExtraResourceButton" onclick="toggleHintBtn('source')">
-                <img src="_Anking_v3.png" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">Source</div>
-            </button>
-            {{/Source}}
-        </div>
-
-        <div class="container">
-            <div id="ExtraResourceContentContainer">
-                {{#Oxford Handbook}}
-                <div id="content-oxhbk" class="ExtraResourceContent element" style="display:none">
-                    {{Oxford Handbook}}
-                </div>
-                {{/Oxford Handbook}}
-                <div id="content-amboss" class="ExtraResourceContent element" style="display:none">
-                    {{AMBOSS}}
-                </div>
-                <div id="content-fa" class="ExtraResourceContent element" style="display:none">
-                    {{First Aid}}
-                </div>
-                <div id="content-etg" class="ExtraResourceContent element" style="display:none">
-                    {{eTG Complete}}
-                </div>
-                <div id="content-toc" class="ExtraResourceContent element" style="display:none">
-                    {{Talley & O'Connor}}
-                </div>
-                <div id="content-ar" class="ExtraResourceContent element" style="display:none">
-                    {{Additional Resources}}
-                </div>
-                <div id="content-source" class="ExtraResourceContent element" style="display:none">
-                    {{Source}}
-                </div>
-            </div>
-        </div>
-
-
-    <!-- HINT BUTTONS SETUP -->
-    <script>
-    currentHintContainerId = null;
-    currentHintBtn = null;
-    currentHintContent = null;
-
-    
-    window.toggleHintBtn = function(containerId, noScrolling=false) 
-    {
-        const hintButton = document.getElementById("button-"+containerId)
-        const hintContent = document.getElementById("content-"+containerId)
-
-        if (currentHintContainerId === containerId) { //They are toggling the current hintbtn off.
-            hintButton.classList.remove("expanded-button")
-            hintContent.style.display = "none";
-            currentHintContainerId = null;
-            currentHintBtn = null;
-            currentHintContent = null;
-        }
-
-        else
-        {
-            //Toggle on the new hint
-            hintButton.classList.add("expanded-button");
-            hintContent.style.display = "block"
-            
-            if (currentHintContainerId !== null){//Toggle off the current hint
-                currentHintBtn.classList.remove("expanded-button")
-                currentHintContent.style.display = "none";
-            }
-
-            //Set the current hint as the new hint
-            currentHintContent = hintContent;
-            currentHintBtn = hintButton;
-            currentHintContainerId = containerId;
-
-            if (ScrollToButton && !noScrolling) {   
-                hintButton.scrollIntoView({
-                behavior: "smooth", // "auto" for instant scrolling
-                block: "start",
-                inline: "nearest"
-                });
-            }
-        }
-    }
-
-    function getHintButtonOrder(){
-        hintButtonNodes = document.getElementById("ExtraResourceButtonContainer").children;
-        hintButtonNames = []
-        for (var i=0; i<hintButtonNodes.length; i++){
-            resourceName = hintButtonNodes[i].id.substr(7)
-            hintButtonNames.push(resourceName)
-        }
-        
-        return(hintButtonNames)
-    }
-
-    hintButtonOrder = null;
-    window.toggleNextButton = function(){
-        if (hintButtonOrder === null) {
-            hintButtonOrder = getHintButtonOrder();
-        }
-
-        if (currentHintContainerId === null) {
-            newHintIndex = 0; // The first one
-        }
-        else {
-            currentHintIndex = hintButtonOrder.indexOf(currentHintContainerId)
-
-            newHintIndex = (currentHintIndex + 1) % hintButtonOrder.length // The modulo operator means if its at the end, it will go to the begining 
-        }
-
-        toggleHintBtn(hintButtonOrder[newHintIndex])
-    }    
-    </script>
-
-    <!-- CLICKABLE COLORFUL TAGS (click functionality requires Clickable Tags addon to be installed)
-    https://ankiweb.net/shared/info/1739176371 -->
-    {{#Tags}}
-    <div id="tags-container" style="display: none">{{clickable::Tags}}</div>
-    <script>
-        var tagContainer = document.getElementById("tags-container");
-        var tagsAlreadyGenerated = false;
-        
-        function generateColorfulTags(){
-            if (tagsAlreadyGenerated) {return};
-
-            if (tagContainer.childElementCount == 0) {
-                var tagList = tagContainer.innerHTML.split(" ");
-                var kbdList = [];
-                var newTagContent = document.createElement("div");
-
-
-            for (var i = 0; i < tagList.length; i++) {
-                var newTag = document.createElement("kbd");
-                var tag = tagList[i];
-
-                // numTagLevelsToShow == 0 means the whole tag should be shown
-                tagSplit = tag.split('::')
-                if (tagSplit[0] == tagStrToRemove){ //if the tag parent is #Malleus_CM we remove it
-                    tagSplit = tagSplit.slice(-numTagLevelsToShow)
-                }        
-                tag = tagSplit.join("::&#8203;");
-                
-                newTag.innerHTML = tag;
-                newTagContent.append(newTag)
-            }
-
-            tagContainer.innerHTML = newTagContent.innerHTML;
-            tagContainer.style.cursor = "default";
-            }
-            tagsAlreadyGenerated = true; 
-        }
-
-        function toggleTagVisibility() {
-
-            if (tagContainer.style.display === "none") {
-                generateColorfulTags();
-                tagContainer.style.display = "block";
-            } else {
-                tagContainer.style.display = "none";
-        }
-    }
-
-    </script>
-    {{/Tags}}
-
-
-    <!-- Handle keyboard shortcuts -->
-
-    <!-- NOT-PERSISTING EVENT LISTENER -->
-    <script>
-        if (window.ankingEventListeners) {
-            for (const listener of ankingEventListeners) {
-                const type = listener[0]
-                const handler = listener[1]
-                document.removeEventListener(type, handler)
-        }
-        }
-        window.ankingEventListeners = []
-
-        window.ankingAddEventListener = function(type, handler) {
-            document.addEventListener(type, handler)
-            window.ankingEventListeners.push([type, handler])
-        }
-    </script>
-    <script>
-    window.ankingAddEventListener("keydown", (event) => {
-            if (event.repeat) return // Is true if the key is held down for long enough that it automatically repeats
-
-            if (event.code == userSettings["keyboardShortcut_ShowTags"]){
-                toggleTagVisibility();
-            }
-            else if (event.code == userSettings["keyboardShortcut_Show_Next_Additional_Resource"]){
-                toggleNextButton();
-            }
-    })
-    </script>
-
-
-    <!-- Code for element magnification on double click -->
-     <script>
-        var elements = document.getElementsByClassName("element")
-        console.log(elements)
-
-        for (var i=0; i < elements.length; i++){
-            elements[i].ondblclick = function(clickevent)
-            {
-                console.log("double clicked!")
-                if(clickevent.currentTarget.classList.contains("elementEnlarged")){
-                    clickevent.currentTarget.classList.remove("elementEnlarged")
-                }
-                else{
-                    clickevent.currentTarget.classList.add("elementEnlarged")
-                }
-            }
-        }        
-
-     </script>
-
-
-
-    <!-- Include the Persistence script -->
-
-    <script>
-        // v1.1.8 - https://github.com/SimonLammer/anki-persistence/blob/584396fea9dea0921011671a47a0fdda19265e62/script.js
-        if(void 0===window.Persistence){var e="github.com/SimonLammer/anki-persistence/",t="_default";if(window.Persistence_sessionStorage=function(){var i=!1;try{"object"==typeof window.sessionStorage&&(i=!0,this.clear=function(){for(var t=0;t<sessionStorage.length;t++){var i=sessionStorage.key(t);0==i.indexOf(e)&&(sessionStorage.removeItem(i),t--)}},this.setItem=function(i,n){void 0==n&&(n=i,i=t),sessionStorage.setItem(e+i,JSON.stringify(n))},this.getItem=function(i){return void 0==i&&(i=t),JSON.parse(sessionStorage.getItem(e+i))},this.removeItem=function(i){void 0==i&&(i=t),sessionStorage.removeItem(e+i)},this.getAllKeys=function(){for(var t=[],i=Object.keys(sessionStorage),n=0;n<i.length;n++){var s=i[n];0==s.indexOf(e)&&t.push(s.substring(e.length,s.length))}return t.sort()})}catch(n){}this.isAvailable=function(){return i}},window.Persistence_windowKey=function(i){var n=window[i],s=!1;"object"==typeof n&&(s=!0,this.clear=function(){n[e]={}},this.setItem=function(i,s){void 0==s&&(s=i,i=t),n[e][i]=s},this.getItem=function(i){return void 0==i&&(i=t),void 0==n[e][i]?null:n[e][i]},this.removeItem=function(i){void 0==i&&(i=t),delete n[e][i]},this.getAllKeys=function(){return Object.keys(n[e])},void 0==n[e]&&this.clear()),this.isAvailable=function(){return s}},window.Persistence=new Persistence_sessionStorage,Persistence.isAvailable()||(window.Persistence=new Persistence_windowKey("py")),!Persistence.isAvailable()){var i=window.location.toString().indexOf("title"),n=window.location.toString().indexOf("main",i);i>0&&n>0&&n-i<10&&(window.Persistence=new Persistence_windowKey("qt"))}}
-    </script>
-
-    <!-- Randomisation -->
-    <script>
-        function generateSeededRandom(seed) {
-            let hash = 0;
-            for (let i = 0; i < seed.length; i++) {
-                hash = ((hash << 5) - hash) + seed.charCodeAt(i);
-                hash |= 0;
-            }
-            return () => {
-                hash = Math.abs((hash * 9301 + 49297) % 233280);
-                return hash / 233280;
-            };
-        }
-
-        function processContent() {
-            const content = document.getElementById('text');
-            let processedText = content.innerHTML;
-
-            // Retrieve the seed
-            let seed;if (typeof Persistence !== 'undefined' && Persistence !== null && Persistence.isAvailable()) {
-                try {
-                    seed = Persistence.getItem("seed");
-                    if (seed) {
-                        Persistence.removeItem("seed"); // Clear the seed for the next card
-                    } else {
-                        // If seed is null or undefined, use the date fallback
-                        const now = new Date();
-                        seed = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}${String(now.getHours()).padStart(2, '0')}`;
-                    }
-                } catch (e) {
-                    // If any error occurs during persistence operations, use the date fallback
-                    const now = new Date();
-                    seed = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}${String(now.getHours()).padStart(2, '0')}`;
-                }
-            } else {
-                // Fallback: Use date and hour as seed when Persistence is not available
-                const now = new Date();
-                seed = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}${String(now.getHours()).padStart(2, '0')}`;
-            }
-            const random = generateSeededRandom(seed);
-            let totalScore = 0;
-
-            // Random from list
-            processedText = processedText.replace(
-                /\[randomlist:([^\]]+)\]/g,
-                (match, options) => {
-                    const optionsList = options.split(',').map(option => option.trim());
-                    const selectedIndex = Math.floor(random() * optionsList.length);
-                    return optionsList[selectedIndex];
-                }
-            );
-
-            processedText = processedText.replace(
-                /\[random:(-?\d+\.?\d*),(-?\d+\.?\d*),(\d+)\]/g,
-                (match, min, max, decimals) => {
-                    const minNum = parseFloat(min);
-                    const maxNum = parseFloat(max);
-                    const value = minNum + random() * (maxNum - minNum);
-                    return value.toFixed(parseInt(decimals));
-                }
-            );
-
-            // Process showscore and collect elements
-            let targetScore = null;
-            const scoredElements = [];
-            
-            processedText = processedText.replace(/\[(show)?score:(\d+)(?:,(\d+))?\]/g, (match, show, min, max) => {
-                const minVal = parseInt(min);
-                const maxVal = max ? parseInt(max) : minVal;
-                targetScore = minVal + Math.floor(random() * (maxVal - minVal + 1));
-                return show ? targetScore.toString() : '';
-            });
-
-            // Collect scored elements
-            const elementRegex = /\[(scoredlist|scorednumber):([^\]]+)\]/g;
-            let elementMatch;
-            while ((elementMatch = elementRegex.exec(processedText)) !== null) {
-                const [fullMatch, type, params] = elementMatch;
-                
-                if (type === 'scoredlist') {
-                    const options = params.split(',').map(item => {
-                        const [text, score] = item.split(':').map(s => s.trim());
-                        return { text, score: parseInt(score) };
-                    });
-                    const scores = options.map(opt => opt.score);
-                    scoredElements.push({
-                        type: 'list',
-                        min: Math.min(...scores),
-                        max: Math.max(...scores),
-                        options: options
-                    });
-                }
-                else if (type === 'scorednumber') {
-                    const parts = params.split(':');
-                    const thresholds = parts[0].split(',').map(parseFloat);
-                    const decimals = parseInt(parts[1]);
-                    const scores = parts[2].split(',').map(Number);
-                    
-                    scoredElements.push({
-                        type: 'number',
-                        min: Math.min(...scores),
-                        max: Math.max(...scores),
-                        thresholds: thresholds,
-                        decimals: decimals,
-                        scores: scores
-                    });
-                }
-            }
-
-            // Adjust target score to possible range
-            if (targetScore !== null) {
-                const totalMin = scoredElements.reduce((sum, el) => sum + el.min, 0);
-                const totalMax = scoredElements.reduce((sum, el) => sum + el.max, 0);
-                targetScore = Math.min(Math.max(targetScore, totalMin), totalMax);
-            }
-
-            // Process scored elements
-            let currentIndex = 0;
-            let remainingScore = targetScore;
-
-            processedText = processedText.replace(/\[(scoredlist|scorednumber):([^\]]+)\]/g, (match, type, params) => {
-                if (currentIndex >= scoredElements.length) return match;
-
-                const element = scoredElements[currentIndex];
-                const remainingElements = scoredElements.slice(currentIndex + 1);
-                const remainingMax = remainingElements.reduce((sum, el) => sum + el.max, 0);
-                const remainingMin = remainingElements.reduce((sum, el) => sum + el.min, 0);
-
-                if (type === 'scoredlist') {
-                    const options = params.split(',').map(item => {
-                        const [text, score] = item.split(':').map(s => s.trim());
-                        return { text, score: parseInt(score) };
-                    });
-
-                    const minScore = targetScore !== null 
-                          ? Math.max(element.min, remainingScore - remainingMax)
-                          : element.min;
-                    const maxScore = targetScore !== null 
-                          ? Math.min(element.max, remainingScore - remainingMin)
-                          : element.max;
-
-                    const validOptions = options.filter(opt => 
-                        opt.score >= minScore && opt.score <= maxScore
-                    );
-
-                    const selected = validOptions.length > 0
-                          ? validOptions[Math.floor(random() * validOptions.length)]
-                          : options[Math.floor(random() * options.length)];
-
-                    if (targetScore !== null) remainingScore -= selected.score;
-                    totalScore += selected.score;
-                    currentIndex++;
-                    return selected.text;
-                }
-                else if (type === 'scorednumber') {
-                    const parts = params.split(':');
-                    const thresholds = parts[0].split(',').map(parseFloat);
-                    const decimals = parseInt(parts[1]);
-                    const scores = parts[2].split(',').map(Number);
-                    
-                    let selectedScore;
-                    let value;
-
-                    if (targetScore !== null) {
-                        const requiredMin = Math.max(
-                            element.min,
-                            remainingScore - remainingMax
-                        );
-                        const requiredMax = Math.min(
-                            element.max,
-                            remainingScore - remainingMin
-                        );
-
-                        const validScores = scores.filter(score => 
-                            score >= requiredMin && score <= requiredMax
-                        );
-
-                        if (validScores.length > 0) {
-                            selectedScore = validScores[Math.floor(random() * validScores.length)];
-                            const scoreIndex = scores.indexOf(selectedScore);
-                            value = thresholds[scoreIndex] + random() * (thresholds[scoreIndex + 1] - thresholds[scoreIndex]);
-                        } else {
-                            selectedScore = scores.reduce((prev, curr) => 
-                                Math.abs(curr - remainingScore) < Math.abs(prev - remainingScore) ? curr : prev
-                            );
-                            const scoreIndex = scores.indexOf(selectedScore);
-                            value = thresholds[scoreIndex] + random() * (thresholds[scoreIndex + 1] - thresholds[scoreIndex]);
-                        }
-                    } else {
-                        value = thresholds[0] + random() * (thresholds[thresholds.length - 1] - thresholds[0]);
-                        for (let i = 0; i < scores.length; i++) {
-                            if (value >= thresholds[i] && value < thresholds[i + 1]) {
-                                selectedScore = scores[i];
-                                break;
-                            }
-                        }
-                    }
-
-                    if (targetScore !== null) remainingScore -= selectedScore;
-                    totalScore += selectedScore;
-                    currentIndex++;
-                    return value.toFixed(decimals);
-                }
-
-                return match;
-            });
-
-            // Process answer by score
-            processedText = processedText.replace(
-                /\[answerbyscore:([^\]]+)\]/g,
-                (match, params) => {
-                    const segments = params.split(':');
-                    let result = '';
-                    
-                    for (let i = 0; i < segments.length; i += 2) {
-                        if (i + 1 >= segments.length) break;
-                        
-                        const rangePart = segments[i];
-                        const text = segments[i + 1];
-                        const range = rangePart.split(',').map(Number);
-                        
-                        if (range.length === 1) {
-                            if (totalScore === range[0]) {
-                                result = text;
-                                break;
-                            }
-                        } else if (range.length === 2) {
-                            if (totalScore >= range[0] && totalScore <= range[1]) {
-                                result = text;
-                                break;
-                            }
-                        }
-                    }
-                    
-                    return result;
-                }
-            );
-
-            content.innerHTML = processedText;
-        }
-
-        processContent();
-    </script>
-<!--
-ANKIHUB_END
-Text below this comment will not be modified by AnkiHub or AnKing add-ons.
-Do not edit or remove this comment if you want to protect the content below.
---> 
+			At some point in the future we may develop an addon to make card config easier. */
+
+
+		/*USER CONFIG - copy from this line ------------------------------------------------------------*/
+
+			/* Colors Light Mode* --------------------------  */
+			.cloze {
+			color: #fe640b !important;
+			}
+
+			.cloze-inactive {
+				color: #00ffe7
+			}
+
+			#Personal-Notes {
+				background-color: #74c7ec;
+			}
+
+			#Missed-Questions {
+				background-color: #f9e2af;
+			}
+
+			#Extra {
+				background-color: #94e2d5;
+			}
+
+			.expanded-button {
+				background-color: #89b4fa;
+			}
+
+			.expanded-button:hover {
+				background:#b4befe;
+			}
+
+			/*Colors Dark Mode-----------------------------*/
+
+			/* NM Cloze Color */
+			.nightMode .cloze,
+			.night_mode .cloze {
+			color: #ffaa00 !important;
+			}
+
+			.night_mode .cloze-inactive,
+			.nightMode .cloze-inactive {
+				color: #00ffe7
+			}
+
+			.night_mode #Personal-Notes,
+			.nightMode #Personal-Notes {
+				background-color: #4848AD;
+			}
+
+			.night_mode #Missed-Questions,
+			.nightMode #Missed-Questions {
+				background-color: #bd5e28;
+			}
+
+			.night_mode #Extra,
+			.nightMode #Extra {
+				background-color: #107E7D;
+
+			}
+
+			.night_mode .ExtraResourceContent,
+			.nightMode .ExtraResourceContent {
+				background-color: #323a81;
+			}
+
+			.nightMode .expanded-button {
+				background-color: #2d2d62;
+			}
+
+			.nightMode .expanded-button:hover {
+				background:#414196;
+			}
+
+			/*USER CONFIG - until this line ---------------------------------------------------------------------------------------*/
+
+
+
+
+
+
+
+		/* The Modal (big picture on doubleclick) CURRENTLY UNUSED*/
+		.modal {
+			display: none; /* Hidden by default */
+			position: fixed; /* Stay in place */
+			z-index: 1; /* Sit on top */
+			padding: 10px; /* Location of the box */
+			left: 0;
+			top: 0;
+			width: 100%; /* Full width */
+			height: 100%; /* Full height */
+			overflow: auto; /* Enable scroll if needed */
+			background-color: rgb(0,0,0); /* Fallback color */
+			background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+		}
+
+		.modal-content {
+			overflow-y:scroll;
+			margin: auto;
+			text-align: center;
+			max-width:95%;
+			max-height:95%;
+		}
+
+		#modal-image {
+			margin: auto;
+			display: inline-block;
+			width:100%;
+			height:100%;
+		}
+
+
+			/* body does not include the extra resource content */
+			body {
+				margin: auto; /*align to center*/
+				padding:10px;
+				text-align: center;
+			}
+
+			#text {
+				margin: auto; /*align to center*/
+				max-width: 850px;
+			}
+
+			#btns-1by1{
+				text-align: center;
+			}
+
+			#btns-1by1 > button {
+			outline: 0;
+			border-radius: 0.12em;
+			border: 1px solid #525253 !important;
+			padding: 5px 5px;
+			text-align: center;
+			display: inline-block;
+			font-size: 18px;
+			background-color: #424242;
+			color: #AFAFAF !important;
+			margin-top: 8px;
+			}
+
+			#clozecontainer{
+				display: flex;
+				justify-content: center;
+				margin-bottom: 0.5em;
+
+			}
+
+			.cloze {
+				font-weight: bold;
+				text-decoration: none; /*on ankidroid one-by-one clozes are made to be <a> elements, which by default are underlined*/
+			}
+
+			img {
+				max-height: 100%;
+			}
+
+
+
+
+			.container {
+				margin: auto;
+				display: flex;
+				flex-direction: row;
+				justify-content: center;
+				flex-wrap: wrap;
+				width: 100%;
+				max-width: 1000px;
+
+			}
+
+			.element {
+				border-radius: 15px; /* Rounded corners */
+				padding: min(20px, 2%); /* Space inside the box */
+				margin: 8px; /* Center the box horizontally */
+				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional shadow for depth */
+
+				flex: 1 1 auto;
+				min-width: 250px;
+				max-width: 1000px;
+			}
+
+			.element.elementEnlarged {
+				max-width: none !important;
+				flex: 0 0 auto;
+				width: 95vw !important;
+				margin-left: 0;
+			}
+
+			.element.elementEnlarged img {
+				width:100%;
+			}
+
+			.element > h2{
+				margin-top: 0;
+				margin-bottom: 8px;
+				font-size: 15px;
+				text-decoration: underline;
+			}
+
+			html {
+
+				font-size: 28px;
+				font-family: Arial;
+			}
+
+			#ExtraResourceButtonContainer{
+				display: flex;
+				flex-wrap: wrap;
+				flex-direction: row;
+				justify-content: center;
+			}
+
+			.ExtraResourceButton{
+				padding: 0.7em; /* Space inside the box */
+				margin: 0px;
+				border-radius: 1em !important;
+
+				margin-top: 0.5em; /* Center the box horizontally */
+
+				margin-left: 2px;
+				margin-right: 2px;
+				margin-left: 0.2em;
+				margin-right: 0.2em;
+
+				display: flex;
+				flex-direction:row;
+
+				height: 4em;
+				width: 6.5em;
+			}
+
+			.ExtraResourceButtonImg{
+				margin-top: auto;
+				margin-bottom: auto;
+				width: 1em;
+				height:1em;
+
+			}
+
+			.ExtraResourceButtonTitle{
+				text-align: center;
+				margin-top: auto;
+				margin-bottom: auto;
+				width: 100%;
+			}
+
+			#ExtraResourceContent{
+				max-width: 100%;
+				margin: auto;
+			}
+
+			.ExtraResourceContent img{
+				max-height: 100%;
+			}
+
+			/* ~~~~~~~~~ TAGS ~~~~~~~~~ */
+			/* Container To Fix Tags At Bottom Of Screen */
+			#tags-container {
+				width: 100%;
+				margin: auto;
+			}
+			/* Clickable Tags (need to download the add-on) */
+			kbd {
+				display: inline-block;
+				letter-spacing: .1px;
+				font-weight: normal;
+				font-size: 12px !important;
+				text-shadow: none !important;
+				padding: 0.05rem 0.1rem !important;
+				margin-top: 5px !important;
+				margin-bottom: 4px !important;
+				margin: 4px !important;
+				border-radius: 4px;
+				border-width: 1.5px !important;
+				border-style: solid;
+				background-color: transparent !important;
+				box-shadow: none !important;
+				opacity: 0.8;
+				vertical-align: middle !important;
+				line-height: auto !important;
+				height: auto !important;
+			}
+
+			/* Tag Becomes More Visible On Hover */
+			kbd:hover {
+				opacity: 1;
+				transition: opacity 0.2s ease;
+			}
+
+			/* Tag Colors */
+			kbd:nth-of-type(1n+0) { border-color: #F44336; color: #F44336!important; }
+			kbd:nth-of-type(2n+0) { border-color: #9C27B0; color: #9C27B0!important; }
+			kbd:nth-of-type(3n+0) { border-color: #3F51B5; color: #3F51B5!important; }
+			kbd:nth-of-type(4n+0) { border-color: #03A9F4; color: #03A9F4!important; }
+			kbd:nth-of-type(5n+0) { border-color: #009688; color: #009688!important; }
+			kbd:nth-of-type(6n+0) { border-color: #C0CA33; color: #C0CA33!important; }
+			kbd:nth-of-type(7n+0) { border-color: #FF9800; color: #FF9800!important;}
+			kbd:nth-of-type(8n+0) { border-color: #FF5722; color: #FF5722!important; }
+			kbd:nth-of-type(9n+0) { border-color: #9E9E9E; color: #9E9E9E!important; }
+			kbd:nth-of-type(10n+0) { border-color: #607D8B; color: #607D8B!important; }
+
+			/* Tag Mobile Adjustments */
+			.mobile kbd {
+				opacity: .9;
+				margin: 1px !important;
+				display: inline-block;
+				font-size: 16px !important;
+			}
+			.mobile #tags-container {
+				line-height: 0.6rem;
+				margin-left: 0px;
+			}
+
+
+
+		button{
+			outline: none !important;
+			background: var(--button-bg);
+			border-radius: var(--border-radius);
+			border: 1px solid var(--border-subtle);
+			font-weight: 500;
+			padding: 8px 10px;
+			margin: 0 4px;
+			-webkit-appearance: none;
+			cursor: pointer;
+			border: 1px solid var(--border-subtle);
+			border-bottom-color: var(--shadow);
+			background: var(--button-bg);
+			color: var(--fg);
+		}
+
+		/*
+		ANKIHUB_END
+		Text below this comment will not be modified by AnkiHub or AnKing add-ons.
+		Do not edit or remove this comment if you want to protect the content below.
+		*/
