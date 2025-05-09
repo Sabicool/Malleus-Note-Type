@@ -1,6 +1,6 @@
-		<!-- IMPORTANT INFO:
+		<!-- IMPORTANT INFO: 
 			Changing settings within the userSettings variable below will *not* work, as changes will be reset
-			when syncing with AnkiHub. To change settings copy the below code from the line saying USER CONFIG
+			when syncing with AnkiHub. To change settings copy the below code from the line saying USER CONFIG 
 			until the line saying USER CONFIG END. Then scroll to the very bottom beneath the ankihub end comment
 			and paste it there. Changing the settings there will overwrite the default settings below.
 			Feel free to reach out on the Malleus Discord if you have any troubles.
@@ -9,313 +9,355 @@
 
 		<!-- USER CONFIG - copy from this line -->
         <script>
-        var userSettings = {
-            keyboardShortcut_Show_Next_Additional_Resource: "KeyH",
-            keyboardShortcut_ShowTags: "KeyT",
-            ShowTagsByDefault: false //if false, tags can be shown using the keyboardshorcut above
-        }
-        </script>
-        <!-- USER CONFIG END - until this line -->
+            var userSettings = {
+                keyboardShortcut_Show_Next_Additional_Resource: "KeyN",
+                keyboardShortcut_ShowTags: "KeyC",
+                ShowTagsByDefault: false,//if false, tags can be shown using the keyboardshorcut above
 
-    <div class="container">
-    <div id="clozecontainer" class="element">
-        <div id="text">
-            {{cloze:Text}}
+                debug: false
+            }
+            </script>
+            <!-- USER CONFIG END - until this line -->
+    
+        <div class="container">
+            <div id="clozecontainer" class="element">
+                {{cloze:Text}}
+            </div>
         </div>
-    </div>
-    </div>
+
+        <div id=DEBUG style="display: none; color:red"></div>
+        <script>
+            //DEBUG INFO LOG
+            function DEBUGLOG(err)
+            {
+                if (!userSettings[debug]) {
+                    console.log(err.stack)
+                    return;
+                };
+
+				console.log(err)
+				debugElement = document.getElementById('DEBUG')
+                debugElement.textContent = err.stack;
+				debugElement.style = "display: block; color: red";
+            }
+        </script>
+    
+    
+            <script>
+            try{
+            //When pressing a button for additional information e.g. eTG, it will automatically scroll down so the revealed content is in view
+            var ScrollToButton = true;     
+    
+            // numTagLevelsToShow = -1 means it will show tags without "Malleus_CM::" at the beginning
+            var tagStrToRemove = "#Malleus_CM"
+            var numTagLevelsToShow = -1;
+            } catch (err) {DEBUGLOG(err)}
+            </script>
+
+            <!-- Extra FIELDS -->
+            <div class="container">
+                {{#Extra}}
+                <div class="element" id="Extra">
+                    <h2>Extra</h2>
+                    <div>{{edit:Extra}}</div>
+                </div>
+                {{/Extra}}
+    
+                {{#Personal Notes}}
+                <div class="element" id="Personal-Notes">
+                <h2>Personal Notes</h2>
+                <div>{{edit:Personal Notes}}</div>
+                </div>
+                {{/Personal Notes}}
+    
+                {{#Missed Questions}}
+                <div class="element" id="Missed-Questions">
+                    <h2>Missed Questions</h2>
+                <div>{{edit:Missed Questions}}</div>
+                </div>
+                {{/Missed Questions}}
+            </div>
+    
+            <div id="ExtraResourceButtonContainer">
+                {{#Oxford Handbook}}
+                <button id="button-oxhbk" class="ExtraResourceButton" onclick="toggleHintBtn('oxhbk')">
+                    <img src="d39e680dc4a1e29f855a47be2f580a2f.jpg" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle"> Oxford Handbook</div>
+                </button>
+                {{/Oxford Handbook}}
+    
+    
+                {{#AMBOSS}}
+                <button id="button-amboss" class="ExtraResourceButton" onclick="toggleHintBtn('amboss')">
+                    <img src="4dc9613d1822dba3774a95e2efa2df17.png" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">AMBOSS</div>
+                </button>
+                {{/AMBOSS}}
+    
+    
+                {{#First Aid}}
+                <button id="button-fa" class="ExtraResourceButton" onclick="toggleHintBtn('fa')">
+                    <img src="df312922ce486335b8623ff3c2f54455.png" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">First Aid</div>
+                </button>
+                {{/First Aid}}
+    
+    
+                {{#eTG Complete}}
+                <button id="button-etg" class="ExtraResourceButton" onclick="toggleHintBtn('etg')">
+                    <img src="1272e8a1e0f5ac2a32f302d746e8965e.png" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">eTG</div>
+                </button>
+                {{/eTG Complete}}
+    
+                {{#Talley & O'Connor}}
+                <button id="button-toc" class="ExtraResourceButton" onclick="toggleHintBtn('toc')">
+                    <img src="cf24f9c713eca6618e1527a309dacb5f.jpg" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">Talley O'Connor</div>
+                </button>
+                {{/Talley & O'Connor}}
+    
+                {{#Additional Resources}}
+                <button id="button-ar" class="ExtraResourceButton" onclick="toggleHintBtn('ar')">
+                    <img src="dfe79fd09cf10172a32d40b2128b2536.webp" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">Additional Resources</div>
+                </button>
+                {{/Additional Resources}}
+    
+                {{#Source}}
+                <button id="button-source" class="ExtraResourceButton" onclick="toggleHintBtn('source')">
+                    <img src="dfe79fd09cf10172a32d40b2128b2536.webp" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">Source</div>
+                </button>
+                {{/Source}}
+            </div>
+    
+            <div class="container">
+                <div id="ExtraResourceContentContainer">
+                    {{#Oxford Handbook}}
+                    <div id="content-oxhbk" class="ExtraResourceContent element" style="display:none">
+                        {{Oxford Handbook}}
+                    </div>
+                    {{/Oxford Handbook}}
+                    <div id="content-amboss" class="ExtraResourceContent element" style="display:none">
+                        {{AMBOSS}}
+                    </div>
+                    <div id="content-fa" class="ExtraResourceContent element" style="display:none">
+                        {{First Aid}}
+                    </div>
+                    <div id="content-etg" class="ExtraResourceContent element" style="display:none">
+                        {{eTG Complete}}
+                    </div>
+                    <div id="content-toc" class="ExtraResourceContent element" style="display:none">
+                        {{Talley & O'Connor}}
+                    </div>
+                    <div id="content-ar" class="ExtraResourceContent element" style="display:none">
+                        {{Additional Resources}}
+                    </div>
+                    <div id="content-source" class="ExtraResourceContent element" style="display:none">
+                        {{Source}}
+                    </div>
+                </div>
+            </div>
+    
+    
+        <!-- HINT BUTTONS SETUP -->
+        <script>
+        try{
+        currentHintContainerId = null;
+        currentHintBtn = null;
+        currentHintContent = null;
+    
+        
+        window.toggleHintBtn = function(containerId, noScrolling=false) 
+        {
+            const hintButton = document.getElementById("button-"+containerId)
+            const hintContent = document.getElementById("content-"+containerId)
+    
+            if (currentHintContainerId === containerId) { //They are toggling the current hintbtn off.
+                hintButton.classList.remove("expanded-button")
+                hintContent.style.display = "none";
+                currentHintContainerId = null;
+                currentHintBtn = null;
+                currentHintContent = null;
+            }
+    
+            else
+            {
+                //Toggle on the new hint
+                hintButton.classList.add("expanded-button");
+                hintContent.style.display = "block"
+                
+                if (currentHintContainerId !== null){//Toggle off the current hint
+                    currentHintBtn.classList.remove("expanded-button")
+                    currentHintContent.style.display = "none";
+                }
+    
+                //Set the current hint as the new hint
+                currentHintContent = hintContent;
+                currentHintBtn = hintButton;
+                currentHintContainerId = containerId;
+    
+                if (ScrollToButton && !noScrolling) {   
+                    hintButton.scrollIntoView({
+                    behavior: "smooth", // "auto" for instant scrolling
+                    block: "start",
+                    inline: "nearest"
+                    });
+                }
+            }
+        }
+    
+        function getHintButtonOrder(){
+            hintButtonNodes = document.getElementById("ExtraResourceButtonContainer").children;
+            hintButtonNames = []
+            for (var i=0; i<hintButtonNodes.length; i++){
+                resourceName = hintButtonNodes[i].id.substr(7)
+                hintButtonNames.push(resourceName)
+            }
+            
+            return(hintButtonNames)
+        }
+    
+        hintButtonOrder = null;
+        window.toggleNextButton = function(){
+            if (hintButtonOrder === null) {
+                hintButtonOrder = getHintButtonOrder();
+            }
+    
+            if (currentHintContainerId === null) {
+                newHintIndex = 0; // The first one
+            }
+            else {
+                currentHintIndex = hintButtonOrder.indexOf(currentHintContainerId)
+    
+                newHintIndex = (currentHintIndex + 1) % hintButtonOrder.length // The modulo operator means if its at the end, it will go to the begining 
+            }
+    
+            toggleHintBtn(hintButtonOrder[newHintIndex])
+        }   
+    } catch(err){DEBUGLOG(err)}
+        </script>
+    
+        <!-- CLICKABLE COLORFUL TAGS (click functionality requires Clickable Tags addon to be installed)
+        https://ankiweb.net/shared/info/1739176371 -->
+        {{#Tags}}
+        <div id="tags-container" style="display: none">{{clickable::Tags}}</div>
+        <script>
+            var tagContainer = document.getElementById("tags-container");
+            var tagsAlreadyGenerated = false;
+            
+            function generateColorfulTags(){
+                if (tagsAlreadyGenerated) {return};
+    
+                if (tagContainer.childElementCount == 0) {
+                    var tagList = tagContainer.innerHTML.split(" ");
+                    var kbdList = [];
+                    var newTagContent = document.createElement("div");
+    
+    
+                for (var i = 0; i < tagList.length; i++) {
+                    var newTag = document.createElement("kbd");
+                    var tag = tagList[i];
+    
+                    // numTagLevelsToShow == 0 means the whole tag should be shown
+                    tagSplit = tag.split('::')
+                    if (tagSplit[0] == tagStrToRemove){ //if the tag parent is #Malleus_CM we remove it
+                        tagSplit = tagSplit.slice(-numTagLevelsToShow)
+                    }        
+                    tag = tagSplit.join("::&#8203;");
+                    
+                    newTag.innerHTML = tag;
+                    newTagContent.append(newTag)
+                }
+    
+                tagContainer.innerHTML = newTagContent.innerHTML;
+                tagContainer.style.cursor = "default";
+                }
+                tagsAlreadyGenerated = true; 
+            }
+    
+            function toggleTagVisibility() {
+    
+                if (tagContainer.style.display === "none") {
+                    generateColorfulTags();
+                    tagContainer.style.display = "block";
+                } else {
+                    tagContainer.style.display = "none";
+            }
+        }
+
+        </script>
+        {{/Tags}}
+    
 
 
         <script>
-        //When pressing a button for additional information e.g. eTG, it will automatically scroll down so the revealed content is in view
-        var ScrollToButton = true;     
-
-        // numTagLevelsToShow = -1 means it will show tags without "Malleus_CM::" at the beginning
-        var tagStrToRemove = "#Malleus_CM"
-        var numTagLevelsToShow = -1;
-
-        </script>
-        <!-- Extra FIELDS -->
-        <div class="container">
-            {{#Extra}}
-            <div class="element" id="Extra">
-                <h2>Extra</h2>
-                <div>{{edit:Extra}}</div>
-            </div>
-            {{/Extra}}
-
-            {{#Personal Notes}}
-            <div class="element" id="Personal-Notes">
-            <h2>Personal Notes</h2>
-            <div>{{edit:Personal Notes}}</div>
-            </div>
-            {{/Personal Notes}}
-
-            {{#Missed Questions}}
-            <div class="element" id="Missed-Questions">
-                <h2>Missed Questions</h2>
-            <div>{{edit:Missed Questions}}</div>
-            </div>
-            {{/Missed Questions}}
-        </div>
-
-        <div id="ExtraResourceButtonContainer">
-            {{#Oxford Handbook}}
-            <button id="button-oxhbk" class="ExtraResourceButton" onclick="toggleHintBtn('oxhbk')">
-                <img src="d39e680dc4a1e29f855a47be2f580a2f.jpg" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle"> Oxford Handbook</div>
-            </button>
-            {{/Oxford Handbook}}
-
-
-            {{#AMBOSS}}
-            <button id="button-amboss" class="ExtraResourceButton" onclick="toggleHintBtn('amboss')">
-                <img src="4dc9613d1822dba3774a95e2efa2df17.png" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">AMBOSS</div>
-            </button>
-            {{/AMBOSS}}
-
-
-            {{#First Aid}}
-            <button id="button-fa" class="ExtraResourceButton" onclick="toggleHintBtn('fa')">
-                <img src="df312922ce486335b8623ff3c2f54455.png" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">First Aid</div>
-            </button>
-            {{/First Aid}}
-
-
-            {{#eTG Complete}}
-            <button id="button-etg" class="ExtraResourceButton" onclick="toggleHintBtn('etg')">
-                <img src="1272e8a1e0f5ac2a32f302d746e8965e.png" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">eTG</div>
-            </button>
-            {{/eTG Complete}}
-
-            {{#Talley & O'Connor}}
-            <button id="button-toc" class="ExtraResourceButton" onclick="toggleHintBtn('toc')">
-                <img src="cf24f9c713eca6618e1527a309dacb5f.jpg" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">Talley O'Connor</div>
-            </button>
-            {{/Talley & O'Connor}}
-
-            {{#Additional Resources}}
-            <button id="button-ar" class="ExtraResourceButton" onclick="toggleHintBtn('ar')">
-                <img src="dfe79fd09cf10172a32d40b2128b2536.webp" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">Additional Resources</div>
-            </button>
-            {{/Additional Resources}}
-
-            {{#Source}}
-            <button id="button-source" class="ExtraResourceButton" onclick="toggleHintBtn('source')">
-                <img src="dfe79fd09cf10172a32d40b2128b2536.webp" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">Source</div>
-            </button>
-            {{/Source}}
-        </div>
-
-        <div class="container">
-            <div id="ExtraResourceContentContainer">
-                {{#Oxford Handbook}}
-                <div id="content-oxhbk" class="ExtraResourceContent element" style="display:none">
-                    {{Oxford Handbook}}
-                </div>
-                {{/Oxford Handbook}}
-                <div id="content-amboss" class="ExtraResourceContent element" style="display:none">
-                    {{AMBOSS}}
-                </div>
-                <div id="content-fa" class="ExtraResourceContent element" style="display:none">
-                    {{First Aid}}
-                </div>
-                <div id="content-etg" class="ExtraResourceContent element" style="display:none">
-                    {{eTG Complete}}
-                </div>
-                <div id="content-toc" class="ExtraResourceContent element" style="display:none">
-                    {{Talley & O'Connor}}
-                </div>
-                <div id="content-ar" class="ExtraResourceContent element" style="display:none">
-                    {{Additional Resources}}
-                </div>
-                <div id="content-source" class="ExtraResourceContent element" style="display:none">
-                    {{Source}}
-                </div>
-            </div>
-        </div>
-
-
-    <!-- HINT BUTTONS SETUP -->
-    <script>
-    currentHintContainerId = null;
-    currentHintBtn = null;
-    currentHintContent = null;
-
-    
-    window.toggleHintBtn = function(containerId, noScrolling=false) 
-    {
-        const hintButton = document.getElementById("button-"+containerId)
-        const hintContent = document.getElementById("content-"+containerId)
-
-        if (currentHintContainerId === containerId) { //They are toggling the current hintbtn off.
-            hintButton.classList.remove("expanded-button")
-            hintContent.style.display = "none";
-            currentHintContainerId = null;
-            currentHintBtn = null;
-            currentHintContent = null;
-        }
-
-        else
-        {
-            //Toggle on the new hint
-            hintButton.classList.add("expanded-button");
-            hintContent.style.display = "block"
-            
-            if (currentHintContainerId !== null){//Toggle off the current hint
-                currentHintBtn.classList.remove("expanded-button")
-                currentHintContent.style.display = "none";
-            }
-
-            //Set the current hint as the new hint
-            currentHintContent = hintContent;
-            currentHintBtn = hintButton;
-            currentHintContainerId = containerId;
-
-            if (ScrollToButton && !noScrolling) {
-                hintButton.scrollIntoView({
-                behavior: "smooth", // "auto" for instant scrolling
-                block: "start",
-                inline: "nearest"
-                });
-            }
-        }
-    }
-
-    function getHintButtonOrder(){
-        hintButtonNodes = document.getElementById("ExtraResourceButtonContainer").children;
-        hintButtonNames = []
-        for (var i=0; i<hintButtonNodes.length; i++){
-            resourceName = hintButtonNodes[i].id.substr(7)
-            hintButtonNames.push(resourceName)
-        }
-
-        return(hintButtonNames)
-    }
-
-    hintButtonOrder = null;
-    window.toggleNextButton = function(){
-        if (hintButtonOrder === null) {
-            hintButtonOrder = getHintButtonOrder();
-        }
-
-        if (currentHintContainerId === null) {
-            newHintIndex = 0; // The first one
-        }
-        else {
-            currentHintIndex = hintButtonOrder.indexOf(currentHintContainerId)
-
-            newHintIndex = (currentHintIndex + 1) % hintButtonOrder.length // The modulo operator means if its at the end, it will go to the begining
-        }
-
-        toggleHintBtn(hintButtonOrder[newHintIndex])
-    }
-    </script>
-
-    <!-- CLICKABLE COLORFUL TAGS (click functionality requires Clickable Tags addon to be installed)
-    https://ankiweb.net/shared/info/1739176371 -->
-    {{#Tags}}
-    <div id="tags-container" style="display: none">{{clickable::Tags}}</div>
-    <script>
-        var tagContainer = document.getElementById("tags-container");
-        var tagsAlreadyGenerated = false;
-        
-        function generateColorfulTags(){
-            if (tagsAlreadyGenerated) {return};
-
-            if (tagContainer.childElementCount == 0) {
-                var tagList = tagContainer.innerHTML.split(" ");
-                var kbdList = [];
-                var newTagContent = document.createElement("div");
-
-
-            for (var i = 0; i < tagList.length; i++) {
-                var newTag = document.createElement("kbd");
-                var tag = tagList[i];
-
-                // numTagLevelsToShow == 0 means the whole tag should be shown
-                tagSplit = tag.split('::')
-                if (tagSplit[0] == tagStrToRemove){ //if the tag parent is #Malleus_CM we remove it
-                    tagSplit = tagSplit.slice(-numTagLevelsToShow)
-                }        
-                tag = tagSplit.join("::&#8203;");
-                
-                newTag.innerHTML = tag;
-                newTagContent.append(newTag)
-            }
-
-            tagContainer.innerHTML = newTagContent.innerHTML;
-            tagContainer.style.cursor = "default";
-            }
-            tagsAlreadyGenerated = true; 
-        }
-
-        function toggleTagVisibility() {
-
-            if (tagContainer.style.display === "none") {
-                generateColorfulTags();
-                tagContainer.style.display = "block";
-            } else {
-                tagContainer.style.display = "none";
-        }
-    }
-
-    </script>
-    {{/Tags}}
-
-
-    <!-- Handle keyboard shortcuts -->
-
-    <!-- NOT-PERSISTING EVENT LISTENER -->
-    <script>
-        if (window.ankingEventListeners) {
-            for (const listener of ankingEventListeners) {
-                const type = listener[0]
-                const handler = listener[1]
-                document.removeEventListener(type, handler)
-        }
-        }
-        window.ankingEventListeners = []
-
-        window.ankingAddEventListener = function(type, handler) {
-            document.addEventListener(type, handler)
-            window.ankingEventListeners.push([type, handler])
-        }
-    </script>
-    <script>
-    window.ankingAddEventListener("keydown", (event) => {
-            if (event.repeat) return // Is true if the key is held down for long enough that it automatically repeats
-
-            if (event.code == userSettings["keyboardShortcut_ShowTags"]){
+        function respectUserTagSetting() {
+            if (userSettings["ShowTagsByDefault"])
+            {
                 toggleTagVisibility();
             }
-            else if (event.code == userSettings["keyboardShortcut_Show_Next_Additional_Resource"]){
-                toggleNextButton();
+            console.log("respect user tag setting)")
+        }
+
+        window.onload = respectUserTagSetting;
+
+    
+        </script>
+
+        <!-- Handle keyboard shortcuts -->
+    
+        <!-- NOT-PERSISTING EVENT LISTENER -->
+        <script>
+            try{
+            if (window.ankingEventListeners) {
+                for (const listener of ankingEventListeners) {
+                    const type = listener[0]
+                    const handler = listener[1]
+                    document.removeEventListener(type, handler)
             }
-    })
-    </script>
-
-
-    <!-- Code for element magnification on double click -->
-     <script>
-        var elements = document.getElementsByClassName("element")
-        console.log(elements)
-
-        for (var i=0; i < elements.length; i++){
-            elements[i].ondblclick = function(clickevent)
-            {
-                console.log("double clicked!")
-                if(clickevent.currentTarget.classList.contains("elementEnlarged")){
-                    clickevent.currentTarget.classList.remove("elementEnlarged")
-                }
-                else{
-                    clickevent.currentTarget.classList.add("elementEnlarged")
-                }
             }
-        }        
+            window.ankingEventListeners = []
+    
+            window.ankingAddEventListener = function(type, handler) {
+                document.addEventListener(type, handler)
+                window.ankingEventListeners.push([type, handler])
+            }
+        } catch (err) { DEBUGLOG(err) }
+        </script>
 
-     </script>
-
-
+        <script>
+            try{
+        window.ankingAddEventListener("keydown", (event) => {
+                if (event.repeat) return // Is true if the key is held down for long enough that it automatically repeats
+    
+                if (event.code == userSettings["keyboardShortcut_ShowTags"]){
+                    toggleTagVisibility();
+                }
+                else if (event.code == userSettings["keyboardShortcut_Show_Next_Additional_Resource"]){
+                    toggleNextButton();
+                }
+        })
+    } catch (err){DEBUGLOG(err)}
+        </script>
+    
+    
+        <!-- Code for element magnification on double click -->
+         <script>
+            try{
+            var elements = document.getElementsByClassName("element")
+    
+            for (var i=0; i < elements.length; i++){
+                elements[i].ondblclick = function(clickevent)
+                {
+                    if(clickevent.currentTarget.classList.contains("elementEnlarged")){
+                        clickevent.currentTarget.classList.remove("elementEnlarged")
+                    }
+                    else{
+                        clickevent.currentTarget.classList.add("elementEnlarged")
+                    }
+                }
+            }   
+        } catch(err) {DEBUGLOG(err)}     
+    
+         </script>
+    
+    
+    
 
     <!-- Include the Persistence script -->
 
@@ -339,7 +381,7 @@
         }
 
         function processContent() {
-            const content = document.getElementById('text');
+            const content = document.getElementById('clozecontainer');
             let processedText = content.innerHTML;
 
             // Retrieve the seed
