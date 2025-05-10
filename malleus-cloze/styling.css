@@ -277,6 +277,7 @@
         #tags-container {
             width: 90%;
             margin: auto;
+            padding-top: 10px;
         }
         /* Clickable Tags (need to download the add-on) */
         kbd {
@@ -327,7 +328,6 @@
         }
         .mobile #tags-container {
             line-height: 0.6rem;
-            margin-left: 0px;
         }
 
 
