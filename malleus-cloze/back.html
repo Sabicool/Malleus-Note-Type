@@ -13,7 +13,6 @@
         keyboardShortcut_Show_Next_Additional_Resource: "KeyN",
         keyboardShortcut_ShowTags: "KeyC",
         ShowTagsByDefault: false,//if false, tags can be shown using the keyboardshorcut above
-
         debug: false
     }
 </script>
@@ -46,8 +45,8 @@
 <script>
     try{
         //When pressing a button for additional information e.g. eTG, it will automatically scroll down so the revealed content is in view
-        var ScrollToButton = true;     
-        
+        var ScrollToButton = true;
+
         // numTagLevelsToShow = -1 means it will show tags without "Malleus_CM::" at the beginning
         var tagStrToRemove = "#Malleus_CM"
         var numTagLevelsToShow = -1;
@@ -85,7 +84,6 @@
     </button>
     {{/Oxford Handbook}}
 
-
     {{#AMBOSS}}
     <button id="button-amboss" class="ExtraResourceButton" onclick="toggleHintBtn('amboss')">
         <img src="4dc9613d1822dba3774a95e2efa2df17.png" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">AMBOSS</div>
@@ -98,7 +96,6 @@
         <img src="df312922ce486335b8623ff3c2f54455.png" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">First Aid</div>
     </button>
     {{/First Aid}}
-
 
     {{#eTG Complete}}
     <button id="button-etg" class="ExtraResourceButton" onclick="toggleHintBtn('etg')">
@@ -123,6 +120,10 @@
         <img src="dfe79fd09cf10172a32d40b2128b2536.webp" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">Source</div>
     </button>
     {{/Source}}
+
+    <button id="button-tags" class="ToggleTagsButton" onclick="toggleTagVisibility()">
+        <div class="ToggleTagsButtonTitle">🏷️ Toggle Tags</div>
+    </button>
 </div>
 
 <div class="container">
@@ -202,7 +203,12 @@
         }
 
         function getHintButtonOrder(){
-            hintButtonNodes = document.getElementById("ExtraResourceButtonContainer").children;
+    let hintButtonNodes = Array.from(
+        document.getElementById("ExtraResourceButtonContainer").children
+    );
+
+    // Remove the last element
+    hintButtonNodes.pop();
             hintButtonNames = []
             for (var i=0; i<hintButtonNodes.length; i++){
                 resourceName = hintButtonNodes[i].id.substr(7)
