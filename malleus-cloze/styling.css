@@ -9,347 +9,347 @@
 
 /*USER CONFIG - copy from this line ------------------------------------------------------------*/
 
-        /* Colors Light Mode* --------------------------  */
-        body {
-            /* color: */
-            /* background-color */
-        }
+/* Colors Light Mode* --------------------------  */
+body {
+    /* color: */
+    /* background-color */
+}
 
-        .cloze,
-        .cloze b {
-            color: #1e66f5;
-        }
+.cloze,
+.cloze b {
+    color: #1e66f5;
+}
 
-        .cloze-inactive,
-        .cloze-inactive b {
-            color: #179299;
-        }
+.cloze-inactive,
+.cloze-inactive b {
+    color: #179299;
+}
 
-        #btns-1by1 > button {
-            background-color: #acb0be
-        }
+#btns-1by1 > button {
+    background-color: #acb0be
+}
 
-        #Personal-Notes {
-            background-color: #eff1f5;
-        }
+#Personal-Notes {
+    background-color: #eff1f5;
+}
 
-        #Missed-Questions {
-            background-color: #eff1f5;
-        }
+#Missed-Questions {
+    background-color: #eff1f5;
+}
 
-        #Extra {
-            background-color: #eff1f5;
-        }
+#Extra {
+    background-color: #eff1f5;
+}
 
-        .ExtraResourceContent{
-            background-color: #dce0e8
-        }
+.ExtraResourceContent{
+    background-color: #dce0e8
+}
 
-        .expanded-button {
-            background-color: #dce0e8
-        }
+.expanded-button {
+    background-color: #dce0e8
+}
 
-        #clozecontainer {
-            background-color: inherit;
-            box-shadow: none;
-        }
+#clozecontainer {
+    background-color: inherit;
+    box-shadow: none;
+}
 
-        b {
-            color: #8839ef;
-        }
+b {
+    color: #8839ef;
+}
 
-        a {
-            color: #1E66F5;
-        }
+a {
+    color: #1E66F5;
+}
 
-        #tags-container {
-          display: none; /* ‘none’ or ‘block’ */
-        }
+#tags-container {
+    display: none; /* ‘none’ or ‘block’ */
+}
 
-        .mobile #tags-container {
-          display: none; /* ‘none’ or ‘block’ */
-        }
+.mobile #tags-container {
+    display: none; /* ‘none’ or ‘block’ */
+}
 
-        /*Colors Dark Mode-----------------------------*/
+/*Colors Dark Mode-----------------------------*/
 
-        body.nightMode,
-        body.night_mode
-        {
-            background-color: #181926;
-        }
+body.nightMode,
+body.night_mode
+{
+    background-color: #181926;
+}
 
-        /* NM Cloze Color */
-        .nightMode .cloze,
-        .night_mode .cloze,
-        .nightMode .cloze b,
-        .night_mode .cloze b
-        {
-            color: #ffaa00;
-        }
+/* NM Cloze Color */
+.nightMode .cloze,
+.night_mode .cloze,
+.nightMode .cloze b,
+.night_mode .cloze b
+{
+    color: #ffaa00;
+}
 
-        .night_mode .cloze-inactive,
-        .nightMode .cloze-inactive,
-        .night_mode .cloze-inactive b,
-        .nightMode .cloze-inactive b {
-            color: #00ffe7;
-        }
+.night_mode .cloze-inactive,
+.nightMode .cloze-inactive,
+.night_mode .cloze-inactive b,
+.nightMode .cloze-inactive b {
+    color: #00ffe7;
+}
 
-        .night_mode #btns-1by1 > button,
-        .nightMode #btns-1by1 > button {
-            background-color: #585b70;
-        }
+.night_mode #btns-1by1 > button,
+.nightMode #btns-1by1 > button {
+    background-color: #585b70;
+}
 
-        .night_mode #Personal-Notes,
-        .nightMode #Personal-Notes {
-            background-color: #26233A;
-        }
+.night_mode #Personal-Notes,
+.nightMode #Personal-Notes {
+    background-color: #26233A;
+}
 
-        .night_mode #Missed-Questions,
-        .nightMode #Missed-Questions {
-            background-color: #26233A;
-        }
+.night_mode #Missed-Questions,
+.nightMode #Missed-Questions {
+    background-color: #26233A;
+}
 
-        .night_mode #Extra,
-        .nightMode #Extra {
-            background-color: #26233A;
+.night_mode #Extra,
+.nightMode #Extra {
+    background-color: #26233A;
 
-        }
+}
 
-        .night_mode #clozecontainer,
-        .nightMode #clozecontainer {
-            background-color: inherit;
-            box-shadow: none;
-        }
+.night_mode #clozecontainer,
+.nightMode #clozecontainer {
+    background-color: inherit;
+    box-shadow: none;
+}
 
-        .night_mode .ExtraResourceContent,
-        .nightMode .ExtraResourceContent {
-            background-color: #303446;
-        }
+.night_mode .ExtraResourceContent,
+.nightMode .ExtraResourceContent {
+    background-color: #303446;
+}
 
-        .night_mode .expanded-button,
-        .nightMode .expanded-button {
-            background-color: #303446
-        }
+.night_mode .expanded-button,
+.nightMode .expanded-button {
+    background-color: #303446
+}
 
-        .night_mode b,
-        .nightMode b {
-            color:#c6a0f6;
-        }
+.night_mode b,
+.nightMode b {
+    color:#c6a0f6;
+}
 
-        .night_mode a,
-        .nightMode a {
-            color: #89B4FA;
-        }
+.night_mode a,
+.nightMode a {
+    color: #89B4FA;
+}
 
 
 /*USER CONFIG - until this line ---------------------------------------------------------------------------------------*/
 
 
 
-        /* body does not include the extra resource content */
-        body {
-            margin: auto; /*align to center*/
-            padding: 0px;
-            text-align: center;
-            overflow-wrap: anywhere;
-        }
+/* body does not include the extra resource content */
+body {
+    margin: auto; /*align to center*/
+    padding: 0px;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
 
-        #btns-1by1{
-            text-align: center;
-        }
+#btns-1by1{
+    text-align: center;
+}
 
-        #btns-1by1 > button {
-            outline: 0;
-            border-radius: 0.12em;
-            padding: 5px 5px;
-            text-align: center;
-            display: inline-block;
-            font-size: 18px;
-            margin-top: 8px;
-        }
-
-
-        .cloze {
-            font-weight: bold;
-            text-decoration: none; /*on ankidroid one-by-one clozes are made to be <a> elements, which by default are underlined*/
-        }
+#btns-1by1 > button {
+    outline: 0;
+    border-radius: 0.12em;
+    padding: 5px 5px;
+    text-align: center;
+    display: inline-block;
+    font-size: 18px;
+    margin-top: 8px;
+}
 
 
-        .container {
-            margin: auto;
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            flex-wrap: wrap;
-            width: 100%;
-            max-width: 1000px;
-
-        }
-
-        .element {
-            border-radius: 15px; /* Rounded corners */
-            padding: min(20px, 2%); /* Space inside the box */
-            margin: 8px; /* Center the box horizontally */
-            border: 0;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional shadow for depth */
-            flex: 1 1 auto;
-            min-width: 250px;
-            max-width: 1000px;
-        }
-
-        .element.elementEnlarged {
-            max-width: none !important;
-            flex: 0 0 auto;
-            width: 95vw !important;
-        }
-
-        .element.elementEnlarged img {
-            width:100%;
-            max-height: none;
-            object-fit: contain;
-        }
-
-        .element > h2{
-            margin-top: 0;
-            margin-bottom: 8px;
-            font-size: 15px;
-            text-decoration: underline;
-        }
-
-        html {
-
-            font-size: 28px;
-            font-family: Arial;
-        }
-
-        #ExtraResourceButtonContainer{
-            display: flex;
-            flex-wrap: wrap;
-            flex-direction: row;
-            justify-content: center;
-        }
-
-        .ExtraResourceButton{
-            padding: 0.7em; /* Space inside the box */
-            margin: 0px;
-            border-radius: 1em !important;
-
-            margin-top: 0.5em; /* Center the box horizontally */
-
-            margin-left: 2px;
-            margin-right: 2px;
-            margin-left: 0.2em;
-            margin-right: 0.2em;
-
-            display: flex;
-            flex-direction:row;
-        }
+.cloze {
+    font-weight: bold;
+    text-decoration: none; /*on ankidroid one-by-one clozes are made to be <a> elements, which by default are underlined*/
+}
 
 
-        .ExtraResourceButtonImg{
-            margin-top: auto;
-            margin-bottom: auto;
-            margin-right: 0.5em;
-            width: 1em;
-            height:1em;
-            max-width: none;
-            max-height: none;
-        }
+.container {
+    margin: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 1000px;
 
-        .ExtraResourceButtonTitle{
-            text-wrap: nowrap;
-            text-align: center;
-            margin-top: auto;
-            margin-bottom: auto;
-            width: 100%;
-            white-space: nowrap;
+}
 
-        }
+.element {
+    border-radius: 15px; /* Rounded corners */
+    padding: min(20px, 2%); /* Space inside the box */
+    margin: 8px; /* Center the box horizontally */
+    border: 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional shadow for depth */
+    flex: 1 1 auto;
+    min-width: 250px;
+    max-width: 1000px;
+}
 
-        #ExtraResourceContent{
-            max-width: 100%;
-            margin: auto;
-        }
+.element.elementEnlarged {
+    max-width: none !important;
+    flex: 0 0 auto;
+    width: 95vw !important;
+}
 
+.element.elementEnlarged img {
+    width:100%;
+    max-height: none;
+    object-fit: contain;
+}
 
-        /* ~~~~~~~~~ TAGS ~~~~~~~~~ */
-        /* Container To Fix Tags At Bottom Of Screen */
-        #tags-container {
-            width: 90%;
-            margin: auto;
-            padding-top: 10px;
-        }
-        /* Clickable Tags (need to download the add-on) */
-        kbd {
-            display: inline-block;
-            letter-spacing: .1px;
-            font-weight: bold;
-            font-size: 16px !important;
-            text-shadow: none !important;
-            padding: 0.05rem 0.1rem !important;
-            margin-top: 5px !important;
-            margin-bottom: 4px !important;
-            margin: 4px !important;
-            border-radius: 4px;
-            border-width: 1.5px !important;
-            border-style: solid;
-            background-color: transparent !important;
-            box-shadow: none !important;
-            opacity: 0.8;
-            vertical-align: middle !important;
-            line-height: auto !important;
-            height: auto !important;
-        }
+.element > h2{
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-size: 15px;
+    text-decoration: underline;
+}
 
-        /* Tag Becomes More Visible On Hover */
-        kbd:hover {
-            opacity: 1;
-            transition: opacity 0.2s ease;
-        }
+html {
 
-        /* Tag Colors */
-        kbd:nth-of-type(1n+0) { border-color: #F44336; color: #F44336!important; }
-        kbd:nth-of-type(2n+0) { border-color: #9C27B0; color: #9C27B0!important; }
-        kbd:nth-of-type(3n+0) { border-color: #3F51B5; color: #3F51B5!important; }
-        kbd:nth-of-type(4n+0) { border-color: #03A9F4; color: #03A9F4!important; }
-        kbd:nth-of-type(5n+0) { border-color: #009688; color: #009688!important; }
-        kbd:nth-of-type(6n+0) { border-color: #C0CA33; color: #C0CA33!important; }
-        kbd:nth-of-type(7n+0) { border-color: #FF9800; color: #FF9800!important;}
-        kbd:nth-of-type(8n+0) { border-color: #FF5722; color: #FF5722!important; }
-        kbd:nth-of-type(9n+0) { border-color: #9E9E9E; color: #9E9E9E!important; }
-        kbd:nth-of-type(10n+0) { border-color: #607D8B; color: #607D8B!important; }
+    font-size: 28px;
+    font-family: Arial;
+}
 
-        /* Tag Mobile Adjustments */
-        .mobile kbd {
-            opacity: .9;
-            margin: 1px !important;
-            display: inline-block;
-            font-size: 16px !important;
-        }
-        .mobile #tags-container {
-            line-height: 0.6rem;
-        }
+#ExtraResourceButtonContainer{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.ExtraResourceButton{
+    padding: 0.7em; /* Space inside the box */
+    margin: 0px;
+    border-radius: 1em !important;
+
+    margin-top: 0.5em; /* Center the box horizontally */
+
+    margin-left: 2px;
+    margin-right: 2px;
+    margin-left: 0.2em;
+    margin-right: 0.2em;
+
+    display: flex;
+    flex-direction:row;
+}
 
 
+.ExtraResourceButtonImg{
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-right: 0.5em;
+    width: 1em;
+    height:1em;
+    max-width: none;
+    max-height: none;
+}
 
-    button{
-        outline: none !important;
-        background: var(--button-bg);
-        border-radius: var(--border-radius);
-        border: 1px solid var(--border-subtle);
-        font-weight: 500;
-        padding: 8px 10px;
-        margin: 0 4px;
-        -webkit-appearance: none;
-        cursor: pointer;
-        border: 1px solid var(--border-subtle);
-        border-bottom-color: var(--shadow);
-        background: var(--button-bg);
-        color: var(--fg);
-    }
+.ExtraResourceButtonTitle{
+    text-wrap: nowrap;
+    text-align: center;
+    margin-top: auto;
+    margin-bottom: auto;
+    width: 100%;
+    white-space: nowrap;
 
-    /*
+}
+
+#ExtraResourceContent{
+    max-width: 100%;
+    margin: auto;
+}
+
+
+/* ~~~~~~~~~ TAGS ~~~~~~~~~ */
+/* Container To Fix Tags At Bottom Of Screen */
+#tags-container {
+    width: 90%;
+    margin: auto;
+    padding-top: 10px;
+}
+/* Clickable Tags (need to download the add-on) */
+kbd {
+    display: inline-block;
+    letter-spacing: .1px;
+    font-weight: bold;
+    font-size: 16px !important;
+    text-shadow: none !important;
+    padding: 0.05rem 0.1rem !important;
+    margin-top: 5px !important;
+    margin-bottom: 4px !important;
+    margin: 4px !important;
+    border-radius: 4px;
+    border-width: 1.5px !important;
+    border-style: solid;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    opacity: 0.8;
+    vertical-align: middle !important;
+    line-height: auto !important;
+    height: auto !important;
+}
+
+/* Tag Becomes More Visible On Hover */
+kbd:hover {
+    opacity: 1;
+    transition: opacity 0.2s ease;
+}
+
+/* Tag Colors */
+kbd:nth-of-type(1n+0) { border-color: #F44336; color: #F44336!important; }
+kbd:nth-of-type(2n+0) { border-color: #9C27B0; color: #9C27B0!important; }
+kbd:nth-of-type(3n+0) { border-color: #3F51B5; color: #3F51B5!important; }
+kbd:nth-of-type(4n+0) { border-color: #03A9F4; color: #03A9F4!important; }
+kbd:nth-of-type(5n+0) { border-color: #009688; color: #009688!important; }
+kbd:nth-of-type(6n+0) { border-color: #C0CA33; color: #C0CA33!important; }
+kbd:nth-of-type(7n+0) { border-color: #FF9800; color: #FF9800!important;}
+kbd:nth-of-type(8n+0) { border-color: #FF5722; color: #FF5722!important; }
+kbd:nth-of-type(9n+0) { border-color: #9E9E9E; color: #9E9E9E!important; }
+kbd:nth-of-type(10n+0) { border-color: #607D8B; color: #607D8B!important; }
+
+/* Tag Mobile Adjustments */
+.mobile kbd {
+    opacity: .9;
+    margin: 1px !important;
+    display: inline-block;
+    font-size: 16px !important;
+}
+.mobile #tags-container {
+    line-height: 0.6rem;
+}
+
+
+
+button{
+    outline: none !important;
+    background: var(--button-bg);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-subtle);
+    font-weight: 500;
+    padding: 8px 10px;
+    margin: 0 4px;
+    -webkit-appearance: none;
+    cursor: pointer;
+    border: 1px solid var(--border-subtle);
+    border-bottom-color: var(--shadow);
+    background: var(--button-bg);
+    color: var(--fg);
+}
+
+/*
     ANKIHUB_END
     Text below this comment will not be modified by AnkiHub or AnKing add-ons.
     Do not edit or remove this comment if you want to protect the content below.
-    */
+*/
