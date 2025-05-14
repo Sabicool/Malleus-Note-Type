@@ -407,7 +407,7 @@
 <script>
     var elements = document.getElementsByClassName("element")
     console.log(elements)
-    
+
     for (var i=0; i < elements.length; i++){
         elements[i].ondblclick = function(clickevent)
         {
@@ -419,8 +419,8 @@
                 clickevent.currentTarget.classList.add("elementEnlarged")
             }
         }
-    }        
-    
+    }
+
 </script>
 
 <!-- Include the Persistence script -->
@@ -488,7 +488,7 @@
 
         let targetScore = null;
         const scoredElements = [];
-        
+
         processedText = processedText.replace(/\[(show)?score:(\d+)(?:,(\d+))?\]/g, (match, show, min, max) => {
             const minVal = parseInt(min);
             const maxVal = max ? parseInt(max) : minVal;
@@ -501,7 +501,7 @@
         let elementMatch;
         while ((elementMatch = elementRegex.exec(processedText)) !== null) {
             const [fullMatch, type, params] = elementMatch;
-            
+
             if (type === 'scoredlist') {
                 const options = params.split(',').map(item => {
                     const [text, score] = item.split(':').map(s => s.trim());
@@ -520,7 +520,7 @@
                 const thresholds = parts[0].split(',').map(parseFloat);
                 const decimals = parseInt(parts[1]);
                 const scores = parts[2].split(',').map(Number);
-                
+
                 scoredElements.push({
                     type: 'number',
                     min: Math.min(...scores),
@@ -557,14 +557,14 @@
                     return { text, score: parseInt(score) };
                 });
 
-                const minScore = targetScore !== null 
+                const minScore = targetScore !== null
                       ? Math.max(element.min, remainingScore - remainingMax)
                       : element.min;
-                const maxScore = targetScore !== null 
+                const maxScore = targetScore !== null
                       ? Math.min(element.max, remainingScore - remainingMin)
                       : element.max;
 
-                const validOptions = options.filter(opt => 
+                const validOptions = options.filter(opt =>
                     opt.score >= minScore && opt.score <= maxScore
                 );
 
@@ -582,7 +582,7 @@
                 const thresholds = parts[0].split(',').map(parseFloat);
                 const decimals = parseInt(parts[1]);
                 const scores = parts[2].split(',').map(Number);
-                
+
                 let selectedScore;
                 let value;
 
@@ -596,7 +596,7 @@
                         remainingScore - remainingMin
                     );
 
-                    const validScores = scores.filter(score => 
+                    const validScores = scores.filter(score =>
                         score >= requiredMin && score <= requiredMax
                     );
 
@@ -605,7 +605,7 @@
                         const scoreIndex = scores.indexOf(selectedScore);
                         value = thresholds[scoreIndex] + random() * (thresholds[scoreIndex + 1] - thresholds[scoreIndex]);
                     } else {
-                        selectedScore = scores.reduce((prev, curr) => 
+                        selectedScore = scores.reduce((prev, curr) =>
                             Math.abs(curr - remainingScore) < Math.abs(prev - remainingScore) ? curr : prev
                         );
                         const scoreIndex = scores.indexOf(selectedScore);
@@ -636,14 +636,14 @@
             (match, params) => {
                 const segments = params.split(':');
                 let result = '';
-                
+
                 for (let i = 0; i < segments.length; i += 2) {
                     if (i + 1 >= segments.length) break;
-                    
+
                     const rangePart = segments[i];
                     const text = segments[i + 1];
                     const range = rangePart.split(',').map(Number);
-                    
+
                     if (range.length === 1) {
                         if (totalScore === range[0]) {
                             result = text;
@@ -656,7 +656,7 @@
                         }
                     }
                 }
-                
+
                 return result;
             }
         );
