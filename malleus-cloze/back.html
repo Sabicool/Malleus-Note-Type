@@ -320,6 +320,16 @@
                 toggleNextButton();
             }
         })
+
+        // Turn the tags on if the setting is true. This is a dirty implementation
+        // to allow for changes in the settings at the bottom to affect the tag 
+        // visibility, by waiting until the rest of the javascript to execute first.
+        if (userSettings["ShowTagsByDefault"]){
+            setTimeout(() => {
+                toggleTagVisibility();
+            }, 0)
+        }
+
     } catch (err){DEBUGLOG(err)}
 </script>
 
