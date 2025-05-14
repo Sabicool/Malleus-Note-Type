@@ -1,6 +1,6 @@
-<!-- IMPORTANT INFO: 
+<!-- IMPORTANT INFO:
     Changing settings within the userSettings variable below will *not* work, as changes will be reset
-    when syncing with AnkiHub. To change settings copy the below code from the line saying USER CONFIG 
+    when syncing with AnkiHub. To change settings copy the below code from the line saying USER CONFIG
     until the line saying USER CONFIG END. Then scroll to the very bottom beneath the ankihub end comment
     and paste it there. Changing the settings there will overwrite the default settings below.
     Feel free to reach out on the Malleus Discord if you have any troubles.
@@ -126,7 +126,7 @@
 
 
         <button id="button-tags" class="ExtraResourceButton TagsButton" onclick="toggleTagVisibility()">
-            <div class="TagsButtonContent">🏷️ Tags</div>    
+            <div class="TagsButtonContent">🏷️ Tags</div>
         </button>
     </div>
 
@@ -194,7 +194,7 @@ window.toggleHintBtn = function(containerId, noScrolling=false)
         currentHintBtn = hintButton;
         currentHintContainerId = containerId;
 
-        if (ScrollToButton && !noScrolling) {   
+        if (ScrollToButton && !noScrolling) {
             hintButton.scrollIntoView({
             behavior: "smooth", // "auto" for instant scrolling
             block: "start",
@@ -211,7 +211,7 @@ function getHintButtonOrder(){
         resourceName = hintButtonNodes[i].id.substr(7)
         hintButtonNames.push(resourceName)
     }
-    
+
     return(hintButtonNames)
 }
 
@@ -227,18 +227,18 @@ window.toggleNextButton = function(){
     else {
         currentHintIndex = hintButtonOrder.indexOf(currentHintContainerId)
 
-        newHintIndex = (currentHintIndex + 1) % hintButtonOrder.length // The modulo operator means if its at the end, it will go to the begining 
+        newHintIndex = (currentHintIndex + 1) % hintButtonOrder.length // The modulo operator means if its at the end, it will go to the begining
     }
 
     toggleHintBtn(hintButtonOrder[newHintIndex])
-}   
+}
 } catch(err){DEBUGLOG(err)}
 </script>
 
 <!-- CLICKABLE COLORFUL TAGS (click functionality requires Clickable Tags addon to be installed)
 https://ankiweb.net/shared/info/1739176371 -->
 {{#Tags}}
-<div id="tags-container" style="display: none">{{clickable::Tags}}</div>
+<div id="tags-container">{{clickable::Tags}}</div>
 <script>
     var tagContainer = document.getElementById("tags-container");
     var tagsAlreadyGenerated = false;
@@ -250,7 +250,6 @@ https://ankiweb.net/shared/info/1739176371 -->
             var tagList = tagContainer.innerHTML.split(" ");
             var kbdList = [];
             var newTagContent = document.createElement("div");
-
 
         for (var i = 0; i < tagList.length; i++) {
             var newTag = document.createElement("kbd");
@@ -270,19 +269,23 @@ https://ankiweb.net/shared/info/1739176371 -->
         tagContainer.innerHTML = newTagContent.innerHTML;
         tagContainer.style.cursor = "default";
         }
-        tagsAlreadyGenerated = true; 
+        tagsAlreadyGenerated = true;
     }
 
-    function toggleTagVisibility() {
+    // Initialize the display state tracking variable based on computed style
+    var isHidden = window.getComputedStyle(tagContainer).display === "none";
+    
+    // Set the inline style to match the current computed style
+    tagContainer.style.display = isHidden ? "none" : "block";
 
-        if (tagContainer.style.display === "none") {
+    function toggleTagVisibility() {
+        if (tagContainer.style.display == "none") {
             generateColorfulTags();
             tagContainer.style.display = "block";
         } else {
             tagContainer.style.display = "none";
+        }
     }
-}
-
 </script>
 {{/Tags}}
 
