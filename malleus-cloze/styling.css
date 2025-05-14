@@ -38,7 +38,7 @@
         background: none;
         background-color: hsl(227, 12%, 90%)
     }
-    
+
     .expanded-button {
         background-color: hsl(220, 21%, 89%)
     }
@@ -81,11 +81,19 @@
     }
 
     #tags-container {
-        display: none; /* ‘none’ or ‘block’ */
+        display: none; /* show tags by default on computer: no with ‘none’ or yes with ‘block’ */
     }
 
     .mobile #tags-container {
-        display: none; /* ‘none’ or ‘block’ */
+        display: none; /* show tags by default on mobile: no with ‘none’ or yes with ‘block’ */
+    }
+
+    #button-tags {
+        display: none; /* show tags button on computer: no with ‘none’ or yes ‘block’ */
+    }
+
+    .mobile #button-tags {
+        display: block /* show tags button on mobile: no with ‘none’ or yes ‘block’ */
     }
 
     /*Colors Dark Mode-----------------------------*/
@@ -129,7 +137,7 @@
         background: none;
         background-color: hsl(231, 16%, 24%)
     }
-    
+
     .night_mode .expanded-button,
     .nightMode .expanded-button {
         background-color: hsl(229, 19%, 23%)
@@ -140,7 +148,7 @@
         background: none;
         background-color: hsl(229, 19%, 13%)
     }
-    
+
     .night_mode #Personal-Notes,
     .nightMode #Personal-Notes {
         background-color: #26233A;
@@ -204,7 +212,7 @@ body {
     bottom: 10px;
     white-space: nowrap;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional shadow for depth */
-                
+
 }
 
 
