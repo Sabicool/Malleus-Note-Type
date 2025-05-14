@@ -20,7 +20,7 @@
         autoFlip: "all", // "all", "off", ["AnkiDesktop", "AnkiDroid", "AnkiMobile", "AnkiWeb"]
         revealNextKeys: ["KeyN", "ArrowRight"], // Keys to reveal the next cloze - for custom keycodes: https://keycode.info/
         hideLastKeys: ["KeyQ", "ArrowLeft"],    // Keys to hide the last cloze
-        highlightCloze: true // Set to "false" to disable next cloze highlighting
+        highlightCloze: false // Set to "false" to disable next cloze highlighting
     };
 </script>
 <!-- USER CONFIG END - until this line -->
@@ -334,11 +334,11 @@
 
         function initialize() {
             updateGestureSetting();
+            var platform = detectAnkiPlatform();
 
-            // Let's make sure the script runs after the DOM is fully loaded
-            // This is crucial for finding elements inside nested divs
-            setTimeout(function() {
-                // Modified to find cloze elements inside the div structure
+            // Extract the core functionality into a separate function
+            function processClozeElements() {
+                // Find cloze elements inside the div structure
                 elements = document.querySelectorAll("#text .cloze");
 
                 // Only proceed if we found cloze elements
@@ -347,14 +347,12 @@
 
                     // Re-query after conversion
                     elements = document.querySelectorAll("#text a.cloze");
-
                     clozes = Array.from(elements).map(el => el.getAttribute("data-cloze"));
 
                     elements.forEach((el, i) => {
                         el.addEventListener("click", () => revealCloze(i));
-
                         // Convert [...] to userSettings[clozeHider] If the cloze is not "[...]" that means that it has a hint in it and should be kept as is.
-                        if (el.textContent === "[...]"){
+                        if (el.textContent === "[...]") {
                             el.textContent = userSettings["clozeHider"];
                         }
                     });
@@ -369,7 +367,15 @@
                 } else {
                     console.log("No cloze elements found");
                 }
-            }, 100); // Small delay to ensure DOM is ready
+            }
+
+            if (platform === "AnkiMobile") {
+                // On AnkiMobile, we need to ensure the DOM is fully loaded
+                setTimeout(processClozeElements, 100); // Small delay to ensure DOM is ready
+            } else {
+                // For other platforms, run immediately
+                processClozeElements();
+            }
         }
 
         // Call initialize when page loads
