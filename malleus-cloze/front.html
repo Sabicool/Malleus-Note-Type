@@ -34,9 +34,15 @@
 </div>
 
 <!-- Buttons visible when clozeByOne is enabled -->
-<div id="btns-1by1">
-    <button id="button-reveal-next" class="button-1by1" onclick="revealNextCloze()">Reveal Next<span class="AnkiDesktopShortcutTip"> (N)</span></button>
-    <button id="button-toggle-all" class="button-1by1" onclick="flipToBack()">Toggle All</button>
+<div id="btns-1bh1-Enabled">
+    <div id="btns-1by1">
+        <button id="button-reveal-next" class="button-1by1" onclick="revealNextCloze()">Reveal Next<span class="AnkiDesktopShortcutTip"> (N)</span></button>
+        <button id="button-toggle-all" class="button-1by1" onclick="flipToBack()">Toggle All</button>
+    </div>
+    
+    <!-- Line breaks so you so you can scroll to the bottom of the content when btns 1-by-1 is enabled -->
+    <br>
+    <br>
 </div>
 
 <!-- Hidden element for querying to see if its a One-By-One -->
@@ -47,11 +53,11 @@
     clozeOneByOneEnabled = document.getElementById("one-by-one").textContent !== "";
 
     if (!clozeOneByOneEnabled){
-        document.getElementById("btns-1by1").style.display = "none";
+        document.getElementById("btns-1bh1-Enabled").style.display = "none";
     }
     else {
         // Make the buttons to control "reveal next" and "toggle all visible"
-        document.getElementById("btns-1by1").style.display = "block";
+        document.getElementById("btns-1bh1-Enabled").style.display = "block";
         
         // the following is thanks to https://github.com/huandney/Anki-Cloze-Interactive/blob/main/card/front-template.html
         
