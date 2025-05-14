@@ -198,16 +198,30 @@ body {
 
 #btns-1by1{
     text-align: center;
+    position: fixed;
+    left: 50%;
+    transform: translate(-50%);
+    bottom: 10px;
+    white-space: nowrap;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional shadow for depth */
+                
 }
 
+
 #btns-1by1 > button {
+    width:43vw;
+    height: 2em;
+    margin: 0;
+    border: 0;
+
     outline: 0;
-    border-radius: 0.12em;
-    padding: 5px 5px;
+    border-radius: 0.3em;
     text-align: center;
     display: inline-block;
     font-size: 18px;
     margin-top: 8px;
+    font-family: inherit;
+    font-weight: bold;
 }
 
 
