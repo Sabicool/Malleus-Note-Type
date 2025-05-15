@@ -7,7 +7,7 @@
     At some point in the future we may develop an addon to make card config easier. */
 
 
-/*USER CONFIG - copy from this line ------------------------------------------------------------*/
+/*USER CONFIG - copy from this line -----------------------------------------------------------------------------------*/
 
     /* Colors Light Mode* --------------------------  */
     body {
@@ -342,7 +342,6 @@ html {
     width: 90%;
     margin: auto;
     padding-top: 10px;
-    padding-bottom: 50px;
 }
 /* Clickable Tags (need to download the add-on) */
 kbd {
