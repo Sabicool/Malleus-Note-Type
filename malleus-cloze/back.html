@@ -1,23 +1,27 @@
-<!-- IMPORTANT INFO:
+<!-- IMPORTANT INFO: 
     Changing settings within the userSettings variable below will *not* work, as changes will be reset
-    when syncing with AnkiHub. To change settings copy the below code from the line saying USER CONFIG
+    when syncing with AnkiHub. To change settings copy the below code from the line saying USER CONFIG 
     until the line saying USER CONFIG END. Then scroll to the very bottom beneath the ankihub end comment
     and paste it there. Changing the settings there will overwrite the default settings below.
     Feel free to reach out on the Malleus Discord if you have any troubles.
     At some point in the future we may develop an addon to make card config easier.
 -->
 
-<!-- USER CONFIG - copy from this line -->
+<!-- USER CONFIG - copy from this line -------------------------------------------------------------------------------->
 <script>
     var userSettings = {
-        keyboardShortcut_Show_Next_Additional_Resource: "KeyN",
-        keyboardShortcut_ShowTags: "KeyC",
-        ShowTagsByDefault: false,//if false, tags can be shown using the keyboardshorcut above
+        keyboardShortcut_Show_Next_Additional_Resource: "KeyN", // this key cycles through the extra resources buttons
+
+        keyboardShortcut_ShowTags: "KeyC", //this key toggles tag visibility on and off
+        
+        // "all", "off", ["AnkiDesktop", "AnkiDroid", "AnkiMobile", "AnkiWeb"] 
+        ShowTagsByDefault: "all", // When off, tags can be shown using the keyboardshorcut above
+        TagButton: "all",  // This shows a button that toggles tags on and off next to the extra resources buttons.
 
         debug: false
     }
-    </script>
-    <!-- USER CONFIG END - until this line -->
+</script>
+<!-- USER CONFIG END - until this line -------------------------------------------------------------------------------->
 
 <div class="container">
     <div id="clozecontainer" class="element">
@@ -25,34 +29,109 @@
     </div>
 </div>
 
+<!-- Functions for reading userSettings -->
+<script>
+   // Detects where the script is being executed
+   function detectAnkiPlatform() {
+        if (window.anki && window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.cb !== undefined) {
+            return "AnkiMobile";
+        } else if (document.querySelector("span.align-middle") && document.querySelector("span.align-middle").textContent.includes("AnkiWeb")) {
+            return "AnkiWeb";
+        } else if (typeof AnkiDroidJS !== "undefined") {
+            return "AnkiDroid";
+        } else if (typeof pycmd !== "undefined") {
+            return "AnkiDesktop";
+        } else {
+            return "Unknown";
+        }
+    }
+
+    var platform = detectAnkiPlatform(); // "ankiMobile", "AnkiWeb", "AnkiDroid", "AnkiDesktop", "Unknown"
+    console.log(platform);
+    
+    function isPlainObject(value) {
+        return value !== null && value.constructor === Object;
+    }
+
+    function getUserSetting(settingName){
+        preference = userSettings[settingName]
+
+        if (typeof(preference) === "boolean" || typeof(preference) === "number") return preference;
+        if (preference === "all") return true;
+        if (preference === "off") return false;
+        if (typeof(preference) === "string") return preference
+
+
+        if (Array.isArray(preference)) {
+            return preference.includes(platform)}
+
+
+        // If it is an object e.g. {ankiMobile: "keyN", ankiWeb: "keyP", Fallback: "keyN"}
+        if (isPlainObject(preference)){
+            preferenceOnThisPlatform = preference[platform]
+            if (preferenceOnThisPlatform === undefined){
+                return preference["Fallback"]
+            }
+            else {
+                return preferenceOnThisPlatform;
+            }
+        }
+    }
+
+
+    //By using a callback setTimeout, this function will run after the rest of the javascript is run.
+    // This means that by the time it runs a userSettings variable added at the bottom will overwrite it. 
+    function respectUserSettings() {
+        if (getUserSetting("ShowTagsByDefault"))
+        {
+            toggleTagVisibility();
+        }
+
+        if (getUserSetting("TagButton"))
+        {
+            document.getElementById("button-tags").style = "display:block";
+        }
+    }
+    setTimeout(respectUserSettings, 0);
+
+
+</script>        
+
 <div id=DEBUG style="display: none; color:red"></div>
 <script>
     //DEBUG INFO LOG
     function DEBUGLOG(err)
     {
-        if (!userSettings[debug]) {
-            console.log(err.stack)
+        if (!getUserSetting("debug")) {
             return;
         };
-
-        console.log(err)
         debugElement = document.getElementById('DEBUG')
-        debugElement.textContent = err.stack;
+        debugElement.textContent = err;
         debugElement.style = "display: block; color: red";
     }
+
+    window.addEventListener('error', (event) => {
+        const errorDetails = `
+        Global Error:
+        Message: ${event.message}
+        Source: ${event.filename}
+        Line: ${event.lineno}
+        Column: ${event.colno}
+        Error Object: ${event.error ? event.error.stack : 'N/A'}
+    `;
+    DEBUGLOG(errorDetails);
+    });
 </script>
 
 
-    <script>
-    try{
-    //When pressing a button for additional information e.g. eTG, it will automatically scroll down so the revealed content is in view
-    var ScrollToButton = true;     
+<script>
+//When pressing a button for additional information e.g. eTG, it will automatically scroll down so the revealed content is in view
+var ScrollToButton = true;     
 
-    // numTagLevelsToShow = -1 means it will show tags without "Malleus_CM::" at the beginning
-    var tagStrToRemove = "#Malleus_CM"
-    var numTagLevelsToShow = -1;
-    } catch (err) {DEBUGLOG(err)}
-    </script>
+// numTagLevelsToShow = -1 means it will show tags without "Malleus_CM::" at the beginning
+var tagStrToRemove = "#Malleus_CM"
+var numTagLevelsToShow = -1;
+</script>
 
     <!-- Extra FIELDS -->
     <div class="container">
@@ -125,8 +204,8 @@
         {{/Source}}
 
 
-        <button id="button-tags" class="ExtraResourceButton TagsButton" onclick="toggleTagVisibility()">
-            <div class="TagsButtonContent">🏷️ Tags</div>
+        <button id="button-tags" class="ExtraResourceButton"  style="display:none" onclick="toggleTagVisibility()">
+            <div class="TagsButtonContent">🏷️ Tags</div>    
         </button>
     </div>
 
@@ -159,7 +238,6 @@
 
 <!-- HINT BUTTONS SETUP -->
 <script>
-try{
 currentHintContainerId = null;
 currentHintBtn = null;
 currentHintContent = null;
@@ -194,7 +272,7 @@ window.toggleHintBtn = function(containerId, noScrolling=false)
         currentHintBtn = hintButton;
         currentHintContainerId = containerId;
 
-        if (ScrollToButton && !noScrolling) {
+        if (ScrollToButton && !noScrolling) {   
             hintButton.scrollIntoView({
             behavior: "smooth", // "auto" for instant scrolling
             block: "start",
@@ -207,11 +285,11 @@ window.toggleHintBtn = function(containerId, noScrolling=false)
 function getHintButtonOrder(){
     hintButtonNodes = document.getElementById("ExtraResourceButtonContainer").children;
     hintButtonNames = []
-    for (var i=0; i<hintButtonNodes.length; i++){
+    for (var i=0; i<hintButtonNodes.length - 1; i++){ //-1 so the tags button is not included.
         resourceName = hintButtonNodes[i].id.substr(7)
         hintButtonNames.push(resourceName)
     }
-
+    
     return(hintButtonNames)
 }
 
@@ -227,18 +305,17 @@ window.toggleNextButton = function(){
     else {
         currentHintIndex = hintButtonOrder.indexOf(currentHintContainerId)
 
-        newHintIndex = (currentHintIndex + 1) % hintButtonOrder.length // The modulo operator means if its at the end, it will go to the begining
+        newHintIndex = (currentHintIndex + 1) % hintButtonOrder.length // The modulo operator means if its at the end, it will go to the begining 
     }
 
     toggleHintBtn(hintButtonOrder[newHintIndex])
-}
-} catch(err){DEBUGLOG(err)}
+}   
 </script>
 
 <!-- CLICKABLE COLORFUL TAGS (click functionality requires Clickable Tags addon to be installed)
 https://ankiweb.net/shared/info/1739176371 -->
 {{#Tags}}
-<div id="tags-container">{{clickable::Tags}}</div>
+<div id="tags-container" style="display: none">{{clickable::Tags}}</div>
 <script>
     var tagContainer = document.getElementById("tags-container");
     var tagsAlreadyGenerated = false;
@@ -250,6 +327,7 @@ https://ankiweb.net/shared/info/1739176371 -->
             var tagList = tagContainer.innerHTML.split(" ");
             var kbdList = [];
             var newTagContent = document.createElement("div");
+
 
         for (var i = 0; i < tagList.length; i++) {
             var newTag = document.createElement("kbd");
@@ -269,47 +347,28 @@ https://ankiweb.net/shared/info/1739176371 -->
         tagContainer.innerHTML = newTagContent.innerHTML;
         tagContainer.style.cursor = "default";
         }
-        tagsAlreadyGenerated = true;
+        tagsAlreadyGenerated = true; 
     }
 
-    // Initialize the display state tracking variable based on computed style
-    var isHidden = window.getComputedStyle(tagContainer).display === "none";
-    
-    // Set the inline style to match the current computed style
-    tagContainer.style.display = isHidden ? "none" : "block";
-
     function toggleTagVisibility() {
-        if (tagContainer.style.display == "none") {
+
+        if (tagContainer.style.display === "none") {
             generateColorfulTags();
             tagContainer.style.display = "block";
         } else {
             tagContainer.style.display = "none";
-        }
     }
+}
+
 </script>
 {{/Tags}}
 
 
 
-<script>
-function respectUserTagSetting() {
-    if (userSettings["ShowTagsByDefault"])
-    {
-        toggleTagVisibility();
-    }
-    console.log("respect user tag setting)")
-}
-
-window.onload = respectUserTagSetting;
-
-
-</script>
-
 <!-- Handle keyboard shortcuts -->
 
 <!-- NOT-PERSISTING EVENT LISTENER -->
 <script>
-    try{
     if (window.ankingEventListeners) {
         for (const listener of ankingEventListeners) {
             const type = listener[0]
@@ -323,28 +382,28 @@ window.onload = respectUserTagSetting;
         document.addEventListener(type, handler)
         window.ankingEventListeners.push([type, handler])
     }
-} catch (err) { DEBUGLOG(err) }
 </script>
 
 <script>
-    try{
 window.ankingAddEventListener("keydown", (event) => {
+
         if (event.repeat) return // Is true if the key is held down for long enough that it automatically repeats
 
-        if (event.code == userSettings["keyboardShortcut_ShowTags"]){
+        if (event.ctrlKey || event.altKey || event.shiftKey) return; //Prevents e.g. ctrl+c copy toggling tags. 
+
+        if (event.code == getUserSetting("keyboardShortcut_ShowTags")){
             toggleTagVisibility();
+
         }
-        else if (event.code == userSettings["keyboardShortcut_Show_Next_Additional_Resource"]){
+        else if (event.code == getUserSetting("keyboardShortcut_Show_Next_Additional_Resource")){
             toggleNextButton();
         }
 })
-} catch (err){DEBUGLOG(err)}
 </script>
 
 
 <!-- Code for element magnification on double click -->
     <script>
-    try{
     var elements = document.getElementsByClassName("element")
 
     for (var i=0; i < elements.length; i++){
@@ -358,8 +417,6 @@ window.ankingAddEventListener("keydown", (event) => {
             }
         }
     }   
-} catch(err) {DEBUGLOG(err)}     
-
     </script>
 
 
@@ -620,3 +677,22 @@ ANKIHUB_END
 Text below this comment will not be modified by AnkiHub or AnKing add-ons.
 Do not edit or remove this comment if you want to protect the content below.
 -->
+
+
+
+
+<!-- USER CONFIG - copy from this line -------------------------------------------------------------------------------->
+<script>
+    var userSettings = {
+        keyboardShortcut_Show_Next_Additional_Resource: {"AnkiDesktop":"KeyP"}, // this key cycles through the extra resources buttons
+
+        keyboardShortcut_ShowTags: "KeyC", //this key toggles tag visibility on and off
+        
+        // "all", "off", ["AnkiDesktop", "AnkiDroid", "AnkiMobile", "AnkiWeb"] 
+        ShowTagsByDefault: "all", // When off, tags can be shown using the keyboardshorcut above
+        TagButton: "all",  // This shows a button that toggles tags on and off next to the extra resources buttons.
+
+        debug: true
+    }
+</script>
+<!-- USER CONFIG END - until this line -------------------------------------------------------------------------------->
