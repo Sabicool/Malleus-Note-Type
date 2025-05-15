@@ -5,9 +5,18 @@
      and paste it there. Changing the settings there will overwrite the default settings below.
      Feel free to reach out on the Malleus Discord if you have any troubles.
      At some point in the future we may develop an addon to make card config easier.
+
+    UserSettings supports platform platform specific options:
+    e.g. true = on all platforms
+         false = not on all platforms
+         ["AnkiDesktop", "AnkiDroid"] = Desktop and Android, and not ios ("AnkiMobile") or website ("AnkiWeb")
+
+    ADVANCED:
+     for settings that aren't a simple true/false, you can do your options platform specific like so:
+     clozeHider: {"AnkiDesktop":[...], "AnkiMobile":"(.)"}
   -->
 
-<!-- USER CONFIG - copy from this line -->
+<!-- USER CONFIG - copy from this line -------------------------------------------------------------------------------->
 <!-- User Settings section -->
 <script>
     // User Settings DO NOT EDIT HERE. Read info above.
@@ -17,13 +26,13 @@
         invertGestures: false,    // Set to "true" to invert the gestures
         swipeThreshold: 50,       // Adjust this value to change the swipe sensitivity
         scrollDuration: 500,      // Scroll duration in milliseconds
-        autoFlip: "all", // "all", "off", ["AnkiDesktop", "AnkiDroid", "AnkiMobile", "AnkiWeb"]
+        autoFlip: true, // "all", "off", ["AnkiDesktop", "AnkiDroid", "AnkiMobile", "AnkiWeb"]
         revealNextKeys: ["KeyN", "ArrowRight"], // Keys to reveal the next cloze - for custom keycodes: https://keycode.info/
-        hideLastKeys: ["KeyQ", "ArrowLeft"],    // Keys to hide the last cloze
-        highlightCloze: false // Set to "false" to disable next cloze highlighting
+        hideLastKeys: ["KeyQ", "ArrowLeft"],    // Keys to hide the last cloze (does not currently support platform specific hotkeys, if thats important to you pls message on the discord)
+        highlightCloze: true // Set to "false" to disable next cloze highlighting
     };
 </script>
-<!-- USER CONFIG END - until this line -->
+<!-- USER CONFIG END - until this line -------------------------------------------------------------------------------->
 
 <div class="container">
     <div id="clozecontainer" class="element">
@@ -32,6 +41,94 @@
         </div>
     </div>
 </div>
+
+<!-- Functions for reading userSettings -->
+<script>
+    // Detects where the script is being executed
+    function detectAnkiPlatform() {
+        if (window.anki && window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.cb !== undefined) {
+            return "AnkiMobile";
+        } else if (document.querySelector("span.align-middle") && document.querySelector("span.align-middle").textContent.includes("AnkiWeb")) {
+            return "AnkiWeb";
+        } else if (typeof AnkiDroidJS !== "undefined") {
+            return "AnkiDroid";
+        } else if (typeof pycmd !== "undefined") {
+            return "AnkiDesktop";
+        } else {
+            return "Unknown";
+        }
+    }
+
+    var platform = detectAnkiPlatform(); // "ankiMobile", "AnkiWeb", "AnkiDroid", "AnkiDesktop", "Unknown"
+    console.log(platform);
+    
+    function isPlainObject(value) {
+        return value !== null && value.constructor === Object;
+    }
+
+    function getUserSetting(settingName){
+        preference = userSettings[settingName]
+
+        if (typeof(preference) === "boolean" || typeof(preference) === "number") return preference;
+        if (preference === "all") return true;
+        if (preference === "off") return false;
+        if (typeof(preference) === "string") return preference
+
+
+        if (Array.isArray(preference)) {
+            return preference.includes(platform)}
+
+
+        // If it is an object e.g. {ankiMobile: "keyN", ankiWeb: "keyP", Fallback: "keyN"}
+        if (isPlainObject(preference)){
+            preferenceOnThisPlatform = preference[platform]
+            if (preferenceOnThisPlatform === undefined){
+                return preference["Fallback"]
+            }
+            else {
+                return preferenceOnThisPlatform;
+            }
+        }
+    }
+
+
+    //By using a callback setTimeout, this function will run after the rest of the javascript is run.
+    // This means that by the time it runs a userSettings variable added at the bottom will overwrite it. 
+    function respectUserSettings() {
+
+    }
+    setTimeout(respectUserSettings, 0);
+
+
+</script>        
+
+
+<div id=DEBUG style="display: none; color:red"></div>
+<script>
+    //DEBUG INFO LOG
+    function DEBUGLOG(err)
+    {
+        if (!getUserSetting("debug")) {
+            return;
+        };
+        debugElement = document.getElementById('DEBUG')
+        debugElement.textContent = err;
+        debugElement.style = "display: block; color: red";
+    }
+
+    window.addEventListener('error', (event) => {
+        const errorDetails = `
+        Global Error:
+        Message: ${event.message}
+        Source: ${event.filename}
+        Line: ${event.lineno}
+        Column: ${event.colno}
+        Error Object: ${event.error ? event.error.stack : 'N/A'}
+    `;
+    DEBUGLOG(errorDetails);
+    });
+</script>
+
 
 <!-- Buttons visible when clozeByOne is enabled -->
 <div id="btns-1bh1-Enabled">
@@ -81,7 +178,7 @@
             var platform = detectAnkiPlatform();
             // AnkiMobile and AnkiDroid are managed by their own app settings through User Actions
             if (platform !== "AnkiWeb" && platform !== "AnkiDesktop") {
-                userSettings.gesturesEnabled = false;
+                getUserSetting("gesturesEnabled") = false;
             }
         }
 
@@ -146,7 +243,7 @@
         var touchStartX = 0;
 
         function touchHandler(e) {
-            if (!userSettings.gesturesEnabled) return;
+            if (!getUserSetting("gesturesEnabled")) return;
 
             if (e.type === "touchstart") {
                 touchStartX = e.touches[0].clientX;
@@ -154,10 +251,10 @@
                 const touchEndX = e.changedTouches[0].clientX;
                 const touchDeltaX = touchStartX - touchEndX;
 
-                if (touchDeltaX > userSettings.swipeThreshold) {
-                    userSettings.invertGestures ? revealNextCloze() : hideLastCloze();
-                } else if (touchDeltaX < -userSettings.swipeThreshold) {
-                    userSettings.invertGestures ? hideLastCloze() : revealNextCloze();
+                if (touchDeltaX > getUserSetting("swipeThreshold")) {
+                    getUserSetting("invertGestures") ? revealNextCloze() : hideLastCloze();
+                } else if (touchDeltaX < -getUserSetting("swipeThreshold")) {
+                    getUserSetting("invertGestures") ? hideLastCloze() : revealNextCloze();
                 }
             }
         }
@@ -250,7 +347,7 @@
         }
 
         function highlightCloze() {
-            if (!userSettings.highlightCloze) return;
+            if (!getUserSetting("highlightCloze")) return;
 
             const firstUnrevealed = revealed.findIndex(el => !el);
 
@@ -262,7 +359,7 @@
         function smoothScrollTo(element) {
             const yOffset = element.getBoundingClientRect().top + window.pageYOffset - (window.innerHeight / 2);
             const startTime = performance.now();
-            const duration = userSettings.scrollDuration;
+            const duration = getUserSetting("scrollDuration");
 
             function animateScroll(currentTime) {
                 const elapsedTime = currentTime - startTime;
@@ -286,43 +383,8 @@
         }
 
         function flipToBack() {
-            const platform = detectAnkiPlatform();
-            let shouldFlip = false; // Assumes we shouldn't flip the card initially
 
-            // Checks the autoFlip configuration
-            if (userSettings.autoFlip === "all") {
-                shouldFlip = true;
-            } else if (userSettings.autoFlip === "off") {
-                shouldFlip = false;
-            } else if (Array.isArray(userSettings.autoFlip)) {
-                shouldFlip = userSettings.autoFlip.includes(platform);
-            }
-
-            const executeFlip = () => {
-                switch (platform) {
-                case "AnkiMobile":
-                    // AnkiMobile doesn't have a public JS API for show answers
-                // In app set "topCenter," "midCenter," or "bottomCenter" as tap gestures to show answers and adjust "msg" bellow accordingly
-                    window.webkit.messageHandlers.cb.postMessage(JSON.stringify({scheme: "ankitap", msg: "midCenter"}));
-                    break;
-                case "AnkiWeb":
-                    const showAnswerButton = document.querySelector(".btn.btn-primary.btn-lg");
-                    if (showAnswerButton) {
-                        showAnswerButton.click();
-                    }
-                    break;
-                case "AnkiDroid":
-                    showAnswer();
-                    break;
-                case "AnkiDesktop":
-                    pycmd("ans");
-                    break;
-                default:
-                    console.log("Platform not recognized by flipToBack.");
-                }
-            };
-
-            if (shouldFlip) {
+            if (getUserSetting("autoFlip")) {
                 if (platform === "AnkiMobile") {
                     // For AnkiMobile, apply a delay to ensure compatibility with touch gestures
                     setTimeout(executeFlip, 200); // Delay of 200ms, adjustable as needed
@@ -334,7 +396,6 @@
 
         function initialize() {
             updateGestureSetting();
-            var platform = detectAnkiPlatform();
 
             // Extract the core functionality into a separate function
             function processClozeElements() {
@@ -353,7 +414,7 @@
                         el.addEventListener("click", () => revealCloze(i));
                         // Convert [...] to userSettings[clozeHider] If the cloze is not "[...]" that means that it has a hint in it and should be kept as is.
                         if (el.textContent === "[...]") {
-                            el.textContent = userSettings["clozeHider"];
+                            el.textContent = getUserSetting("clozeHider");
                         }
                     });
 
@@ -418,12 +479,10 @@
 <!-- Code for element magnification on double click -->
 <script>
     var elements = document.getElementsByClassName("element")
-    console.log(elements)
     
     for (var i=0; i < elements.length; i++){
         elements[i].ondblclick = function(clickevent)
         {
-            console.log("double clicked!")
             if(clickevent.currentTarget.classList.contains("elementEnlarged")){
                 clickevent.currentTarget.classList.remove("elementEnlarged")
             }
