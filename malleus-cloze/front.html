@@ -29,7 +29,7 @@
         autoFlip: true, // "all", "off", ["AnkiDesktop", "AnkiDroid", "AnkiMobile", "AnkiWeb"]
         revealNextKeys: ["KeyN", "ArrowRight"], // Keys to reveal the next cloze - for custom keycodes: https://keycode.info/
         hideLastKeys: ["KeyQ", "ArrowLeft"],    // Keys to hide the last cloze (does not currently support platform specific hotkeys, if thats important to you pls message on the discord)
-        highlightCloze: false // Set to "false" to disable next cloze highlighting
+        highlightCloze: true // Set to "false" to disable next cloze highlighting
     };
 </script>
 <!-- USER CONFIG END - until this line -------------------------------------------------------------------------------->
@@ -80,27 +80,33 @@
 
 
         // If it is an object e.g. {ankiMobile: "keyN", ankiWeb: "keyP", Fallback: "keyN"}
-        if (isPlainObject(preference)){
-            preferenceOnThisPlatform = preference[platform]
-            if (preferenceOnThisPlatform === undefined){
-                return preference["Fallback"]
+        try{
+            if (isPlainObject(preference)){
+                preferenceOnThisPlatform = preference[platform]
+                if (preferenceOnThisPlatform === undefined){
+                    return preference["Fallback"]
+                }
+                else {
+                    return preferenceOnThisPlatform;
+                }
             }
-            else {
-                return preferenceOnThisPlatform;
-            }
+        }
+        catch(err)
+        {
+            return preference; 
         }
     }
 
 
     //By using a callback setTimeout, this function will run after the rest of the javascript is run.
-    // This means that by the time it runs a userSettings variable added at the bottom will overwrite it.
+    // This means that by the time it runs a userSettings variable added at the bottom will overwrite it. 
     function respectUserSettings() {
 
     }
     setTimeout(respectUserSettings, 0);
 
 
-</script>
+</script>        
 
 
 <div id=DEBUG style="display: none; color:red"></div>
@@ -136,7 +142,7 @@
         <button id="button-reveal-next" class="button-1by1" onclick="revealNextCloze()">Reveal Next<span class="AnkiDesktopShortcutTip"> (N)</span></button>
         <button id="button-toggle-all" class="button-1by1" onclick="flipToBack()">Toggle All</button>
     </div>
-
+    
     <!-- Line breaks so you so you can scroll to the bottom of the content when btns 1-by-1 is enabled -->
     <br>
     <br>
@@ -155,9 +161,9 @@
     else {
         // Make the buttons to control "reveal next" and "toggle all visible"
         document.getElementById("btns-1bh1-Enabled").style.display = "block";
-
+        
         // the following is thanks to https://github.com/huandney/Anki-Cloze-Interactive/blob/main/card/front-template.html
-
+        
         // Detects where the script is being executed
         function detectAnkiPlatform() {
             if (window.anki && window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.cb !== undefined) {
@@ -383,16 +389,45 @@
         }
 
         function flipToBack() {
+            console.log("fliptoback")
+			const platform = detectAnkiPlatform();
+			let shouldFlip = true; // Assumes we shouldn't flip the card initially
 
-            if (getUserSetting("autoFlip")) {
-                if (platform === "AnkiMobile") {
-                    // For AnkiMobile, apply a delay to ensure compatibility with touch gestures
-                    setTimeout(executeFlip, 200); // Delay of 200ms, adjustable as needed
-                } else {
-                    executeFlip();
-                }
-            }
-        }
+
+			const executeFlip = () => {
+                console.log("flipping")
+				switch (platform) {
+				case "AnkiMobile":
+					// AnkiMobile doesn't have a public JS API for show answers
+				// In app set "topCenter," "midCenter," or "bottomCenter" as tap gestures to show answers and adjust "msg" bellow accordingly
+					window.webkit.messageHandlers.cb.postMessage(JSON.stringify({scheme: "ankitap", msg: "midCenter"}));
+					break;
+				case "AnkiWeb":
+					const showAnswerButton = document.querySelector(".btn.btn-primary.btn-lg");
+					if (showAnswerButton) {
+						showAnswerButton.click();
+					}
+					break;
+				case "AnkiDroid":
+					showAnswer();
+					break;
+				case "AnkiDesktop":
+					pycmd("ans");
+					break;
+				default:
+					console.log("Platform not recognized by flipToBack.");
+				}
+			};
+
+			if (shouldFlip) {
+				if (platform === "AnkiMobile") {
+					// For AnkiMobile, apply a delay to ensure compatibility with touch gestures
+					setTimeout(executeFlip, 200); // Delay of 200ms, adjustable as needed
+				} else {
+					executeFlip();
+				}
+			}
+		}
 
         function initialize() {
             updateGestureSetting();
@@ -452,28 +487,50 @@
             }
         }
 
-        // Listen for key presses to trigger keyboard shortcuts.
-        document.addEventListener("keydown", handleKeyboardShortcuts, false);
-
-        function handleKeyboardShortcuts(event) {
-            if (event.defaultPrevented) {
-                return;
-            }
-
-            if (userSettings.revealNextKeys.includes(event.code)) {
-                event.preventDefault();
-                revealNextCloze();
-            } else if (userSettings.hideLastKeys.includes(event.code)) {
-                event.preventDefault();
-                hideLastCloze();
-            }
-        }
-
         // User Actions
         // In AnkiMobile (v2.0.88+) and AnkiDroid (v2.17.0+), it is possible to map JavaScript functions to gestures or gamepad actions to enhance card interactivity
         var userJs1 = revealNextCloze; // User Action 1
         var userJs2 = hideLastCloze;   // User Action 2
     }
+</script>
+
+<!-- Handle keyboard shortcuts -->
+
+<!-- NOT-PERSISTING EVENT LISTENER -->
+<script>
+    if (window.ankingEventListeners) {
+        for (const listener of ankingEventListeners) {
+            const type = listener[0]
+            const handler = listener[1]
+            document.removeEventListener(type, handler)
+    }
+    }
+    window.ankingEventListeners = []
+
+    window.ankingAddEventListener = function(type, handler) {
+        document.addEventListener(type, handler)
+        window.ankingEventListeners.push([type, handler])
+    }
+
+
+
+    // Listen for key presses to trigger keyboard shortcuts.
+       
+    ankingAddEventListener("keydown", handleKeyboardShortcuts);
+
+    function handleKeyboardShortcuts(event) {
+    if (event.defaultPrevented) {
+        return;
+    }
+
+    if (userSettings.revealNextKeys.includes(event.code)) {
+        event.preventDefault();
+        revealNextCloze();
+    } else if (userSettings.hideLastKeys.includes(event.code)) {
+        event.preventDefault();
+        hideLastCloze();
+    }
+}
 </script>
 
 <!-- Code for element magnification on double click -->
