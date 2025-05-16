@@ -1,6 +1,6 @@
-<!-- IMPORTANT INFO:
+<!-- IMPORTANT INFO: 
     Changing settings within the userSettings variable below will *not* work, as changes will be reset
-    when syncing with AnkiHub. To change settings copy the below code from the line saying USER CONFIG
+    when syncing with AnkiHub. To change settings copy the below code from the line saying USER CONFIG 
     until the line saying USER CONFIG END. Then scroll to the very bottom beneath the ankihub end comment
     and paste it there. Changing the settings there will overwrite the default settings below.
     Feel free to reach out on the Malleus Discord if you have any troubles.
@@ -17,6 +17,7 @@
         // "all", "off", ["AnkiDesktop", "AnkiDroid", "AnkiMobile", "AnkiWeb"] 
         ShowTagsByDefault: "all", // When off, tags can be shown using the keyboardshorcut above
         TagButton: "all",  // This shows a button that toggles tags on and off next to the extra resources buttons.
+
         debug: false
     }
 </script>
@@ -48,11 +49,11 @@
     var platform = detectAnkiPlatform(); // "ankiMobile", "AnkiWeb", "AnkiDroid", "AnkiDesktop", "Unknown"
     console.log(platform);
     
-    function isPlainObject(value) {
-        return value !== null && value.constructor === Object;
-    }
+        function isPlainObject(value) {
+            return value !== null && value.constructor === Object;
+        }
 
-    function getUserSetting(settingName){
+        function getUserSetting(settingName){
         preference = userSettings[settingName]
 
         if (typeof(preference) === "boolean" || typeof(preference) === "number") return preference;
@@ -66,17 +67,41 @@
 
 
         // If it is an object e.g. {ankiMobile: "keyN", ankiWeb: "keyP", Fallback: "keyN"}
-        if (isPlainObject(preference)){
-            preferenceOnThisPlatform = preference[platform]
-            if (preferenceOnThisPlatform === undefined){
-                return preference["Fallback"]
-            }
-            else {
-                return preferenceOnThisPlatform;
+        try{
+            if (isPlainObject(preference)){
+                preferenceOnThisPlatform = preference[platform]
+                if (preferenceOnThisPlatform === undefined){
+                    return preference["Fallback"]
+                }
+                else {
+                    return preferenceOnThisPlatform;
+                }
             }
         }
+        catch(err)
+        {
+            return preference; 
+        }
     }
-</script>
+
+
+    //By using a callback setTimeout, this function will run after the rest of the javascript is run.
+    // This means that by the time it runs a userSettings variable added at the bottom will overwrite it. 
+    function respectUserSettings() {
+        if (getUserSetting("ShowTagsByDefault"))
+        {
+            toggleTagVisibility();
+        }
+
+        if (getUserSetting("TagButton"))
+        {
+            document.getElementById("button-tags").style = "display:block";
+        }
+    }
+    setTimeout(respectUserSettings, 0);
+
+
+</script>        
 
 <div id=DEBUG style="display: none; color:red"></div>
 <script>
@@ -91,7 +116,7 @@
         debugElement.style = "display: block; color: red";
     }
 
-    window.addEventListener('error', (event) => {
+    window.ankingAddEventListener('error', (event) => {
         const errorDetails = `
         Global Error:
         Message: ${event.message}
@@ -186,7 +211,7 @@ var numTagLevelsToShow = -1;
 
 
         <button id="button-tags" class="ExtraResourceButton"  style="display:none" onclick="toggleTagVisibility()">
-            <div class="TagsButtonContent">🏷️ Tags</div>
+            <div class="TagsButtonContent">🏷️ Tags</div>    
         </button>
     </div>
 
@@ -286,11 +311,11 @@ window.toggleNextButton = function(){
     else {
         currentHintIndex = hintButtonOrder.indexOf(currentHintContainerId)
 
-        newHintIndex = (currentHintIndex + 1) % hintButtonOrder.length // The modulo operator means if its at the end, it will go to the begining
+        newHintIndex = (currentHintIndex + 1) % hintButtonOrder.length // The modulo operator means if its at the end, it will go to the begining 
     }
 
     toggleHintBtn(hintButtonOrder[newHintIndex])
-}
+}   
 </script>
 
 <!-- CLICKABLE COLORFUL TAGS (click functionality requires Clickable Tags addon to be installed)
@@ -340,20 +365,7 @@ https://ankiweb.net/shared/info/1739176371 -->
             tagContainer.style.display = "none";
     }
 }
-    //By using a callback setTimeout, this function will run after the rest of the javascript is run.
-    // This means that by the time it runs a userSettings variable added at the bottom will overwrite it. 
-    function respectUserSettings() {
-        if (getUserSetting("ShowTagsByDefault"))
-        {
-            toggleTagVisibility();
-        }
 
-        if (getUserSetting("TagButton"))
-        {
-            document.getElementById("button-tags").style = "display:block";
-        }
-    }
-    setTimeout(respectUserSettings, 0);
 </script>
 {{/Tags}}
 
@@ -671,21 +683,3 @@ ANKIHUB_END
 Text below this comment will not be modified by AnkiHub or AnKing add-ons.
 Do not edit or remove this comment if you want to protect the content below.
 -->
-
-
-
-
-<!-- USER CONFIG - copy from this line -------------------------------------------------------------------------------->
-<script>
-    var userSettings = {
-        keyboardShortcut_Show_Next_Additional_Resource: {"AnkiDesktop":"KeyP"}, // this key cycles through the extra resources buttons
-
-        keyboardShortcut_ShowTags: "KeyC", //this key toggles tag visibility on and off
-        
-        // "all", "off", ["AnkiDesktop", "AnkiDroid", "AnkiMobile", "AnkiWeb"] 
-        ShowTagsByDefault: "off", // When off, tags can be shown using the keyboardshorcut above
-        TagButton: ["AnkiDroid", "AnkiMobile"],  // This shows a button that toggles tags on and off next to the extra resources buttons.
-        debug: true
-    }
-</script>
-<!-- USER CONFIG END - until this line -------------------------------------------------------------------------------->
