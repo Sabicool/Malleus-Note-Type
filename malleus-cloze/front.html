@@ -29,9 +29,9 @@
         autoFlip: "all", // "all", "off", ["AnkiDesktop", "AnkiDroid", "AnkiMobile", "AnkiWeb"]
         revealNextKeys: ["KeyN", "ArrowRight"], // Keys to reveal the next cloze - for custom keycodes: https://keycode.info/
         hideLastKeys: ["KeyQ", "ArrowLeft"],    // Keys to hide the last cloze (does not currently support platform specific hotkeys, if thats important to you pls message on the discord)
-        highlightCloze: true, // Set to "false" to disable next cloze highlighting
+        highlightCloze: false, // Set to "false" to disable next cloze highlighting
 
-        debug: true
+        debug: false
     };
 </script>
 <!-- USER CONFIG END - until this line -------------------------------------------------------------------------------->
@@ -95,20 +95,20 @@
         }
         catch(err)
         {
-            return preference; 
+            return preference;
         }
     }
 
 
     //By using a callback setTimeout, this function will run after the rest of the javascript is run.
-    // This means that by the time it runs a userSettings variable added at the bottom will overwrite it. 
+    // This means that by the time it runs a userSettings variable added at the bottom will overwrite it.
     function respectUserSettings() {
 
     }
     setTimeout(respectUserSettings, 0);
 
 
-</script>        
+</script>
 
 
 <div id=DEBUG style="display: none; color:red"></div>
@@ -144,7 +144,7 @@
         <button id="button-reveal-next" class="button-1by1" onclick="revealNextCloze()">Reveal Next<span class="AnkiDesktopShortcutTip"> (N)</span></button>
         <button id="button-toggle-all" class="button-1by1" onclick="flipToBack()">Toggle All</button>
     </div>
-    
+
     <!-- Line breaks so you so you can scroll to the bottom of the content when btns 1-by-1 is enabled -->
     <br>
     <br>
@@ -163,9 +163,9 @@
     else {
         // Make the buttons to control "reveal next" and "toggle all visible"
         document.getElementById("btns-1by1").style.display = "block";
-        
+
         // the following is thanks to https://github.com/huandney/Anki-Cloze-Interactive/blob/main/card/front-template.html
-        
+
         // Detects where the script is being executed
         function detectAnkiPlatform() {
             if (window.anki && window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.cb !== undefined) {
@@ -495,7 +495,7 @@
                 initialize();
         }
 
-        
+
 
         // Call initialize when page loads
         document.addEventListener("DOMContentLoaded", initialize);
@@ -528,7 +528,7 @@
 
 
     // Listen for key presses to trigger keyboard shortcuts.
-       
+
     ankingAddEventListener("keydown", handleKeyboardShortcuts);
 
     function handleKeyboardShortcuts(event) {
