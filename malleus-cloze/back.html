@@ -1,6 +1,6 @@
-<!-- IMPORTANT INFO: 
+<!-- IMPORTANT INFO:
     Changing settings within the userSettings variable below will *not* work, as changes will be reset
-    when syncing with AnkiHub. To change settings copy the below code from the line saying USER CONFIG 
+    when syncing with AnkiHub. To change settings copy the below code from the line saying USER CONFIG
     until the line saying USER CONFIG END. Then scroll to the very bottom beneath the ankihub end comment
     and paste it there. Changing the settings there will overwrite the default settings below.
     Feel free to reach out on the Malleus Discord if you have any troubles.
@@ -18,7 +18,7 @@
         ShowTagsByDefault: ["AnkiDesktop"], // When off, tags can be shown using the keyboardshorcut above
         TagButton: "all",  // This shows a button that toggles tags on and off next to the extra resources buttons.
 
-        debug: true
+        debug: false
     }
 </script>
 <!-- USER CONFIG END - until this line -------------------------------------------------------------------------------->
@@ -84,24 +84,7 @@
         }
     }
 
-
-    //By using a callback setTimeout, this function will run after the rest of the javascript is run.
-    // This means that by the time it runs a userSettings variable added at the bottom will overwrite it. 
-    function respectUserSettings() {
-        if (getUserSetting("ShowTagsByDefault"))
-        {
-            toggleTagVisibility();
-        }
-
-        if (getUserSetting("TagButton"))
-        {
-            document.getElementById("button-tags").style = "display:block";
-        }
-    }
-    setTimeout(respectUserSettings, 0);
-
-
-</script>        
+</script>
 
 <div id=DEBUG style="display: none; color:red"></div>
 <script>
@@ -132,7 +115,7 @@
 
 <script>
 //When pressing a button for additional information e.g. eTG, it will automatically scroll down so the revealed content is in view
-var ScrollToButton = true;     
+var ScrollToButton = true;
 
 // numTagLevelsToShow = -1 means it will show tags without "Malleus_CM::" at the beginning
 var tagStrToRemove = "#Malleus_CM"
@@ -211,7 +194,7 @@ var numTagLevelsToShow = -1;
 
 
         <button id="button-tags" class="ExtraResourceButton"  style="display:none" onclick="toggleTagVisibility()">
-            <div class="TagsButtonContent">🏷️ Tags</div>    
+            <div class="TagsButtonContent">🏷️ Tags</div>
         </button>
     </div>
 
@@ -249,7 +232,7 @@ currentHintBtn = null;
 currentHintContent = null;
 
 
-window.toggleHintBtn = function(containerId, noScrolling=false) 
+window.toggleHintBtn = function(containerId, noScrolling=false)
 {
     const hintButton = document.getElementById("button-"+containerId)
     const hintContent = document.getElementById("content-"+containerId)
@@ -267,7 +250,7 @@ window.toggleHintBtn = function(containerId, noScrolling=false)
         //Toggle on the new hint
         hintButton.classList.add("expanded-button");
         hintContent.style.display = "block"
-        
+
         if (currentHintContainerId !== null){//Toggle off the current hint
             currentHintBtn.classList.remove("expanded-button")
             currentHintContent.style.display = "none";
@@ -278,7 +261,7 @@ window.toggleHintBtn = function(containerId, noScrolling=false)
         currentHintBtn = hintButton;
         currentHintContainerId = containerId;
 
-        if (ScrollToButton && !noScrolling) {   
+        if (ScrollToButton && !noScrolling) {
             hintButton.scrollIntoView({
             behavior: "smooth", // "auto" for instant scrolling
             block: "start",
@@ -295,7 +278,7 @@ function getHintButtonOrder(){
         resourceName = hintButtonNodes[i].id.substr(7)
         hintButtonNames.push(resourceName)
     }
-    
+
     return(hintButtonNames)
 }
 
@@ -311,11 +294,11 @@ window.toggleNextButton = function(){
     else {
         currentHintIndex = hintButtonOrder.indexOf(currentHintContainerId)
 
-        newHintIndex = (currentHintIndex + 1) % hintButtonOrder.length // The modulo operator means if its at the end, it will go to the begining 
+        newHintIndex = (currentHintIndex + 1) % hintButtonOrder.length // The modulo operator means if its at the end, it will go to the begining
     }
 
     toggleHintBtn(hintButtonOrder[newHintIndex])
-}   
+}
 </script>
 
 <!-- CLICKABLE COLORFUL TAGS (click functionality requires Clickable Tags addon to be installed)
@@ -325,7 +308,7 @@ https://ankiweb.net/shared/info/1739176371 -->
 <script>
     var tagContainer = document.getElementById("tags-container");
     var tagsAlreadyGenerated = false;
-    
+
     function generateColorfulTags(){
         if (tagsAlreadyGenerated) {return};
 
@@ -343,9 +326,9 @@ https://ankiweb.net/shared/info/1739176371 -->
             tagSplit = tag.split('::')
             if (tagSplit[0] == tagStrToRemove){ //if the tag parent is #Malleus_CM we remove it
                 tagSplit = tagSplit.slice(-numTagLevelsToShow)
-            }        
+            }
             tag = tagSplit.join("::&#8203;");
-            
+
             newTag.innerHTML = tag;
             newTagContent.append(newTag)
         }
@@ -353,7 +336,7 @@ https://ankiweb.net/shared/info/1739176371 -->
         tagContainer.innerHTML = newTagContent.innerHTML;
         tagContainer.style.cursor = "default";
         }
-        tagsAlreadyGenerated = true; 
+        tagsAlreadyGenerated = true;
     }
 
     function toggleTagVisibility() {
@@ -365,6 +348,24 @@ https://ankiweb.net/shared/info/1739176371 -->
             tagContainer.style.display = "none";
     }
 }
+
+
+
+    //By using a callback setTimeout, this function will run after the rest of the javascript is run.
+    // This means that by the time it runs a userSettings variable added at the bottom will overwrite it.
+    function respectUserSettings() {
+        if (getUserSetting("ShowTagsByDefault"))
+        {
+            toggleTagVisibility();
+        }
+
+        if (getUserSetting("TagButton"))
+        {
+            document.getElementById("button-tags").style = "display:block";
+        }
+    }
+    setTimeout(respectUserSettings, 0);
+
 
 </script>
 {{/Tags}}
@@ -395,7 +396,7 @@ window.ankingAddEventListener("keydown", (event) => {
 
         if (event.repeat) return // Is true if the key is held down for long enough that it automatically repeats
 
-        if (event.ctrlKey || event.altKey || event.shiftKey) return; //Prevents e.g. ctrl+c copy toggling tags. 
+        if (event.ctrlKey || event.altKey || event.shiftKey) return; //Prevents e.g. ctrl+c copy toggling tags.
 
         if (event.code == getUserSetting("keyboardShortcut_ShowTags")){
             toggleTagVisibility();
@@ -422,7 +423,7 @@ window.ankingAddEventListener("keydown", (event) => {
                 clickevent.currentTarget.classList.add("elementEnlarged")
             }
         }
-    }   
+    }
     </script>
 
 
@@ -500,7 +501,7 @@ function processContent() {
     // Process showscore and collect elements
     let targetScore = null;
     const scoredElements = [];
-    
+
     processedText = processedText.replace(/\[(show)?score:(\d+)(?:,(\d+))?\]/g, (match, show, min, max) => {
         const minVal = parseInt(min);
         const maxVal = max ? parseInt(max) : minVal;
@@ -513,7 +514,7 @@ function processContent() {
     let elementMatch;
     while ((elementMatch = elementRegex.exec(processedText)) !== null) {
         const [fullMatch, type, params] = elementMatch;
-        
+
         if (type === 'scoredlist') {
             const options = params.split(',').map(item => {
                 const [text, score] = item.split(':').map(s => s.trim());
@@ -532,7 +533,7 @@ function processContent() {
             const thresholds = parts[0].split(',').map(parseFloat);
             const decimals = parseInt(parts[1]);
             const scores = parts[2].split(',').map(Number);
-            
+
             scoredElements.push({
                 type: 'number',
                 min: Math.min(...scores),
@@ -569,14 +570,14 @@ function processContent() {
                 return { text, score: parseInt(score) };
             });
 
-            const minScore = targetScore !== null 
+            const minScore = targetScore !== null
                     ? Math.max(element.min, remainingScore - remainingMax)
                     : element.min;
-            const maxScore = targetScore !== null 
+            const maxScore = targetScore !== null
                     ? Math.min(element.max, remainingScore - remainingMin)
                     : element.max;
 
-            const validOptions = options.filter(opt => 
+            const validOptions = options.filter(opt =>
                 opt.score >= minScore && opt.score <= maxScore
             );
 
@@ -594,7 +595,7 @@ function processContent() {
             const thresholds = parts[0].split(',').map(parseFloat);
             const decimals = parseInt(parts[1]);
             const scores = parts[2].split(',').map(Number);
-            
+
             let selectedScore;
             let value;
 
@@ -608,7 +609,7 @@ function processContent() {
                     remainingScore - remainingMin
                 );
 
-                const validScores = scores.filter(score => 
+                const validScores = scores.filter(score =>
                     score >= requiredMin && score <= requiredMax
                 );
 
@@ -617,7 +618,7 @@ function processContent() {
                     const scoreIndex = scores.indexOf(selectedScore);
                     value = thresholds[scoreIndex] + random() * (thresholds[scoreIndex + 1] - thresholds[scoreIndex]);
                 } else {
-                    selectedScore = scores.reduce((prev, curr) => 
+                    selectedScore = scores.reduce((prev, curr) =>
                         Math.abs(curr - remainingScore) < Math.abs(prev - remainingScore) ? curr : prev
                     );
                     const scoreIndex = scores.indexOf(selectedScore);
@@ -648,14 +649,14 @@ function processContent() {
         (match, params) => {
             const segments = params.split(':');
             let result = '';
-            
+
             for (let i = 0; i < segments.length; i += 2) {
                 if (i + 1 >= segments.length) break;
-                
+
                 const rangePart = segments[i];
                 const text = segments[i + 1];
                 const range = rangePart.split(',').map(Number);
-                
+
                 if (range.length === 1) {
                     if (totalScore === range[0]) {
                         result = text;
@@ -668,7 +669,7 @@ function processContent() {
                     }
                 }
             }
-            
+
             return result;
         }
     );
