@@ -387,14 +387,8 @@
 
             requestAnimationFrame(animateScroll);
         }
-
-        function flipToBack() {
-            console.log("fliptoback")
-			const platform = detectAnkiPlatform();
-			let shouldFlip = true; // Assumes we shouldn't flip the card initially
-
-
-			const executeFlip = () => {
+        
+        function executeFlip() {
                 console.log("flipping")
 				switch (platform) {
 				case "AnkiMobile":
@@ -417,7 +411,13 @@
 				default:
 					console.log("Platform not recognized by flipToBack.");
 				}
-			};
+		};
+
+        function flipToBack() {
+            console.log("fliptoback")
+			var platform = detectAnkiPlatform();
+			let shouldFlip = true; // Assumes we shouldn't flip the card initially
+
 
 			if (shouldFlip) {
 				if (platform === "AnkiMobile") {
