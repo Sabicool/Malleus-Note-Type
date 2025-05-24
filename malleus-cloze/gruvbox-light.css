@@ -1,0 +1,65 @@
+/*
+This is a simple implementation of the gruvbox light theme provided as an example.
+*/
+
+    body {
+        color: #3C3836;
+        background-color: #FBF1C7;
+    }
+
+    .cloze,
+    .cloze b {
+        color: #458588;
+    }
+
+    .cloze-inactive,
+    .cloze-inactive b {
+        color: #689D6B;
+    }
+
+    .highlight-cloze {
+        background-color: rgba(255, 255, 0, 0.329);
+        border-radius: 3px;
+    }
+
+    #Personal-Notes {
+        background-color: #EBDBB3;
+    }
+
+    #Missed-Questions {
+        background-color: #EBDBB3;
+    }
+
+    #Extra {
+        background-color: #EBDBB3;
+    }
+
+    .ExtraResourceContent{
+        background-color: #D5C4A1;
+    }
+
+    button {
+        background: none !important;
+        background-color: #ebdbb3 !important;
+    }
+
+    button:hover{
+        background: none !important;
+        background-color: #F9F5D7 !important;
+    }
+
+    .expanded-button {
+        background-color: #BDAE93 !important;
+    }
+
+    .expanded-button:hover {
+        background-color: #F9F5D7 !important;
+    }
+
+    b {
+        color: #B16286;
+    }
+
+    a {
+        color: #458588;
+    }
