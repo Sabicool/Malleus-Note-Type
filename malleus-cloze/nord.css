@@ -1,0 +1,190 @@
+/*USER CONFIG - copy from this line -----------------------------------------------------------------------------------*/
+
+/*
+Example of the nord colour theme style
+*/
+
+    /* Colors Light Mode* --------------------------  */
+    body {
+        /* color: */
+        /* background-color */
+    }
+
+    .cloze,
+    .cloze b {
+        color: #1e66f5;
+    }
+
+    .cloze-inactive,
+    .cloze-inactive b {
+        color: #179299;
+    }
+
+    .highlight-cloze {
+        background-color: rgba(255, 255, 0, 0.329);
+        border-radius: 3px;
+    }
+
+    button {
+        background-color: hsl(227, 12%, 71%)
+    }
+
+    button:hover{
+        background: none;
+        background-color: hsl(227, 12%, 90%)
+    }
+
+    .expanded-button {
+        background-color: hsl(220, 21%, 89%)
+    }
+
+    .expanded-button:hover {
+        background-color: hsl(220, 21%, 79%)
+    }
+
+    #Personal-Notes {
+        background-color: #eff1f5;
+    }
+
+    #Missed-Questions {
+        background-color: #eff1f5;
+    }
+
+    #Extra {
+        background-color: #eff1f5;
+    }
+
+    .ExtraResourceContent{
+        background-color: #dce0e8
+    }
+
+    .expanded-button {
+        background-color: #dce0e8
+    }
+
+    #clozecontainer {
+        background-color: inherit;
+        box-shadow: none;
+    }
+
+    b {
+        color: #8839ef;
+    }
+
+    a {
+        color: #1E66F5;
+    }
+
+    #tags-container {
+        display: none; /* show tags by default on computer: no with ‘none’ or yes with ‘block’ */
+    }
+
+    .mobile #tags-container {
+        display: none; /* show tags by default on mobile: no with ‘none’ or yes with ‘block’ */
+    }
+
+    #button-tags {
+        display: none; /* show tags button on computer: no with ‘none’ or yes ‘block’ */
+    }
+
+    .mobile #button-tags {
+        display: block /* show tags button on mobile: no with ‘none’ or yes ‘block’ */
+    }
+
+    /*Colors Dark Mode-----------------------------*/
+
+    body.nightMode,
+    body.night_mode
+    {
+        background-color: #2e3440;
+    }
+
+    /* NM Cloze Color */
+    .nightMode .cloze,
+    .night_mode .cloze,
+    .nightMode .cloze b,
+    .night_mode .cloze b
+    {
+        color: #d08770;
+    }
+
+    .night_mode .cloze-inactive,
+    .nightMode .cloze-inactive,
+    .night_mode .cloze-inactive b,
+    .nightMode .cloze-inactive b {
+        color: #88c0d0;
+    }
+
+    .night_mode .highlight-cloze,
+    .nightMode .highlight-cloze {
+        background-color: #ffff0033;
+        border-radius: 3px;
+    }
+
+    .night_mode button,
+    .nightMode button {
+        background: none;
+        background-color: #3b4252;
+    }
+
+    .night_mode button:hover,
+    .nightMode button:hover {
+        background: none;
+        background-color: #4c566a;
+    }
+
+    .night_mode .expanded-button,
+    .nightMode .expanded-button {
+        background-color: #2e3440;
+    }
+
+    .night_mode.expanded-button button:hover
+    .nightMode .expanded-button button:hover {
+        background: none;
+        background-color: #4c566a;
+    }
+
+    .night_mode #Personal-Notes,
+    .nightMode #Personal-Notes {
+        background-color: #26233A;
+    }
+
+    .night_mode #Missed-Questions,
+    .nightMode #Missed-Questions {
+        background-color: #3b4252;
+    }
+
+    .night_mode #Extra,
+    .nightMode #Extra {
+        background-color: #3b4252;
+
+    }
+
+    .night_mode #clozecontainer,
+    .nightMode #clozecontainer {
+        background-color: inherit;
+        box-shadow: none;
+    }
+
+    .night_mode .ExtraResourceContent,
+    .nightMode .ExtraResourceContent {
+        background-color: #434c5e;
+    }
+
+    .night_mode .expanded-button,
+    .nightMode .expanded-button {
+        background-color: #303446
+    }
+
+    .night_mode b,
+    .nightMode b {
+        color:#b48ead;
+    }
+
+    .night_mode a,
+    .nightMode a {
+        color: #81a1c1;
+    }
+
+
+/*USER CONFIG - until this line ---------------------------------------------------------------------------------------*/
