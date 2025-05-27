@@ -338,13 +338,16 @@ https://ankiweb.net/shared/info/1739176371 -->
         tagsAlreadyGenerated = true;
     }
 
+    tagButton = document.getElementById("button-tags")
     function toggleTagVisibility() {
 
         if (tagContainer.style.display === "none") {
             generateColorfulTags();
             tagContainer.style.display = "block";
+            tagButton.classList.add("expanded-button")
         } else {
             tagContainer.style.display = "none";
+            tagButton.classList.remove("expanded-button")
     }
 }
 
