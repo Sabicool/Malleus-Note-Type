@@ -30,7 +30,7 @@
         revealNextKeys: ["KeyN", "ArrowRight"], // Keys to reveal the next cloze - for custom keycodes: https://keycode.info/
         hideLastKeys: ["KeyQ", "ArrowLeft"],    // Keys to hide the last cloze (does not currently support platform specific hotkeys, if thats important to you pls message on the discord)
         highlightCloze: false, // Set to "false" to disable next cloze highlighting
-
+        toggleAllButton: false,
         debug: false
     };
 </script>
@@ -163,6 +163,9 @@
     else {
         // Make the buttons to control "reveal next" and "toggle all visible"
         document.getElementById("btns-1by1").style.display = "block";
+        if (!getUserSetting("toggleAllButton")) {
+            document.getElementById("button-toggle-all").style.display = "none";
+        }
 
         // the following is thanks to https://github.com/huandney/Anki-Cloze-Interactive/blob/main/card/front-template.html
 
