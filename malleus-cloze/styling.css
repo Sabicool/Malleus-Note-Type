@@ -245,6 +245,10 @@ body {
     max-width: 1000px;
 }
 
+img {
+    max-height: none; /*Allows for very tall imgs e.g. eTG complete */
+}
+
 .element.elementEnlarged {
     max-width: none !important;
     flex: 0 0 auto;
