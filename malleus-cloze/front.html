@@ -605,7 +605,7 @@
 
         // Generate or retrieve a seed
         let seed;
-        if (Persistence.isAvailable()) {
+        if (typeof Persistence !== 'undefined' && Persistence.isAvailable()) {
             seed = Persistence.getItem("seed");
             if (seed === null) {
                 // Generate a new seed if none exists
@@ -620,6 +620,7 @@
 
         const random = generateSeededRandom(seed);
         let totalScore = 0;
+        const scoredReplacements = [];
 
         // Random from list
         processedText = processedText.replace(
@@ -642,149 +643,86 @@
             }
         );
 
-        let targetScore = null;
-        const scoredElements = [];
-        
-        processedText = processedText.replace(/\[(show)?score:(\d+)(?:,(\d+))?\]/g, (match, show, min, max) => {
-            const minVal = parseInt(min);
-            const maxVal = max ? parseInt(max) : minVal;
-            targetScore = minVal + Math.floor(random() * (maxVal - minVal + 1));
-            return show ? targetScore.toString() : '';
-        });
+        // First pass: collect all scored elements and calculate total score
+        let tempText = processedText;
 
-        // Collect scored elements
-        const elementRegex = /\[(scoredlist|scorednumber):([^\]]+)\]/g;
-        let elementMatch;
-        while ((elementMatch = elementRegex.exec(processedText)) !== null) {
-            const [fullMatch, type, params] = elementMatch;
-            
-            if (type === 'scoredlist') {
+        // Process scored lists
+        tempText = tempText.replace(
+            /\[scoredlist:([^\]]+)\]/g,
+            (match, params) => {
                 const options = params.split(',').map(item => {
                     const [text, score] = item.split(':').map(s => s.trim());
-                    return { text, score: parseInt(score) };
-                });
-                const scores = options.map(opt => opt.score);
-                scoredElements.push({
-                    type: 'list',
-                    min: Math.min(...scores),
-                    max: Math.max(...scores),
-                    options: options
-                });
-            }
-            else if (type === 'scorednumber') {
-                const parts = params.split(':');
-                const thresholds = parts[0].split(',').map(parseFloat);
-                const decimals = parseInt(parts[1]);
-                const scores = parts[2].split(',').map(Number);
-                
-                scoredElements.push({
-                    type: 'number',
-                    min: Math.min(...scores),
-                    max: Math.max(...scores),
-                    thresholds: thresholds,
-                    decimals: decimals,
-                    scores: scores
-                });
-            }
-        }
-
-        // Adjust target score to possible range
-        if (targetScore !== null) {
-            const totalMin = scoredElements.reduce((sum, el) => sum + el.min, 0);
-            const totalMax = scoredElements.reduce((sum, el) => sum + el.max, 0);
-            targetScore = Math.min(Math.max(targetScore, totalMin), totalMax);
-        }
-
-        // Process scored elements
-        let currentIndex = 0;
-        let remainingScore = targetScore;
-
-        processedText = processedText.replace(/\[(scoredlist|scorednumber):([^\]]+)\]/g, (match, type, params) => {
-            if (currentIndex >= scoredElements.length) return match;
-
-            const element = scoredElements[currentIndex];
-            const remainingElements = scoredElements.slice(currentIndex + 1);
-            const remainingMax = remainingElements.reduce((sum, el) => sum + el.max, 0);
-            const remainingMin = remainingElements.reduce((sum, el) => sum + el.min, 0);
-
-            if (type === 'scoredlist') {
-                const options = params.split(',').map(item => {
-                    const [text, score] = item.split(':').map(s => s.trim());
-                    return { text, score: parseInt(score) };
+                    const scoreNum = parseInt(score);
+                    return { text, score: isNaN(scoreNum) ? 0 : scoreNum };
                 });
 
-                const minScore = targetScore !== null 
-                      ? Math.max(element.min, remainingScore - remainingMax)
-                      : element.min;
-                const maxScore = targetScore !== null 
-                      ? Math.min(element.max, remainingScore - remainingMin)
-                      : element.max;
-
-                const validOptions = options.filter(opt => 
-                    opt.score >= minScore && opt.score <= maxScore
-                );
-
-                const selected = validOptions.length > 0
-                      ? validOptions[Math.floor(random() * validOptions.length)]
-                      : options[Math.floor(random() * options.length)];
-
-                if (targetScore !== null) remainingScore -= selected.score;
+                const selectedIndex = Math.floor(random() * options.length);
+                const selected = options[selectedIndex];
                 totalScore += selected.score;
-                currentIndex++;
-                return selected.text;
+
+                scoredReplacements.push({
+                    original: match,
+                    replacement: selected.text
+                });
+
+                return match; // Keep original for now
             }
-            else if (type === 'scorednumber') {
+        );
+
+        // Process scored numbers
+        tempText = tempText.replace(
+            /\[scorednumber:([^\]]+)\]/g,
+            (match, params) => {
                 const parts = params.split(':');
+                if (parts.length !== 3) return match;
+
                 const thresholds = parts[0].split(',').map(parseFloat);
                 const decimals = parseInt(parts[1]);
-                const scores = parts[2].split(',').map(Number);
-                
-                let selectedScore;
-                let value;
+                const scores = parts[2].split(',').map(s => {
+                    const num = parseInt(s.trim());
+                    return isNaN(num) ? 0 : num;
+                });
 
-                if (targetScore !== null) {
-                    const requiredMin = Math.max(
-                        element.min,
-                        remainingScore - remainingMax
-                    );
-                    const requiredMax = Math.min(
-                        element.max,
-                        remainingScore - remainingMin
-                    );
+                // Generate random value within the full range
+                const minVal = thresholds[0];
+                const maxVal = thresholds[thresholds.length - 1];
+                const value = minVal + random() * (maxVal - minVal);
 
-                    const validScores = scores.filter(score => 
-                        score >= requiredMin && score <= requiredMax
-                    );
-
-                    if (validScores.length > 0) {
-                        selectedScore = validScores[Math.floor(random() * validScores.length)];
-                        const scoreIndex = scores.indexOf(selectedScore);
-                        value = thresholds[scoreIndex] + random() * (thresholds[scoreIndex + 1] - thresholds[scoreIndex]);
-                    } else {
-                        selectedScore = scores.reduce((prev, curr) => 
-                            Math.abs(curr - remainingScore) < Math.abs(prev - remainingScore) ? curr : prev
-                        );
-                        const scoreIndex = scores.indexOf(selectedScore);
-                        value = thresholds[scoreIndex] + random() * (thresholds[scoreIndex + 1] - thresholds[scoreIndex]);
-                    }
-                } else {
-                    value = thresholds[0] + random() * (thresholds[thresholds.length - 1] - thresholds[0]);
-                    for (let i = 0; i < scores.length; i++) {
-                        if (value >= thresholds[i] && value < thresholds[i + 1]) {
-                            selectedScore = scores[i];
-                            break;
-                        }
+                // Determine which score bracket this falls into
+                let selectedScore = scores[scores.length - 1]; // default to last score
+                for (let i = 0; i < thresholds.length - 1; i++) {
+                    if (value >= thresholds[i] && value < thresholds[i + 1]) {
+                        selectedScore = scores[i];
+                        break;
                     }
                 }
 
-                if (targetScore !== null) remainingScore -= selectedScore;
                 totalScore += selectedScore;
-                currentIndex++;
-                return value.toFixed(decimals);
-            }
 
-            return match;
-        });
+                scoredReplacements.push({
+                    original: match,
+                    replacement: value.toFixed(decimals)
+                });
+
+                return match; // Keep original for now
+            }
+        );
+
+        // Second pass: apply all replacements
+        for (const replacement of scoredReplacements) {
+            processedText = processedText.replace(replacement.original, replacement.replacement);
+        }
+
+        // Process score display - just show the calculated total
+        processedText = processedText.replace(
+            /\[showscore(?::\d+(?:,\d+)?)?\]/g,
+            () => {
+                // Add some debugging to see what's happening
+                console.log('Total score calculated:', totalScore);
+                console.log('Type of totalScore:', typeof totalScore);
+                return isNaN(totalScore) ? '0' : totalScore.toString();
+            }
+        );
 
         // Process answer by score
         processedText = processedText.replace(
@@ -792,14 +730,14 @@
             (match, params) => {
                 const segments = params.split(':');
                 let result = '';
-                
+
                 for (let i = 0; i < segments.length; i += 2) {
                     if (i + 1 >= segments.length) break;
-                    
+
                     const rangePart = segments[i];
                     const text = segments[i + 1];
                     const range = rangePart.split(',').map(Number);
-                    
+
                     if (range.length === 1) {
                         if (totalScore === range[0]) {
                             result = text;
@@ -812,7 +750,7 @@
                         }
                     }
                 }
-                
+
                 return result;
             }
         );

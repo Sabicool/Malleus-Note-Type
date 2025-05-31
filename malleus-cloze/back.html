@@ -99,8 +99,7 @@
     }
 
     window.ankingAddEventListener('error', (event) => {
-        const errorDetails = `
-        Global Error:
+        const errorDetails = `Global Error:
         Message: ${event.message}
         Source: ${event.filename}
         Line: ${event.lineno}
@@ -440,249 +439,188 @@ if(void 0===window.Persistence){var e="github.com/SimonLammer/anki-persistence/"
 
 <!-- Randomisation -->
 <script>
-function generateSeededRandom(seed) {
-    let hash = 0;
-    for (let i = 0; i < seed.length; i++) {
-        hash = ((hash << 5) - hash) + seed.charCodeAt(i);
-        hash |= 0;
+    function generateSeededRandom(seed) {
+        let hash = 0;
+        for (let i = 0; i < seed.length; i++) {
+            hash = ((hash << 5) - hash) + seed.charCodeAt(i);
+            hash |= 0;
+        }
+        return () => {
+            hash = Math.abs((hash * 9301 + 49297) % 233280);
+            return hash / 233280;
+        };
     }
-    return () => {
-        hash = Math.abs((hash * 9301 + 49297) % 233280);
-        return hash / 233280;
-    };
-}
 
-function processContent() {
-    const content = document.getElementById('clozecontainer');
-    let processedText = content.innerHTML;
+    function processContent() {
+        const content = document.getElementById('clozecontainer');
+        let processedText = content.innerHTML;
 
-    // Retrieve the seed
-    let seed;if (typeof Persistence !== 'undefined' && Persistence !== null && Persistence.isAvailable()) {
-        try {
-            seed = Persistence.getItem("seed");
-            if (seed) {
-                Persistence.removeItem("seed"); // Clear the seed for the next card
-            } else {
-                // If seed is null or undefined, use the date fallback
+        // Retrieve the seed
+        let seed;if (typeof Persistence !== 'undefined' && Persistence !== null && Persistence.isAvailable()) {
+            try {
+                seed = Persistence.getItem("seed");
+                if (seed) {
+                    Persistence.removeItem("seed"); // Clear the seed for the next card
+                } else {
+                    // If seed is null or undefined, use the date fallback
+                    const now = new Date();
+                    seed = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}${String(now.getHours()).padStart(2, '0')}`;
+                }
+            } catch (e) {
+                // If any error occurs during persistence operations, use the date fallback
                 const now = new Date();
                 seed = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}${String(now.getHours()).padStart(2, '0')}`;
             }
-        } catch (e) {
-            // If any error occurs during persistence operations, use the date fallback
+        } else {
+            // Fallback: Use date and hour as seed when Persistence is not available
             const now = new Date();
             seed = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}${String(now.getHours()).padStart(2, '0')}`;
         }
-    } else {
-        // Fallback: Use date and hour as seed when Persistence is not available
-        const now = new Date();
-        seed = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}${String(now.getHours()).padStart(2, '0')}`;
-    }
-    const random = generateSeededRandom(seed);
-    let totalScore = 0;
+        const random = generateSeededRandom(seed);
+        let totalScore = 0;
+        const scoredReplacements = [];
+        
+        // Random from list
+        processedText = processedText.replace(
+            /\[randomlist:([^\]]+)\]/g,
+            (match, options) => {
+                const optionsList = options.split(',').map(option => option.trim());
+                const selectedIndex = Math.floor(random() * optionsList.length);
+                return optionsList[selectedIndex];
+            }
+        );
 
-    // Random from list
-    processedText = processedText.replace(
-        /\[randomlist:([^\]]+)\]/g,
-        (match, options) => {
-            const optionsList = options.split(',').map(option => option.trim());
-            const selectedIndex = Math.floor(random() * optionsList.length);
-            return optionsList[selectedIndex];
-        }
-    );
+        // Process standalone random numbers
+        processedText = processedText.replace(
+            /\[random:(-?\d+\.?\d*),(-?\d+\.?\d*),(\d+)\]/g,
+            (match, min, max, decimals) => {
+                const minNum = parseFloat(min);
+                const maxNum = parseFloat(max);
+                const value = minNum + random() * (maxNum - minNum);
+                return value.toFixed(parseInt(decimals));
+            }
+        );
 
-    processedText = processedText.replace(
-        /\[random:(-?\d+\.?\d*),(-?\d+\.?\d*),(\d+)\]/g,
-        (match, min, max, decimals) => {
-            const minNum = parseFloat(min);
-            const maxNum = parseFloat(max);
-            const value = minNum + random() * (maxNum - minNum);
-            return value.toFixed(parseInt(decimals));
-        }
-    );
+        // First pass: collect all scored elements and calculate total score
+        let tempText = processedText;
 
-    // Process showscore and collect elements
-    let targetScore = null;
-    const scoredElements = [];
+        // Process scored lists
+        tempText = tempText.replace(
+            /\[scoredlist:([^\]]+)\]/g,
+            (match, params) => {
+                const options = params.split(',').map(item => {
+                    const [text, score] = item.split(':').map(s => s.trim());
+                    const scoreNum = parseInt(score);
+                    return { text, score: isNaN(scoreNum) ? 0 : scoreNum };
+                });
 
-    processedText = processedText.replace(/\[(show)?score:(\d+)(?:,(\d+))?\]/g, (match, show, min, max) => {
-        const minVal = parseInt(min);
-        const maxVal = max ? parseInt(max) : minVal;
-        targetScore = minVal + Math.floor(random() * (maxVal - minVal + 1));
-        return show ? targetScore.toString() : '';
-    });
+                const selectedIndex = Math.floor(random() * options.length);
+                const selected = options[selectedIndex];
+                totalScore += selected.score;
 
-    // Collect scored elements
-    const elementRegex = /\[(scoredlist|scorednumber):([^\]]+)\]/g;
-    let elementMatch;
-    while ((elementMatch = elementRegex.exec(processedText)) !== null) {
-        const [fullMatch, type, params] = elementMatch;
+                scoredReplacements.push({
+                    original: match,
+                    replacement: selected.text
+                });
 
-        if (type === 'scoredlist') {
-            const options = params.split(',').map(item => {
-                const [text, score] = item.split(':').map(s => s.trim());
-                return { text, score: parseInt(score) };
-            });
-            const scores = options.map(opt => opt.score);
-            scoredElements.push({
-                type: 'list',
-                min: Math.min(...scores),
-                max: Math.max(...scores),
-                options: options
-            });
-        }
-        else if (type === 'scorednumber') {
-            const parts = params.split(':');
-            const thresholds = parts[0].split(',').map(parseFloat);
-            const decimals = parseInt(parts[1]);
-            const scores = parts[2].split(',').map(Number);
+                return match; // Keep original for now
+            }
+        );
 
-            scoredElements.push({
-                type: 'number',
-                min: Math.min(...scores),
-                max: Math.max(...scores),
-                thresholds: thresholds,
-                decimals: decimals,
-                scores: scores
-            });
-        }
-    }
+        // Process scored numbers
+        tempText = tempText.replace(
+            /\[scorednumber:([^\]]+)\]/g,
+            (match, params) => {
+                const parts = params.split(':');
+                if (parts.length !== 3) return match;
 
-    // Adjust target score to possible range
-    if (targetScore !== null) {
-        const totalMin = scoredElements.reduce((sum, el) => sum + el.min, 0);
-        const totalMax = scoredElements.reduce((sum, el) => sum + el.max, 0);
-        targetScore = Math.min(Math.max(targetScore, totalMin), totalMax);
-    }
+                const thresholds = parts[0].split(',').map(parseFloat);
+                const decimals = parseInt(parts[1]);
+                const scores = parts[2].split(',').map(s => {
+                    const num = parseInt(s.trim());
+                    return isNaN(num) ? 0 : num;
+                });
 
-    // Process scored elements
-    let currentIndex = 0;
-    let remainingScore = targetScore;
+                // Generate random value within the full range
+                const minVal = thresholds[0];
+                const maxVal = thresholds[thresholds.length - 1];
+                const value = minVal + random() * (maxVal - minVal);
 
-    processedText = processedText.replace(/\[(scoredlist|scorednumber):([^\]]+)\]/g, (match, type, params) => {
-        if (currentIndex >= scoredElements.length) return match;
-
-        const element = scoredElements[currentIndex];
-        const remainingElements = scoredElements.slice(currentIndex + 1);
-        const remainingMax = remainingElements.reduce((sum, el) => sum + el.max, 0);
-        const remainingMin = remainingElements.reduce((sum, el) => sum + el.min, 0);
-
-        if (type === 'scoredlist') {
-            const options = params.split(',').map(item => {
-                const [text, score] = item.split(':').map(s => s.trim());
-                return { text, score: parseInt(score) };
-            });
-
-            const minScore = targetScore !== null
-                    ? Math.max(element.min, remainingScore - remainingMax)
-                    : element.min;
-            const maxScore = targetScore !== null
-                    ? Math.min(element.max, remainingScore - remainingMin)
-                    : element.max;
-
-            const validOptions = options.filter(opt =>
-                opt.score >= minScore && opt.score <= maxScore
-            );
-
-            const selected = validOptions.length > 0
-                    ? validOptions[Math.floor(random() * validOptions.length)]
-                    : options[Math.floor(random() * options.length)];
-
-            if (targetScore !== null) remainingScore -= selected.score;
-            totalScore += selected.score;
-            currentIndex++;
-            return selected.text;
-        }
-        else if (type === 'scorednumber') {
-            const parts = params.split(':');
-            const thresholds = parts[0].split(',').map(parseFloat);
-            const decimals = parseInt(parts[1]);
-            const scores = parts[2].split(',').map(Number);
-
-            let selectedScore;
-            let value;
-
-            if (targetScore !== null) {
-                const requiredMin = Math.max(
-                    element.min,
-                    remainingScore - remainingMax
-                );
-                const requiredMax = Math.min(
-                    element.max,
-                    remainingScore - remainingMin
-                );
-
-                const validScores = scores.filter(score =>
-                    score >= requiredMin && score <= requiredMax
-                );
-
-                if (validScores.length > 0) {
-                    selectedScore = validScores[Math.floor(random() * validScores.length)];
-                    const scoreIndex = scores.indexOf(selectedScore);
-                    value = thresholds[scoreIndex] + random() * (thresholds[scoreIndex + 1] - thresholds[scoreIndex]);
-                } else {
-                    selectedScore = scores.reduce((prev, curr) =>
-                        Math.abs(curr - remainingScore) < Math.abs(prev - remainingScore) ? curr : prev
-                    );
-                    const scoreIndex = scores.indexOf(selectedScore);
-                    value = thresholds[scoreIndex] + random() * (thresholds[scoreIndex + 1] - thresholds[scoreIndex]);
-                }
-            } else {
-                value = thresholds[0] + random() * (thresholds[thresholds.length - 1] - thresholds[0]);
-                for (let i = 0; i < scores.length; i++) {
+                // Determine which score bracket this falls into
+                let selectedScore = scores[scores.length - 1]; // default to last score
+                for (let i = 0; i < thresholds.length - 1; i++) {
                     if (value >= thresholds[i] && value < thresholds[i + 1]) {
                         selectedScore = scores[i];
                         break;
                     }
                 }
-            }
 
-            if (targetScore !== null) remainingScore -= selectedScore;
-            totalScore += selectedScore;
-            currentIndex++;
-            return value.toFixed(decimals);
+                totalScore += selectedScore;
+
+                scoredReplacements.push({
+                    original: match,
+                    replacement: value.toFixed(decimals)
+                });
+
+                return match; // Keep original for now
+            }
+        );
+
+        // Second pass: apply all replacements
+        for (const replacement of scoredReplacements) {
+            processedText = processedText.replace(replacement.original, replacement.replacement);
         }
 
-        return match;
-    });
+        // Process score display - just show the calculated total
+        processedText = processedText.replace(
+            /\[showscore(?::\d+(?:,\d+)?)?\]/g,
+            () => {
+                // Add some debugging to see what's happening
+                console.log('Total score calculated:', totalScore);
+                console.log('Type of totalScore:', typeof totalScore);
+                return isNaN(totalScore) ? '0' : totalScore.toString();
+            }
+        );
 
-    // Process answer by score
-    processedText = processedText.replace(
-        /\[answerbyscore:([^\]]+)\]/g,
-        (match, params) => {
-            const segments = params.split(':');
-            let result = '';
+        // Process answer by score
+        processedText = processedText.replace(
+            /\[answerbyscore:([^\]]+)\]/g,
+            (match, params) => {
+                const segments = params.split(':');
+                let result = '';
 
-            for (let i = 0; i < segments.length; i += 2) {
-                if (i + 1 >= segments.length) break;
+                for (let i = 0; i < segments.length; i += 2) {
+                    if (i + 1 >= segments.length) break;
 
-                const rangePart = segments[i];
-                const text = segments[i + 1];
-                const range = rangePart.split(',').map(Number);
+                    const rangePart = segments[i];
+                    const text = segments[i + 1];
+                    const range = rangePart.split(',').map(Number);
 
-                if (range.length === 1) {
-                    if (totalScore === range[0]) {
-                        result = text;
-                        break;
-                    }
-                } else if (range.length === 2) {
-                    if (totalScore >= range[0] && totalScore <= range[1]) {
-                        result = text;
-                        break;
+                    if (range.length === 1) {
+                        if (totalScore === range[0]) {
+                            result = text;
+                            break;
+                        }
+                    } else if (range.length === 2) {
+                        if (totalScore >= range[0] && totalScore <= range[1]) {
+                            result = text;
+                            break;
+                        }
                     }
                 }
+
+                return result;
             }
+        );
 
-            return result;
-        }
-    );
+        content.innerHTML = processedText;
+    }
 
-    content.innerHTML = processedText;
-}
-
-processContent();
+    processContent();
 </script>
+
 <!--
 ANKIHUB_END
 Text below this comment will not be modified by AnkiHub or AnKing add-ons.
 Do not edit or remove this comment if you want to protect the content below.
--->
+  -->
