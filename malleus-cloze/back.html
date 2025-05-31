@@ -26,7 +26,9 @@
         // "all", "off", ["AnkiDesktop", "AnkiDroid", "AnkiMobile", "AnkiWeb"] 
         ShowTagsByDefault: "off", // When off, tags can be shown using the keyboardshorcut above
         TagButton: "all",  // This shows a button that toggles tags on and off next to the extra resources buttons.
-        debug: false
+        debug: false,
+
+        DoubleClickToEnlargeImg: true
     }
 </script>
 <!-- USER CONFIG END - until this line -------------------------------------------------------------------------------->
@@ -420,19 +422,23 @@ window.ankingAddEventListener("keydown", (event) => {
 
 
 <!-- Code for element magnification on double click -->
+<!-- Code for element magnification on double click -->
 <script>
-var elements = document.getElementsByTagName("img")
-
-for (var i=0; i < elements.length; i++){
-    elements[i].ondblclick = function(clickevent)
-    {
-        var parentElement = clickevent.currentTarget.closest(".element")
-        if (parentElement) {
-            parentElement.classList.toggle("elementEnlarged")
+    if(getUserSetting("DoubleClickToEnlargeImg")){
+        var elements = document.getElementsByTagName("img")
+        
+        for (var i=0; i < elements.length; i++){
+            elements[i].ondblclick = function(clickevent)
+            {
+                var parentElement = clickevent.currentTarget.closest(".element")
+                if (parentElement) {
+                    parentElement.classList.toggle("elementEnlarged")
+                }
+            }
         }
     }
-}
 </script>
+
 
 
 
