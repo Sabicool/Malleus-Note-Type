@@ -632,6 +632,41 @@ if(void 0===window.Persistence){var e="github.com/SimonLammer/anki-persistence/"
     processContent();
 </script>
 
+<script>
+(function() {
+    function scrollToRevealedCloze() {
+        const clozes = document.querySelectorAll("span.cloze");
+        for (let i = 0; i < clozes.length; i++) {
+            const el = clozes[i];
+            const text = el.textContent.trim();
+
+            const isActuallyRevealed = text.length > 0 && text !== '[...]' && !/^\[\d+\]$/.test(text);
+            const isVisible = el.offsetParent !== null;
+
+            if (isActuallyRevealed && isVisible) {
+                el.scrollIntoView({ behavior: "smooth", block: "center" });
+                return true;
+            }
+        }
+        return false;
+    }
+
+    let attempts = 0;
+    const maxAttempts = 15;
+
+    function tryScroll() {
+        attempts++;
+        const success = scrollToRevealedCloze();
+        if (!success && attempts < maxAttempts) {
+            setTimeout(tryScroll, 200);
+        }
+    }
+
+    // Wait a moment before starting to poll
+    setTimeout(tryScroll, 400);
+})();
+</script>
+
 <!--
 ANKIHUB_END
 Text below this comment will not be modified by AnkiHub or AnKing add-ons.
