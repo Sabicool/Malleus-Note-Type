@@ -327,6 +327,7 @@
             if (firstUnrevealed != -1) {
                 if (!isElementInViewport(elements[firstUnrevealed])) {
                     smoothScrollTo(elements[firstUnrevealed]);
+                    revealCloze(firstUnrevealed);
                 } else {
                     revealCloze(firstUnrevealed);
                 }
