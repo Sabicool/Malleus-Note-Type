@@ -562,18 +562,28 @@
 
 <!-- Code for element magnification on double click -->
 <script>
-    if(getUserSetting("DoubleClickToEnlargeImg")){
-        var elements = document.getElementsByTagName("img")
-        
-        for (var i=0; i < elements.length; i++){
-            elements[i].ondblclick = function(clickevent)
-            {
-                var parentElement = clickevent.currentTarget.closest(".element")
-                if (parentElement) {
-                    parentElement.classList.toggle("elementEnlarged")
+    function enableImageZooming() {
+        if (!getUserSetting("DoubleClickToEnlargeImg")) return;
+
+        // Attach only to unprocessed images
+        const images = document.querySelectorAll("img:not([data-zoom-ready])");
+        images.forEach((img) => {
+            img.setAttribute("data-zoom-ready", "true");
+            img.ondblclick = function (e) {
+                const parent = e.currentTarget.closest(".element");
+                if (parent) {
+                    parent.classList.toggle("elementEnlarged");
                 }
-            }
-        }
+            };
+        });
+    }
+
+    // Run on initial load
+    document.addEventListener("DOMContentLoaded", enableImageZooming);
+
+    // Re-run if clozes are revealed or dynamic content changes
+    if (typeof onUpdateHook !== "undefined") {
+        onUpdateHook.push(enableImageZooming);
     }
 </script>
 
