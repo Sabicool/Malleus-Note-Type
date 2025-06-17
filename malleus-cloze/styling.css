@@ -9,6 +9,15 @@
 
 /*USER CONFIG - copy from this line -----------------------------------------------------------------------------------*/
 
+/* Blur styles */
+img {
+  transition: filter 0.3s ease;
+}
+
+.blur {
+  filter: blur(15px);
+}
+
     /* Colors Light Mode* --------------------------  */
     body {
         /* color: */
