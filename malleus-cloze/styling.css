@@ -175,8 +175,19 @@
         color: #89B4FA;
     }
 
+/* Special formatting -----------------*/
+    /*For beneath imgs and figures*/
+    .figure-citation{
+        font-size: 10pt !important;
+        font-style: italic;
+    }
+
 
 /*USER CONFIG - until this line ---------------------------------------------------------------------------------------*/
+
+
+
+
 
 /* Blur styles */
 img {
