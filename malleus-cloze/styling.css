@@ -357,6 +357,7 @@ kbd {
     display: inline-block;
     letter-spacing: .1px;
     font-weight: bold;
+    font-family: inherit !important;
     font-size: 16px !important;
     text-shadow: none !important;
     padding: 0.05rem 0.1rem !important;
