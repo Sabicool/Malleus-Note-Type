@@ -8,17 +8,21 @@ tree --gitignore
 #+end_src
 
 #+RESULTS:
-: .
-: ├── LICENSE
-: ├── README.org
-: └── malleus-cloze
-:     ├── back.html
-:     ├── front.html
-:     └── styling.css
-:
-: 2 directories, 5 files
+#+begin_example
+.
+├── LICENSE
+├── README.org
+└── malleus-cloze
+    ├── back.html
+    ├── front.html
+    ├── gruvbox-light.css
+    ├── nord.css
+    └── styling.css
 
-** Features for Implementation
+2 directories, 7 files
+#+end_example
+
+** Implemented Features
 *** Malleus Cloze
 - Custom malleus colour theme
 - Readable font
