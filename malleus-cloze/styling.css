@@ -265,6 +265,8 @@ body {
 
 img {
     max-height: none; /*Allows for very tall imgs e.g. eTG complete */
+    margin-top: 0.5em; /* Consistent vertical spacing */
+    margin-bottom: 0.5em;         
 }
 
 .element.elementEnlarged {
@@ -425,29 +427,93 @@ button{
 }
 
 
+ol, ul {
+  display: inline-block;        /* Centers list container horizontally */
+  margin: 1em auto;             /* Vertical spacing and centering */
+  text-align: left;             /* Aligns text to the left */
+  max-width: 85%;               /* Slightly narrower for readability */
+  padding-left: 0;              /* Remove default browser padding */
+}
+
+/* Lists */
+ol li, ul li {
+  line-height: 1.35;            /* Consistent text spacing */
+  margin: 0.4em 0;              /* Space between list items */
+  word-wrap: break-word;        /* Prevents long words from breaking layout */
+}
+
+ol {
+  list-style-position: outside; /* Default numbering position */
+  padding-left: 2em;            /* Space for list numbers */
+}
+
+ol li::marker {
+  font-weight: bold;            /* Emphasize list numbers */
+  color: #1e66f5;               /* Blue numbering for contrast */
+}
+
 ul {
-    list-style: none;
-    margin: 1em auto;             /* Retains spacing above and below */
-    padding-left: 0;              /* Aligns text better to the left */
-    text-align: left;             /* Left-aligns text */
-    max-width: 80%;
+  list-style: none;             /* Remove browser bullets */
+  margin-top: 0;                /* Tighter vertical control */
+  margin-bottom: 0;
+  padding-left: 1.2em;          /* Space for custom dash */
 }
 
 ul li {
-    position: relative;
-    padding-left: 1.3em;          /* Space between dash and text */
-    text-align: left;             /* Ensures multi-line text stays aligned */
-    margin-top: 0.4em;            /* Vertical spacing between list items */
-    margin-bottom: 0.4em;
+  position: relative;           /* Position for custom marker */
+  padding-left: 1.3em;          /* Space between dash and text */
+  text-align: left;             /* Ensures wrapped text aligns properly */
 }
 
+/* Custom dash marker for unordered list items */
 ul li::before {
-    content: "–";                 /* en dash instead of hyphen */
-    position: absolute;
-    left: 0;
-    width: 1.2em;                 /* Keeps dashes aligned */
-    display: inline-block;
-    text-align: left;
+  content: "–";                 /* En dash instead of bullet */
+  position: absolute;
+  left: 0;
+  width: 1.2em;                 /* Keeps dashes visually aligned */
+  display: inline-block;        /* Allows width control */
+  text-align: left;
+  color: inherit;               /* Matches text color */
+}
+
+/* Nested unordered lists */
+ul ul {
+  margin-top: 0;                /* Compact nesting */
+  margin-bottom: 0;
+  padding-left: 1.5em;          /* Slightly more indent for hierarchy */
+}
+
+@media (max-width: 600px) {
+  ol, ul {
+    max-width: 95%;             /* Allow more width on small screens */
+  }
+
+  ol {
+    padding-left: 1.8em;        /* Slightly reduce indent on mobile */
+  }
+
+  ul {
+    padding-left: 1em;          /* Reduce indent for better fit */
+  }
+
+  ul ul {
+    padding-left: 1.3em;        /* Adjust nested spacing */
+  }
+}
+
+/* Table styling */
+table {
+  width: auto;
+  max-width: 95%;               /* Responsive width */
+  border-collapse: collapse;    /* Removes gaps between table cells */
+  margin: 1em auto;             /* Center table with spacing */
+  font-size: 0.75em;            /* Slightly smaller font for tables */
+}
+
+@media (max-width: 600px) {
+  table {
+    font-size: 0.65em;          /* Make tables more compact on mobile */
+  }
 }
 
 
