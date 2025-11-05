@@ -517,6 +517,35 @@ table {
   }
 }
 
+/* ✅ Android tag fallback styling */
+#tags-container {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* Target raw text tags on Android */
+#tags-container span,
+#tags-container div,
+#tags-container font {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    line-height: 1.2;
+    font-size: 0.75em;
+    width: fit-content;
+    max-width: 100%;
+    word-break: break-word;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+}
+
+/* ✅ Remove literal "#" from Android tags */
+#tags-container span::before,
+#tags-container div::before,
+#tags-container font::before {
+    content: "";
+
 
 /*
 ANKIHUB_END
