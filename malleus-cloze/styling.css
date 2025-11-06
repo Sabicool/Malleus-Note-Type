@@ -72,8 +72,14 @@
         box-shadow: none;
     }
 
+    /* All bold text inherits surrounding color by default */
     b {
-        color: #8839ef;
+        color: inherit;
+    }
+
+    /* Bold text inside the cloze/text field keeps its original color */
+    #clozecontainer b {
+        color: #8839ef; /* Light mode */
     }
 
     a {
@@ -165,9 +171,10 @@
         background-color: #303446
     }
 
-    .night_mode b,
-    .nightMode b {
-        color:#c6a0f6;
+    /* Bold text inside the cloze/text field keeps its color in dark mode */
+    body.nightMode #clozecontainer b,
+    body.night_mode #clozecontainer b {
+        color:#c6a0f6; /* Dark mode */
     }
 
     .night_mode a,
@@ -183,8 +190,9 @@
     }
 
     .figure-header{
-        margin-bottom: 0.5em;
-        font-size: 22px !important;
+        display: block;
+        padding-top: 1em;
+        font-weight: bold;
     }
 
 /*USER CONFIG - until this line ---------------------------------------------------------------------------------------*/
@@ -504,17 +512,42 @@ ul ul {
 
 /* Table styling */
 table {
-  width: auto;
-  max-width: 95%;               /* Responsive width */
-  border-collapse: collapse;    /* Removes gaps between table cells */
-  margin: 1em auto;             /* Center table with spacing */
-  font-size: 0.75em;            /* Slightly smaller font for tables */
+    overflow-x: auto !important;
+    margin-left: auto;
+    margin-right: auto;
+    margin: 1em auto;
+    font-size: 0.5em;
+    border-collapse: collapse;
+    overflow: scroll;
+    white-space: normal;
+    font-style: normal;
+    max-width: 95vw;
 }
 
-@media (max-width: 600px) {
-  table {
-    font-size: 0.65em;          /* Make tables more compact on mobile */
-  }
+/* Left and right border cleanup */
+table td:first-child {
+    border-left: 1px solid black;
+}
+table td:last-child {
+    border-right: 1px solid black;
+}
+
+/* Table dynamic padding */
+table tr, table td, table th {
+    padding-top: clamp(0.05rem, 1vw, 1rem);
+    padding-bottom: clamp(0.05rem, 1vw, 1rem);
+    padding-left: clamp(0.05rem, 1vw, 1rem);
+    padding-right: clamp(0.05rem, 1vw, 1rem);
+}
+
+/* Horizontal Header Style, applies to any row that spans all columns */
+table tr td:first-child[colspan]:last-child[colspan] {
+    background-color: #ffffff;
+    border-top: 3px solid;
+    border-bottom: 3px solid;
+    text-align: center; /* corrected from 'middle' */
+    padding-top: 1vw;
+    padding-bottom: 1vw;
 }
 
 /* ✅ Android tag fallback styling */
@@ -545,7 +578,6 @@ table {
 #tags-container div::before,
 #tags-container font::before {
     content: "";
-
 
 /*
 ANKIHUB_END
