@@ -171,10 +171,9 @@
         background-color: #303446
     }
 
-    /* Bold text inside the cloze/text field keeps its color in dark mode */
-    body.nightMode #clozecontainer b,
-    body.night_mode #clozecontainer b {
-        color:#c6a0f6; /* Dark mode */
+    .night_mode b,
+    .nightMode b {
+        color:#c6a0f6;
     }
 
     .night_mode a,
@@ -186,13 +185,12 @@
     /*For beneath imgs and figures*/
     .figure-citation{
         font-size: 10pt !important;
-        font-style: italic;
+        font-style: italic !important;
     }
 
     .figure-header{
-        display: block;
-        padding-top: 1em;
-        font-weight: bold;
+        margin-bottom: 0.5em;
+        font-size: 22px !important;
     }
 
 /*USER CONFIG - until this line ---------------------------------------------------------------------------------------*/
@@ -273,8 +271,8 @@ body {
 
 img {
     max-height: none; /*Allows for very tall imgs e.g. eTG complete */
-    margin-top: 0.5em; /* Consistent vertical spacing */
-    margin-bottom: 0.5em;         
+    margin-top: 0.3em; /* Consistent vertical spacing */
+    margin-bottom: 0.3em;         
 }
 
 .element.elementEnlarged {
@@ -435,6 +433,7 @@ button{
     line-height: 1.4;
 }
 
+/* ~~~~~~~~~ Lists ~~~~~~~~~ */
 
 ol, ul {
   display: inline-block;        /* Centers list container horizontally */
@@ -444,9 +443,8 @@ ol, ul {
   padding-left: 0;              /* Remove default browser padding */
 }
 
-/* Lists */
+/* List items */
 ol li, ul li {
-  line-height: 1.35;            /* Consistent text spacing */
   margin: 0.4em 0;              /* Space between list items */
   word-wrap: break-word;        /* Prevents long words from breaking layout */
 }
@@ -463,7 +461,7 @@ ol li::marker {
 
 ul {
   list-style: none;             /* Remove browser bullets */
-  margin-top: 0;                /* Tighter vertical control */
+  margin-top: 0;
   margin-bottom: 0;
   padding-left: 1.2em;          /* Space for custom dash */
 }
@@ -480,16 +478,9 @@ ul li::before {
   position: absolute;
   left: 0;
   width: 1.2em;                 /* Keeps dashes visually aligned */
-  display: inline-block;        /* Allows width control */
+  display: inline-block;
   text-align: left;
   color: inherit;               /* Matches text color */
-}
-
-/* Nested unordered lists */
-ul ul {
-  margin-top: 0;                /* Compact nesting */
-  margin-bottom: 0;
-  padding-left: 1.5em;          /* Slightly more indent for hierarchy */
 }
 
 @media (max-width: 600px) {
@@ -498,11 +489,11 @@ ul ul {
   }
 
   ol {
-    padding-left: 1.8em;        /* Slightly reduce indent on mobile */
+    padding-left: 1.8em;
   }
 
   ul {
-    padding-left: 1em;          /* Reduce indent for better fit */
+    padding-left: 1em;
   }
 
   ul ul {
@@ -510,47 +501,108 @@ ul ul {
   }
 }
 
-/* Table styling */
+/* ~~~~~~~~~TABLE STYLES~~~~~~~~~ */
+
+/* Table general styles */
 table {
-    overflow-x: auto !important;
-    margin-left: auto;
-    margin-right: auto;
-    margin: 1em auto;
-    font-size: 0.5em;
-    border-collapse: collapse;
-    overflow: scroll;
-    white-space: normal;
-    font-style: normal;
-    max-width: 95vw;
+  width: 95%; /* Fill container */
+  margin-top: 1em;
+  margin-bottom: 1em;
+  margin-left: auto;
+  margin-right: auto;
+  border-collapse: collapse;
+  table-layout: fixed; /* Columns scale proportionally */
+  font-size: clamp(0.7rem, 1.2vw, 1rem); /* Dynamic font scaling */
+  color: #000000;
+  background-color: #ffffff;
+  border: 1px solid black; /* Outer border */
 }
 
-/* Left and right border cleanup */
-table td:first-child {
-    border-left: 1px solid black;
-}
-table td:last-child {
-    border-right: 1px solid black;
-}
-
-/* Table dynamic padding */
-table tr, table td, table th {
-    padding-top: clamp(0.05rem, 1vw, 1rem);
-    padding-bottom: clamp(0.05rem, 1vw, 1rem);
-    padding-left: clamp(0.05rem, 1vw, 1rem);
-    padding-right: clamp(0.05rem, 1vw, 1rem);
+/* Table cells and headers */
+th, td {
+  border: 1px solid black; /* All borders black */
+  padding: clamp(0.2rem, 1vw, 1rem); /* Dynamic padding */
+  text-align: center; /* Center text */
+  white-space: normal; /* Allow text to wrap to next line */
+  overflow-wrap: break-word; /* Break only between words */
+  word-break: normal; /* Do not break single words */
+  vertical-align: middle;
+  font-style: normal;
+  color: #000000; /* Default text color */
 }
 
-/* Horizontal Header Style, applies to any row that spans all columns */
-table tr td:first-child[colspan]:last-child[colspan] {
-    background-color: #ffffff;
-    border-top: 3px solid;
-    border-bottom: 3px solid;
-    text-align: center; /* corrected from 'middle' */
-    padding-top: 1vw;
-    padding-bottom: 1vw;
+/* Table headers - default slightly larger, bold, underlined, black text */
+th {
+  background-color: #eeeeee; /* Light grey header */
+  font-weight: bold; /* Bold by default, can override */
+  text-decoration: underline; /* Underline by default, can override */
 }
 
-/* ✅ Android tag fallback styling */
+/* Left and right borders for first and last columns */
+td:first-child, th:first-child {
+  border-left: 1px solid black;
+}
+td:last-child, th:last-child {
+  border-right: 1px solid black;
+}
+
+/* Colspan rows (normal border thickness and text color) */
+td[colspan] {
+  background-color: #ffffff;
+  color: #000000; /* Reset text color to default */
+  border-top: 1px solid black;  /* Normal thickness */
+  border-bottom: 1px solid black; /* Normal thickness */
+  padding-top: 1vw;
+  padding-bottom: 1vw;
+}
+
+/* Images inside table */
+td img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Night mode table */
+.night_mode table, .nightMode table {
+  color: #ffffff;
+  background-color: #26252b;
+  border: 1px solid black;
+}
+
+/* Night mode headers - keep black text */
+.night_mode th, .nightMode th {
+  background-color: #444444;
+  color: #000000; /* Always black text */
+  font-weight: bold; /* Bold by default */
+  font-size: clamp(1rem, 2.2vw, 1.2rem); /* Slightly larger */
+  text-decoration: underline; /* Underline by default */
+}
+
+/* Night mode first/last column borders */
+.night_mode td:first-child, .nightMode td:first-child {
+  border-left: 1px solid black;
+}
+
+.night_mode td:last-child, .nightMode td:last-child {
+  border-right: 1px solid black;
+}
+
+/* Night mode colspan cells */
+.night_mode td[colspan], .nightMode td[colspan] {
+  background-color: #26252b; /* Match table background */
+  color: #ffffff; /* Regular text color */
+  border-top: 1px solid black; /* Normal thickness */
+  border-bottom: 1px solid black; /* Normal thickness */
+}
+
+
+
+/* ~~~~~~Tag styling~~~~~~ */
+
+/* Android tag fallback styling */
 #tags-container {
     display: flex;
     flex-direction: column;
