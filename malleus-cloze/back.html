@@ -648,7 +648,13 @@
     clozes = document.querySelectorAll(".cloze")
     lastCloze = clozes[clozes.length - 1]
 
-    if (!isElementInViewport(lastCloze)){
+    const rect = lastCloze.getBoundingClientRect();
+    const buffer = window.innerHeight * 0.5; // require 50% out of view
+    const isFarBelow = rect.bottom - window.innerHeight > buffer;
+    const isFarAbove = rect.top < -buffer;
+
+    if (isFarBelow || isFarAbove) {
+
         console.log("element not in viewport, scrolling")
         lastCloze.scrollIntoView({
                 behavior: "smooth", // "auto" for instant scrolling
