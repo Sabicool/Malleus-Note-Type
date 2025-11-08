@@ -779,6 +779,58 @@
     }
 </script>
 
+<!-- TABLE SANITISER -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  try {
+    document.querySelectorAll("table").forEach((table) => {
+      // Skip if already wrapped
+      if (table.parentElement && table.parentElement.classList.contains("table-wrapper")) return;
+
+      // Wrap the table
+      const wrapper = document.createElement("div");
+      wrapper.className = "table-wrapper";
+      table.parentNode.insertBefore(wrapper, table);
+      wrapper.appendChild(table);
+
+      // Remove width/height attributes on table
+      table.removeAttribute("width");
+      table.removeAttribute("height");
+
+      // Remove inline width/height from style attribute (if present)
+      if (table.style) {
+        table.style.width = "100%";
+        table.style.maxWidth = "100%";
+        table.style.height = "auto";
+        table.style.tableLayout = "auto";
+      }
+
+      // Clean up colgroup/col widths
+      const colgroups = table.querySelectorAll("colgroup, col");
+      colgroups.forEach((col) => {
+        col.removeAttribute("width");
+        col.style.width = "auto";
+        col.style.minWidth = "0";
+      });
+
+      // Remove width/height from each td/th inline style if present (but preserve other styles)
+      table.querySelectorAll("td, th").forEach((cell) => {
+        cell.removeAttribute("width");
+        cell.removeAttribute("height");
+        if (cell.style) {
+          // only override problematic sizing styles
+          cell.style.maxWidth = "100%";
+          cell.style.overflowWrap = "anywhere";
+          cell.style.wordBreak = "break-word";
+        }
+      });
+    });
+  } catch (err) {
+    console.log("table sanitizer error:", err);
+  }
+});
+</script>
+
 <!--
 ANKIHUB_END
 Text below this comment will not be modified by AnkiHub or AnKing add-ons.
