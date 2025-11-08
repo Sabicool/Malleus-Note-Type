@@ -171,10 +171,25 @@
         background-color: #303446
     }
 
-    /* Night mode bold text inherits its context colour (same as light mode) */
+   /* Night mode bold text (normal fields) */
     .night_mode b,
     .nightMode b {
-        color:#c6a0f6;
+        color: #c6a0f6 !important;
+        font-weight: bold;
+    }
+
+    /* Keep table bolds white in night mode */
+    .night_mode table b,
+    .nightMode table b,
+    .night_mode table strong,
+    .nightMode table strong {
+        color: #ffffff !important;
+    }
+    
+    /* Keep cloze bolds their existing highlight colour */
+    .night_mode .cloze b,
+    .nightMode .cloze b {
+        color: #ffaa00 !important;
     }
 
     .night_mode a,
