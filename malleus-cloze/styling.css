@@ -523,25 +523,25 @@ ul li::before {
 .table-wrapper {
   width: 100%;
   max-width: 100%;
-  overflow-x: auto;                 /* Allows horizontal scroll only if needed */
-  -webkit-overflow-scrolling: touch;/* Smooth scrolling on mobile */
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   box-sizing: border-box;
 }
 
 /* General table style */
 table {
-  width: 100% !important;           /* Fill container width */
-  max-width: 100% !important;       /* Prevent overflow */
+  width: 100% !important;
+  max-width: 100% !important;
   margin: 1em auto;
   border-collapse: collapse;
-  table-layout: auto !important;    /* Let columns auto-size */
+  table-layout: auto !important;
   font-size: clamp(0.7rem, 1.2vw, 1rem);
   background-color: #ffffff;
   border: 1px solid black;
-  overflow-wrap: anywhere;
   word-break: break-word;
+  overflow-wrap: anywhere;
+  color: #000000 !important;
   box-sizing: border-box;
-  color: #000000 !important;        /* Force all table text to black */
 }
 
 /* Table cells and headers */
@@ -552,33 +552,77 @@ th, td {
   vertical-align: middle;
   font-style: normal;
   white-space: normal;
+  color: #000000 !important;
   overflow-wrap: anywhere;
   word-break: break-word;
-  color: #000000 !important;        /* Ensure all cell text is black */
 }
 
-/* Enforce text colour for bold and links inside tables */
-table b,
-table strong,
-table a {
+/* Normalize header styling */
+table thead,
+table thead tr,
+table th {
+  background-color: #eeeeee !important;
   color: #000000 !important;
-  font-weight: bold;
-  text-decoration: none;
-}
-
-/* Header styling */
-th {
-  background-color: #eeeeee;
-  font-weight: bold;
+  font-size: inherit !important;
+  font-weight: bold !important;
   text-decoration: underline;
+  line-height: 1.3;
+  vertical-align: middle;
 }
 
-/* Left/right column borders */
-td:first-child, th:first-child {
-  border-left: 1px solid black;
+/* Force all text inside tables to inherit the table colour */
+table * {
+  color: inherit !important;
 }
-td:last-child, th:last-child {
-  border-right: 1px solid black;
+
+/* Light mode: links in tables */
+table a {
+  color: #0645ad !important;
+  text-decoration: underline !important;
+}
+
+/* Images inside tables scale properly */
+table img {
+  max-width: 100% !important;
+  height: auto !important;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Night mode tables */
+.night_mode table,
+.nightMode table {
+  background-color: #26252b;
+  color: #ffffff !important;
+  border: 1px solid black;
+}
+
+/* Night mode headers */
+.night_mode table thead,
+.night_mode table thead tr,
+.night_mode table th,
+.nightMode table thead,
+.nightMode table thead tr,
+.nightMode table th {
+  background-color: #444444 !important;
+  color: #ffffff !important;
+  font-size: inherit !important;
+  font-weight: bold !important;
+  text-decoration: underline;
+  line-height: 1.3;
+}
+
+/* Night mode text override */
+.night_mode table *,
+.nightMode table * {
+  color: #ffffff !important;
+}
+
+/* Night mode links */
+.night_mode table a,
+.nightMode table a {
+  color: #5fa8ff !important;
+  text-decoration: underline !important;
 }
 
 /* Colspan rows */
@@ -590,108 +634,34 @@ td[colspan] {
   padding-top: 1vw;
   padding-bottom: 1vw;
 }
-
-/* Images inside tables scale properly */
-table img {
-  max-width: 100% !important;
-  height: auto !important;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+.night_mode td[colspan],
+.nightMode td[colspan] {
+  background-color: #26252b;
+  color: #ffffff !important;
 }
 
-/* Handle <col> and <colgroup> fixed widths from Excel exports */
+/* Left/right column borders */
+td:first-child, th:first-child {
+  border-left: 1px solid black;
+}
+td:last-child, th:last-child {
+  border-right: 1px solid black;
+}
+
+/* Handle <col> and <colgroup> widths */
 col, colgroup {
   width: auto !important;
   min-width: 0 !important;
 }
 
-/* ~~~~~~~~~ NIGHT MODE TABLES ~~~~~~~~~ */
-
-.night_mode table,
-.nightMode table {
-  color: #ffffff !important;           /* Force all table text to white */
-  background-color: #26252b;
-  border: 1px solid black;
-}
-
-.night_mode th,
-.nightMode th {
-  background-color: #444444;
-  color: #ffffff !important;           /* White header text */
-  font-weight: bold;
-  font-size: clamp(1rem, 2.2vw, 1.2rem);
-  text-decoration: underline;
-}
-
-/* Apply white text colour to all nested tags */
-.night_mode table b,
-.nightMode table b,
-.night_mode table strong,
-.nightMode table strong,
-.night_mode table a,
-.nightMode table a {
-  color: #ffffff !important;
-  font-weight: bold;
-  text-decoration: none;
-}
-
-/* Night mode colspan rows */
-.night_mode td[colspan],
-.nightMode td[colspan] {
-  background-color: #26252b;
-  color: #ffffff !important;
-  border-top: 1px solid black;
-  border-bottom: 1px solid black;
-}
-
-/* Night mode first/last column borders */
-.night_mode td:first-child,
-.nightMode td:first-child {
-  border-left: 1px solid black;
-}
-.night_mode td:last-child,
-.nightMode td:last-child {
-  border-right: 1px solid black;
-}
-
-/* Mobile/tablet adjustments */
+/* Mobile adjustments */
 @media (max-width: 600px) {
-  .table-wrapper {
-    overflow-x: auto;
-  }
-
   table {
     font-size: clamp(0.6rem, 2.5vw, 0.9rem);
   }
-
   th, td {
     padding: 0.3em;
   }
-}
-
-/* Force all text inside tables to inherit the table colour */
-table * {
-  color: inherit !important;
-}
-
-/* Light mode: links inside tables appear blue + underlined */
-table a {
-  color: #0645ad !important;
-  text-decoration: underline !important;
-}
-
-/* Night mode: ensure all table text is white except links */
-.night_mode table *,
-.nightMode table * {
-  color: #ffffff !important;
-}
-
-/* Night mode links: lighter blue for visibility */
-.night_mode table a,
-.nightMode table a {
-  color: #5fa8ff !important;
-  text-decoration: underline !important;
 }
 
 /* ~~~~~~Tag styling~~~~~~ */
