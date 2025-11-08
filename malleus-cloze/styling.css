@@ -503,42 +503,52 @@ ul li::before {
 
 /* ~~~~~~~~~TABLE STYLES~~~~~~~~~ */
 
-/* Table general styles */
+/* Responsive wrapper to prevent overflow on mobile */
+.table-wrapper {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;                 /* Allows horizontal scroll only if needed */
+  -webkit-overflow-scrolling: touch;/* Smooth scrolling on mobile */
+  box-sizing: border-box;
+}
+
+/* General table style */
 table {
-  width: 95%; /* Fill container */
-  margin-top: 1em;
-  margin-bottom: 1em;
-  margin-left: auto;
-  margin-right: auto;
+  width: 100% !important;           /* Fill container width */
+  max-width: 100% !important;       /* Prevent overflow */
+  margin: 1em auto;
   border-collapse: collapse;
-  table-layout: fixed; /* Columns scale proportionally */
-  font-size: clamp(0.7rem, 1.2vw, 1rem); /* Dynamic font scaling */
+  table-layout: auto !important;    /* Let columns auto-size */
+  font-size: clamp(0.7rem, 1.2vw, 1rem);
   color: #000000;
   background-color: #ffffff;
-  border: 1px solid black; /* Outer border */
+  border: 1px solid black;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  box-sizing: border-box;
 }
 
 /* Table cells and headers */
 th, td {
-  border: 1px solid black; /* All borders black */
-  padding: clamp(0.2rem, 1vw, 1rem); /* Dynamic padding */
-  text-align: center; /* Center text */
-  white-space: normal; /* Allow text to wrap to next line */
-  overflow-wrap: break-word; /* Break only between words */
-  word-break: normal; /* Do not break single words */
+  border: 1px solid black;
+  padding: clamp(0.2rem, 1vw, 1rem);
+  text-align: center;
   vertical-align: middle;
   font-style: normal;
-  color: #000000; /* Default text color */
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  color: #000000;
 }
 
-/* Table headers - default slightly larger, bold, underlined, black text */
+/* Header styling */
 th {
-  background-color: #eeeeee; /* Light grey header */
-  font-weight: bold; /* Bold by default, can override */
-  text-decoration: underline; /* Underline by default, can override */
+  background-color: #eeeeee;
+  font-weight: bold;
+  text-decoration: underline;
 }
 
-/* Left and right borders for first and last columns */
+/* Left/right column borders */
 td:first-child, th:first-child {
   border-left: 1px solid black;
 }
@@ -546,59 +556,82 @@ td:last-child, th:last-child {
   border-right: 1px solid black;
 }
 
-/* Colspan rows (normal border thickness and text color) */
+/* Colspan rows */
 td[colspan] {
   background-color: #ffffff;
-  color: #000000; /* Reset text color to default */
-  border-top: 1px solid black;  /* Normal thickness */
-  border-bottom: 1px solid black; /* Normal thickness */
+  color: #000000;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
   padding-top: 1vw;
   padding-bottom: 1vw;
 }
 
-/* Images inside table */
-td img {
-  max-width: 100%;
-  height: auto;
+/* Images inside tables scale properly */
+table img {
+  max-width: 100% !important;
+  height: auto !important;
   display: block;
   margin-left: auto;
   margin-right: auto;
 }
 
-/* Night mode table */
-.night_mode table, .nightMode table {
+/* Handle <col> and <colgroup> fixed widths from Excel exports */
+col, colgroup {
+  width: auto !important;
+  min-width: 0 !important;
+}
+
+/* Night mode table styling */
+.night_mode table,
+.nightMode table {
   color: #ffffff;
   background-color: #26252b;
   border: 1px solid black;
 }
 
-/* Night mode headers - keep black text */
-.night_mode th, .nightMode th {
+/* Night mode headers */
+.night_mode th,
+.nightMode th {
   background-color: #444444;
-  color: #000000; /* Always black text */
-  font-weight: bold; /* Bold by default */
-  font-size: clamp(1rem, 2.2vw, 1.2rem); /* Slightly larger */
-  text-decoration: underline; /* Underline by default */
+  color: #000000;
+  font-weight: bold;
+  font-size: clamp(1rem, 2.2vw, 1.2rem);
+  text-decoration: underline;
+}
+
+/* Night mode colspan rows */
+.night_mode td[colspan],
+.nightMode td[colspan] {
+  background-color: #26252b;
+  color: #ffffff;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
 }
 
 /* Night mode first/last column borders */
-.night_mode td:first-child, .nightMode td:first-child {
+.night_mode td:first-child,
+.nightMode td:first-child {
   border-left: 1px solid black;
 }
-
-.night_mode td:last-child, .nightMode td:last-child {
+.night_mode td:last-child,
+.nightMode td:last-child {
   border-right: 1px solid black;
 }
 
-/* Night mode colspan cells */
-.night_mode td[colspan], .nightMode td[colspan] {
-  background-color: #26252b; /* Match table background */
-  color: #ffffff; /* Regular text color */
-  border-top: 1px solid black; /* Normal thickness */
-  border-bottom: 1px solid black; /* Normal thickness */
+/* Mobile/tablet adjustments */
+@media (max-width: 600px) {
+  .table-wrapper {
+    overflow-x: auto;
+  }
+
+  table {
+    font-size: clamp(0.6rem, 2.5vw, 0.9rem);
+  }
+
+  th, td {
+    padding: 0.3em;
+  }
 }
-
-
 
 /* ~~~~~~Tag styling~~~~~~ */
 
