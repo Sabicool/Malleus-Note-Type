@@ -174,8 +174,7 @@
     /* Night mode bold text inherits its context colour (same as light mode) */
     .night_mode b,
     .nightMode b {
-        color: inherit;
-        font-weight: bold;
+        color:#c6a0f6;
     }
 
     .night_mode a,
