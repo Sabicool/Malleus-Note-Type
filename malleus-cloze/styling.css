@@ -522,12 +522,12 @@ table {
   border-collapse: collapse;
   table-layout: auto !important;    /* Let columns auto-size */
   font-size: clamp(0.7rem, 1.2vw, 1rem);
-  color: #000000;
   background-color: #ffffff;
   border: 1px solid black;
   overflow-wrap: anywhere;
   word-break: break-word;
   box-sizing: border-box;
+  color: #000000 !important;        /* Force all table text to black */
 }
 
 /* Table cells and headers */
@@ -540,7 +540,16 @@ th, td {
   white-space: normal;
   overflow-wrap: anywhere;
   word-break: break-word;
-  color: #000000;
+  color: #000000 !important;        /* Ensure all cell text is black */
+}
+
+/* Enforce text colour for bold and links inside tables */
+table b,
+table strong,
+table a {
+  color: #000000 !important;
+  font-weight: bold;
+  text-decoration: none;
 }
 
 /* Header styling */
@@ -583,29 +592,41 @@ col, colgroup {
   min-width: 0 !important;
 }
 
-/* Night mode table styling */
+/* ~~~~~~~~~ NIGHT MODE TABLES ~~~~~~~~~ */
+
 .night_mode table,
 .nightMode table {
-  color: #ffffff;
+  color: #ffffff !important;           /* Force all table text to white */
   background-color: #26252b;
   border: 1px solid black;
 }
 
-/* Night mode headers */
 .night_mode th,
 .nightMode th {
   background-color: #444444;
-  color: #000000;
+  color: #ffffff !important;           /* White header text */
   font-weight: bold;
   font-size: clamp(1rem, 2.2vw, 1.2rem);
   text-decoration: underline;
+}
+
+/* Apply white text colour to all nested tags */
+.night_mode table b,
+.nightMode table b,
+.night_mode table strong,
+.nightMode table strong,
+.night_mode table a,
+.nightMode table a {
+  color: #ffffff !important;
+  font-weight: bold;
+  text-decoration: none;
 }
 
 /* Night mode colspan rows */
 .night_mode td[colspan],
 .nightMode td[colspan] {
   background-color: #26252b;
-  color: #ffffff;
+  color: #ffffff !important;
   border-top: 1px solid black;
   border-bottom: 1px solid black;
 }
@@ -633,6 +654,30 @@ col, colgroup {
   th, td {
     padding: 0.3em;
   }
+}
+
+/* Force all text inside tables to inherit the table colour */
+table * {
+  color: inherit !important;
+}
+
+/* Light mode: links inside tables appear blue + underlined */
+table a {
+  color: #0645ad !important;
+  text-decoration: underline !important;
+}
+
+/* Night mode: ensure all table text is white except links */
+.night_mode table *,
+.nightMode table * {
+  color: #ffffff !important;
+}
+
+/* Night mode links: lighter blue for visibility */
+.night_mode table a,
+.nightMode table a {
+  color: #5fa8ff !important;
+  text-decoration: underline !important;
 }
 
 /* ~~~~~~Tag styling~~~~~~ */
