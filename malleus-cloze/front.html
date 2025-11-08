@@ -792,33 +792,47 @@ document.addEventListener("DOMContentLoaded", () => {
         wrapper.appendChild(table);
       }
 
-      // Remove width/height attributes from table
+      // Reset table sizing
       ["width", "height"].forEach(attr => table.removeAttribute(attr));
-      table.style.width = "100%";
-      table.style.maxWidth = "100%";
-      table.style.tableLayout = "auto";
+      Object.assign(table.style, {
+        width: "100%",
+        maxWidth: "100%",
+        tableLayout: "auto"
+      });
 
-      // Clean <col> and <colgroup>
-      table.querySelectorAll("col, colgroup").forEach(el => {
+      // Clean thead/tr/th/td/col/colgroup
+      table.querySelectorAll("thead, tr, th, td, col, colgroup").forEach(el => {
         el.removeAttribute("width");
-        el.style.width = "auto";
-        el.style.minWidth = "0";
+        el.removeAttribute("height");
+        Object.assign(el.style, {
+          width: "auto",
+          maxWidth: "100%",
+          minWidth: "0",
+          backgroundColor: "",
+          fontSize: "inherit",
+          color: "inherit",
+          whiteSpace: "normal",
+          wordBreak: "break-word",
+          overflowWrap: "anywhere"
+        });
       });
 
-      // Clean <th> and <td> inline sizing + text colour
-      table.querySelectorAll("th, td").forEach(cell => {
-        cell.removeAttribute("width");
-        cell.removeAttribute("height");
-        if (cell.style) {
-          cell.style.width = "auto";
-          cell.style.color = "inherit"; // inherit table colour
-          cell.style.backgroundColor = "inherit";
-        }
-      });
-
-      // Clean nested links, spans, italics, etc.
-      table.querySelectorAll("a, span, b, i, em, strong").forEach(el => {
+      // Clean nested text formatting
+      table.querySelectorAll("a, span, b, i, em, strong, div").forEach(el => {
         el.style.color = "inherit";
+        el.style.fontSize = "inherit";
+      });
+
+      // Fix images inside tables
+      table.querySelectorAll("img").forEach(img => {
+        img.removeAttribute("width");
+        img.removeAttribute("height");
+        Object.assign(img.style, {
+          maxWidth: "100%",
+          height: "auto",
+          display: "block",
+          margin: "0 auto"
+        });
       });
     });
   } catch (err) {
