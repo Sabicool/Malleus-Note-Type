@@ -664,8 +664,8 @@ col, colgroup {
   }
 }
 
-/* Ensure first row of any table is styled like a header if no <th> present */
-table tbody tr:first-child > td {
+/* Only style first row as header if table has no <thead> */
+table:not(:has(thead)) > tbody:first-of-type > tr:first-of-type > td {
   background-color: #eeeeee !important;
   color: #000000 !important;
   font-weight: bold !important;
@@ -673,8 +673,8 @@ table tbody tr:first-child > td {
 }
 
 /* Night mode equivalent */
-.night_mode table tbody tr:first-child > td,
-.nightMode table tbody tr:first-child > td {
+.night_mode table:not(:has(thead)) > tbody:first-of-type > tr:first-of-type > td,
+.nightMode table:not(:has(thead)) > tbody:first-of-type > tr:first-of-type > td {
   background-color: #444444 !important;
   color: #ffffff !important;
   font-weight: bold !important;
