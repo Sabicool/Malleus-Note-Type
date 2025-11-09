@@ -479,7 +479,7 @@ ul {
   list-style: none;             /* Remove browser bullets */
   margin-top: 0;
   margin-bottom: 0;
-  padding-left: 1.2em;          /* Space for custom dash */
+  padding-left: 0em;          /* Space for custom dash */
 }
 
 ul li {
