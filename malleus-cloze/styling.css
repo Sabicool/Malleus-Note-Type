@@ -664,6 +664,23 @@ col, colgroup {
   }
 }
 
+/* Ensure first row of any table is styled like a header if no <th> present */
+table tbody tr:first-child > td {
+  background-color: #eeeeee !important;
+  color: #000000 !important;
+  font-weight: bold !important;
+  text-decoration: underline;
+}
+
+/* Night mode equivalent */
+.night_mode table tbody tr:first-child > td,
+.nightMode table tbody tr:first-child > td {
+  background-color: #444444 !important;
+  color: #ffffff !important;
+  font-weight: bold !important;
+  text-decoration: underline;
+}
+
 /* ~~~~~~Tag styling~~~~~~ */
 
 /* Android tag fallback styling */
