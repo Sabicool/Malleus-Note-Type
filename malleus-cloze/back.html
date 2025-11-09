@@ -632,41 +632,6 @@
         processContent();
     </script>
 
-    <script>
-
-    function isElementInViewport(el) {
-        const rect = el.getBoundingClientRect();
-        return (
-            rect.left >= 0 &&
-            rect.right <= window.innerWidth &&
-            rect.bottom <= window.innerHeight &&
-            rect.top >= 0
-        );
-    }
-
-    setTimeout(() => {
-    clozes = document.querySelectorAll(".cloze")
-    lastCloze = clozes[clozes.length - 1]
-
-    const rect = lastCloze.getBoundingClientRect();
-    const buffer = window.innerHeight * 0.5; // require 50% out of view
-    const isFarBelow = rect.bottom - window.innerHeight > buffer;
-    const isFarAbove = rect.top < -buffer;
-
-    if (isFarBelow || isFarAbove) {
-
-        console.log("element not in viewport, scrolling")
-        lastCloze.scrollIntoView({
-                behavior: "smooth", // "auto" for instant scrolling
-                block: "center",
-                inline: "nearest"
-        });
-    }
-    }, 200)
-
-
-    </script>
-
 <!-- IMAGE BLUR -->
 <script>
     for (const image of document.querySelectorAll(".blur")) {
@@ -742,6 +707,43 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 </script>
+
+<!-- CONTENT SCROLL -->
+
+    <script>
+
+    function isElementInViewport(el) {
+        const rect = el.getBoundingClientRect();
+        return (
+            rect.left >= 0 &&
+            rect.right <= window.innerWidth &&
+            rect.bottom <= window.innerHeight &&
+            rect.top >= 0
+        );
+    }
+
+    setTimeout(() => {
+    clozes = document.querySelectorAll(".cloze")
+    lastCloze = clozes[clozes.length - 1]
+
+    const rect = lastCloze.getBoundingClientRect();
+    const buffer = window.innerHeight * 0.5; // require 50% out of view
+    const isFarBelow = rect.bottom - window.innerHeight > buffer;
+    const isFarAbove = rect.top < -buffer;
+
+    if (isFarBelow || isFarAbove) {
+
+        console.log("element not in viewport, scrolling")
+        lastCloze.scrollIntoView({
+                behavior: "smooth", // "auto" for instant scrolling
+                block: "center",
+                inline: "nearest"
+        });
+    }
+    }, 200)
+
+
+    </script>
 
 <!--
 ANKIHUB_END
