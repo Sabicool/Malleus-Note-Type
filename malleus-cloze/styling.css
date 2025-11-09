@@ -444,6 +444,55 @@ button{
     color: var(--fg);
 }
 
+/* ~~ Reduced font size of all non-cloze fields by 20% excluding source field ~~ */
+
+#Extra {
+    font-size: 0.8em;
+    line-height: 1.4;
+}
+
+#Missed-Questions {
+    font-size: 0.8em;
+    line-height: 1.4;
+}
+
+#Personal-Notes {
+    font-size: 0.8em;
+    line-height: 1.4;
+}
+
+#content-oxhbk {
+    font-size: 0.8em;
+    line-height: 1.4;
+}
+
+#content-amboss {
+    font-size: 0.8em;
+    line-height: 1.4;
+}
+
+#content-fa {
+    font-size: 0.8em;
+    line-height: 1.4;
+}
+
+#content-etg {
+    font-size: 0.8em;
+    line-height: 1.4;
+}
+
+#content-toc {
+    font-size: 0.8em;
+    line-height: 1.4;
+}
+
+#content-ar {
+    font-size: 0.8em;
+    line-height: 1.4;
+}
+
+/* ~~ Reduced font size of source field by 40% ~~ */
+
 #content-source {
     font-size: 0.6em;
     line-height: 1.4;
