@@ -642,20 +642,29 @@
     }
 </script>
 
-<!-- TABLE SANITISER -->
+<!-- TABLE SANITISER (id="noSanitise" exclusion) -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   try {
-    // Delay a bit to let EFDRC finish wrapping
     setTimeout(() => {
       document.querySelectorAll("table").forEach((table) => {
-        // Skip tables inside the main text/cloze field
+
+        // --- MANUAL EXCLUSION (use id="noSanitise") ---
+        if (table.id === "noSanitise" || table.getAttribute("id") === "noSanitise") {
+          // Skip any table explicitly marked by id (Anki preserves id attributes)
+          console.log("Table Sanitiser: skipping table with id=noSanitise");
+          return;
+        }
+
+        // --- Skip cloze/text content (existing behaviour) ---
         if (table.closest("#clozecontainer")) return;
 
-        // Add sanitised marker
+        // --- Already processed? ---
+        if (table.classList.contains("sanitised")) return;
+
+        // --- Apply sanitisation/wrapping ---
         table.classList.add("sanitised");
 
-        // Ensure table is wrapped properly
         if (!table.parentElement.classList.contains("table-wrapper")) {
           const wrapper = document.createElement("div");
           wrapper.className = "table-wrapper sanitised-wrapper";
@@ -663,17 +672,17 @@ document.addEventListener("DOMContentLoaded", () => {
           wrapper.appendChild(table);
         }
 
-        // Normalize dimensions
+        // Normalize attributes & inline styles the sanitiser sets
         table.removeAttribute("width");
         table.removeAttribute("height");
         Object.assign(table.style, {
           width: "100%",
           maxWidth: "100%",
-          tableLayout: "auto"
+          tableLayout: "auto",
         });
 
-        // Reset child element sizing & wrapping
-        table.querySelectorAll("tr, th, td, col, colgroup").forEach(el => {
+        // Normalise children (cells/cols)
+        table.querySelectorAll("tr, th, td, col, colgroup").forEach((el) => {
           el.removeAttribute("width");
           el.removeAttribute("height");
           el.style.minWidth = "0";
@@ -683,27 +692,27 @@ document.addEventListener("DOMContentLoaded", () => {
           el.style.overflowWrap = "anywhere";
         });
 
-        // Fix images
-        table.querySelectorAll("img").forEach(img => {
+        // Images inside tables
+        table.querySelectorAll("img").forEach((img) => {
           img.removeAttribute("width");
           img.removeAttribute("height");
           Object.assign(img.style, {
             maxWidth: "100%",
             height: "auto",
             display: "block",
-            margin: "0 auto"
+            margin: "0 auto",
           });
         });
 
-        // Reset nested inline color/font-size overrides
-        table.querySelectorAll("a, span, b, i, em, strong, div").forEach(el => {
+        // Reset nested inline colors/sizes to inherit table colors
+        table.querySelectorAll("a, span, b, i, em, strong, div").forEach((el) => {
           el.style.color = "inherit";
           el.style.fontSize = "inherit";
         });
       });
     }, 100);
   } catch (err) {
-    console.error("table sanitizer error:", err);
+    console.error("Table Sanitiser error:", err);
   }
 });
 </script>
