@@ -727,7 +727,7 @@ document.addEventListener("DOMContentLoaded", () => {
     lastCloze = clozes[clozes.length - 1]
 
     const rect = lastCloze.getBoundingClientRect();
-    const buffer = window.innerHeight * 0.5; // require 50% out of view
+    const buffer = window.innerHeight * 0.2; // require 20% out of view
     const isFarBelow = rect.bottom - window.innerHeight > buffer;
     const isFarAbove = rect.top < -buffer;
 
