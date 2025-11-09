@@ -783,58 +783,62 @@
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   try {
-    document.querySelectorAll("table").forEach((table) => {
-      // Wrap in .table-wrapper if not already
-      if (!table.parentElement.classList.contains("table-wrapper")) {
-        const wrapper = document.createElement("div");
-        wrapper.className = "table-wrapper";
-        table.parentNode.insertBefore(wrapper, table);
-        wrapper.appendChild(table);
-      }
+    // Delay a bit to let EFDRC finish wrapping
+    setTimeout(() => {
+      document.querySelectorAll("table").forEach((table) => {
+        // Skip tables inside the main text/cloze field
+        if (table.closest("#clozecontainer")) return;
 
-      // Reset table sizing
-      ["width", "height"].forEach(attr => table.removeAttribute(attr));
-      Object.assign(table.style, {
-        width: "100%",
-        maxWidth: "100%",
-        tableLayout: "auto"
-      });
+        // Add sanitised marker
+        table.classList.add("sanitised");
 
-      // Clean thead/tr/th/td/col/colgroup
-      table.querySelectorAll("thead, tr, th, td, col, colgroup").forEach(el => {
-        el.removeAttribute("width");
-        el.removeAttribute("height");
-        Object.assign(el.style, {
-          width: "auto",
+        // Ensure table is wrapped properly
+        if (!table.parentElement.classList.contains("table-wrapper")) {
+          const wrapper = document.createElement("div");
+          wrapper.className = "table-wrapper sanitised-wrapper";
+          table.parentNode.insertBefore(wrapper, table);
+          wrapper.appendChild(table);
+        }
+
+        // Normalize dimensions
+        table.removeAttribute("width");
+        table.removeAttribute("height");
+        Object.assign(table.style, {
+          width: "100%",
           maxWidth: "100%",
-          minWidth: "0",
-          backgroundColor: "",
-          fontSize: "inherit",
-          color: "inherit",
-          whiteSpace: "normal",
-          wordBreak: "break-word",
-          overflowWrap: "anywhere"
+          tableLayout: "auto"
+        });
+
+        // Reset child element sizing & wrapping
+        table.querySelectorAll("tr, th, td, col, colgroup").forEach(el => {
+          el.removeAttribute("width");
+          el.removeAttribute("height");
+          el.style.minWidth = "0";
+          el.style.maxWidth = "100%";
+          el.style.whiteSpace = "normal";
+          el.style.wordBreak = "break-word";
+          el.style.overflowWrap = "anywhere";
+        });
+
+        // Fix images
+        table.querySelectorAll("img").forEach(img => {
+          img.removeAttribute("width");
+          img.removeAttribute("height");
+          Object.assign(img.style, {
+            maxWidth: "100%",
+            height: "auto",
+            display: "block",
+            margin: "0 auto"
+          });
+        });
+
+        // Reset nested inline color/font-size overrides
+        table.querySelectorAll("a, span, b, i, em, strong, div").forEach(el => {
+          el.style.color = "inherit";
+          el.style.fontSize = "inherit";
         });
       });
-
-      // Clean nested text formatting
-      table.querySelectorAll("a, span, b, i, em, strong, div").forEach(el => {
-        el.style.color = "inherit";
-        el.style.fontSize = "inherit";
-      });
-
-      // Fix images inside tables
-      table.querySelectorAll("img").forEach(img => {
-        img.removeAttribute("width");
-        img.removeAttribute("height");
-        Object.assign(img.style, {
-          maxWidth: "100%",
-          height: "auto",
-          display: "block",
-          margin: "0 auto"
-        });
-      });
-    });
+    }, 100);
   } catch (err) {
     console.error("table sanitizer error:", err);
   }
