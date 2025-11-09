@@ -794,16 +794,66 @@ table.sanitised col, table.sanitised colgroup {
   text-decoration: underline;
 }
 
-/* 🚫 Exclude manually marked tables from any forced formatting */
-table.no-sanitise,
-table[data-nosanitize],
-#no-sanitise {
-  all: unset !important;              /* removes inherited CSS rules */
-  display: table !important;          /* restores table display */
-  border-collapse: collapse;          /* safe defaults */
-  width: auto !important;             /* prevents full-width override */
+/* ───── Protect tables explicitly marked with id="noSanitise" ───── */
+/* This block must come after the existing table rules. */
+
+table#noSanitise,
+#Extra table#noSanitise,
+#Missed-Questions table#noSanitise,
+#Personal-Notes table#noSanitise,
+.ExtraResourceContent table#noSanitise,
+#content-oxhbk table#noSanitise,
+#content-amboss table#noSanitise,
+#content-fa table#noSanitise,
+#content-etg table#noSanitise,
+#content-toc table#noSanitise,
+#content-ar table#noSanitise,
+#content-source table#noSanitise {
+  /* Revert to author/inline styles where possible and make highly specific */
+  all: revert !important;
+  border-collapse: collapse !important;
+  width: auto !important;
   max-width: none !important;
-  background: none !important;
+  background: transparent !important;
+  color: inherit !important;
+  padding: initial !important;
+  margin: initial !important;
+  table-layout: auto !important;
+}
+
+/* Also protect header-first-row styling that targets first-child rows */
+#Extra table#noSanitise tr:first-child td,
+#Extra table#noSanitise tr:first-child th,
+#Missed-Questions table#noSanitise tr:first-child td,
+#Personal-Notes table#noSanitise tr:first-child td,
+.ExtraResourceContent table#noSanitise tr:first-child td,
+#content-source table#noSanitise tr:first-child td,
+#Extra table#noSanitise tr:first-child th,
+#Missed-Questions table#noSanitise tr:first-child th,
+#Personal-Notes table#noSanitise tr:first-child th,
+.ExtraResourceContent table#noSanitise tr:first-child th,
+#content-source table#noSanitise tr:first-child th {
+  background: transparent !important;
+  font-weight: normal !important;
+  text-decoration: none !important;
+  color: inherit !important;
+}
+
+/* Night mode counterpart */
+.night_mode table#noSanitise,
+.nightMode table#noSanitise,
+.night_mode #Extra table#noSanitise,
+.nightMode #Extra table#noSanitise,
+.night_mode #Missed-Questions table#noSanitise,
+.nightMode #Missed-Questions table#noSanitise,
+.night_mode #Personal-Notes table#noSanitise,
+.nightMode #Personal-Notes table#noSanitise,
+.night_mode .ExtraResourceContent table#noSanitise,
+.nightMode .ExtraResourceContent table#noSanitise,
+.night_mode #content-source table#noSanitise,
+.nightMode #content-source table#noSanitise {
+  all: revert !important;
+  background: transparent !important;
   color: inherit !important;
 }
 
