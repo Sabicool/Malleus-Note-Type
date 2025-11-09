@@ -584,7 +584,7 @@ table {
   margin: 1em auto;
   border-collapse: collapse;
   table-layout: auto !important;
-  font-size: clamp(0.7rem, 1.2vw, 1rem);
+  font-size: clamp(0.7rem, 1.2vw, 0.8rem);
   background-color: #ffffff;
   border: 1px solid black;
   word-break: break-word;
