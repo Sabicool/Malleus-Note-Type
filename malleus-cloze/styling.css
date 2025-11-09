@@ -730,6 +730,83 @@ table:not(:has(thead)) > tbody:first-of-type > tr:first-of-type > td {
   text-decoration: underline;
 }
 
+/* ✅ Apply all table formatting to all non-cloze fields explicitly */
+#Extra table,
+#Missed-Questions table,
+#Personal-Notes table,
+.ExtraResourceContent table,
+#content-source table {
+  width: 100% !important;
+  max-width: 100% !important;
+  border-collapse: collapse;
+  margin: 1em auto;
+  border: 1px solid black;
+  background-color: #ffffff;
+  color: #000000;
+  table-layout: auto;
+}
+
+/* ✅ Header styling (applies to first row if no <thead>) */
+#Extra table tr:first-child td,
+#Extra table tr:first-child th,
+#Missed-Questions table tr:first-child td,
+#Personal-Notes table tr:first-child td,
+.ExtraResourceContent table tr:first-child td,
+#content-source table tr:first-child td,
+#Extra table tr:first-child th,
+#Missed-Questions table tr:first-child th,
+#Personal-Notes table tr:first-child th,
+.ExtraResourceContent table tr:first-child th,
+#content-source table tr:first-child th {
+  background-color: #eeeeee !important;
+  font-weight: bold !important;
+  text-decoration: underline;
+  color: #000000 !important;
+}
+
+/* ✅ Night mode variants */
+.nightMode #Extra table,
+.night_mode #Extra table,
+.nightMode #Missed-Questions table,
+.night_mode #Missed-Questions table,
+.nightMode #Personal-Notes table,
+.night_mode #Personal-Notes table,
+.nightMode .ExtraResourceContent table,
+.night_mode .ExtraResourceContent table,
+.nightMode #content-source table,
+.night_mode #content-source table {
+  background-color: #26252b !important;
+  color: #ffffff !important;
+  border-color: #ffffff !important;
+}
+
+.nightMode #Extra table tr:first-child td,
+.night_mode #Extra table tr:first-child td,
+.nightMode #Missed-Questions table tr:first-child td,
+.night_mode #Missed-Questions table tr:first-child td,
+.nightMode #Personal-Notes table tr:first-child td,
+.night_mode #Personal-Notes table tr:first-child td,
+.nightMode .ExtraResourceContent table tr:first-child td,
+.night_mode .ExtraResourceContent table tr:first-child td,
+.nightMode #content-source table tr:first-child td,
+.night_mode #content-source table tr:first-child td,
+.nightMode #Extra table tr:first-child th,
+.night_mode #Extra table tr:first-child th,
+.nightMode #Missed-Questions table tr:first-child th,
+.night_mode #Missed-Questions table tr:first-child th,
+.nightMode #Personal-Notes table tr:first-child th,
+.night_mode #Personal-Notes table tr:first-child th,
+.nightMode .ExtraResourceContent table tr:first-child th,
+.night_mode .ExtraResourceContent table tr:first-child th,
+.nightMode #content-source table tr:first-child th,
+.night_mode #content-source table tr:first-child th {
+  background-color: #444444 !important;
+  color: #ffffff !important;
+  font-weight: bold !important;
+  text-decoration: underline;
+}
+
+
 /* ~~~~~~Tag styling~~~~~~ */
 
 /* Android tag fallback styling */
