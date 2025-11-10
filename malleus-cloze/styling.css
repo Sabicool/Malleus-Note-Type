@@ -698,6 +698,12 @@ table.sanitised col {
   min-width: 6ch;
 }
 
+/* --- Vertically center text in table cells --- */
+table.sanitised td,
+table.sanitised th {
+  vertical-align: middle !important;
+}
+
 /*
 ANKIHUB_END
 Text below this comment will not be modified by AnkiHub or AnKing add-ons.
