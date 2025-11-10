@@ -781,77 +781,113 @@
 
 <!-- TABLE SANITISER (id="noSanitise" exclusion) -->
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  try {
-    setTimeout(() => {
-      document.querySelectorAll("table").forEach((table) => {
+(function(){
+  function sanitiseTables() {
+    const tables = Array.from(document.querySelectorAll("table"));
+    tables.forEach(tbl => {
+      // --- Skip exclusions ---
+      if (
+        tbl.id === "noSanitise" ||
+        tbl.classList.contains("noSanitise") ||
+        tbl.dataset.noSanitise !== undefined ||
+        tbl.querySelector(".cloze")
+      ) return;
 
-        // --- MANUAL EXCLUSION (use id="noSanitise") ---
-        if (table.id === "noSanitise" || table.getAttribute("id") === "noSanitise") {
-          // Skip any table explicitly marked by id (Anki preserves id attributes)
-          console.log("Table Sanitiser: skipping table with id=noSanitise");
-          return;
-        }
-
-        // --- Skip cloze/text content (existing behaviour) ---
-        if (table.closest("#clozecontainer")) return;
-
-        // --- Already processed? ---
-        if (table.classList.contains("sanitised")) return;
-
-        // --- Apply sanitisation/wrapping ---
-        table.classList.add("sanitised");
-
-        if (!table.parentElement.classList.contains("table-wrapper")) {
-          const wrapper = document.createElement("div");
-          wrapper.className = "table-wrapper sanitised-wrapper";
-          table.parentNode.insertBefore(wrapper, table);
-          wrapper.appendChild(table);
-        }
-
-        // Normalize attributes & inline styles the sanitiser sets
-        table.removeAttribute("width");
-        table.removeAttribute("height");
-        Object.assign(table.style, {
-          width: "100%",
-          maxWidth: "100%",
-          tableLayout: "auto",
-        });
-
-        // Normalise children (cells/cols)
-        table.querySelectorAll("tr, th, td, col, colgroup").forEach((el) => {
-          el.removeAttribute("width");
-          el.removeAttribute("height");
-          el.style.minWidth = "0";
-          el.style.maxWidth = "100%";
-          el.style.whiteSpace = "normal";
-          el.style.wordBreak = "break-word";
-          el.style.overflowWrap = "anywhere";
-        });
-
-        // Images inside tables
-        table.querySelectorAll("img").forEach((img) => {
-          img.removeAttribute("width");
-          img.removeAttribute("height");
-          Object.assign(img.style, {
-            maxWidth: "100%",
-            height: "auto",
-            display: "block",
-            margin: "0 auto",
-          });
-        });
-
-        // Reset nested inline colors/sizes to inherit table colors
-        table.querySelectorAll("a, span, b, i, em, strong, div").forEach((el) => {
-          el.style.color = "inherit";
-          el.style.fontSize = "inherit";
-        });
+      // --- Remove inline and legacy attributes ---
+      const removeAttrs = ["style","width","height","border","cellpadding","cellspacing","bgcolor","align","valign"];
+      [tbl, ...tbl.querySelectorAll("*")].forEach(el => {
+        removeAttrs.forEach(a => { try { el.removeAttribute(a); } catch(e){} });
       });
-    }, 100);
-  } catch (err) {
-    console.error("Table Sanitiser error:", err);
+
+      // --- Wrap table for mobile responsiveness ---
+      if (!tbl.parentElement || !tbl.parentElement.classList.contains("sanitised-wrapper")) {
+        const wrap = document.createElement("div");
+        wrap.className = "table-wrapper sanitised-wrapper";
+        tbl.parentNode.insertBefore(wrap, tbl);
+        wrap.appendChild(tbl);
+      }
+
+      // --- Add base class ---
+      tbl.classList.add("sanitised");
+
+      // --- Detect if table has THEAD (robust + case-insensitive) ---
+      const hasHead = Array.from(tbl.children).some(
+        el => el.tagName && el.tagName.toLowerCase() === "thead"
+      );
+      if (hasHead) {
+        tbl.classList.add("has-thead");
+      } else {
+        tbl.classList.remove("has-thead");
+      }
+
+      // --- Clear any old header markings ---
+      Array.from(tbl.querySelectorAll("tr")).forEach(r => r.classList.remove("sanitised-header"));
+
+      // --- Determine the true header row ---
+      let headerRow = tbl.querySelector("thead > tr") ||
+                      tbl.querySelector("tbody > tr") ||
+                      tbl.querySelector("tr");
+      if (headerRow) {
+        headerRow.classList.add("sanitised-header");
+
+        // Convert TDs in header row to THs (semantic, optional)
+        Array.from(headerRow.children).forEach(cell => {
+          if (!cell) return;
+          try {
+            if (cell.tagName && cell.tagName.toLowerCase() === "td") {
+              const th = document.createElement("th");
+              while (cell.firstChild) th.appendChild(cell.firstChild);
+              th.className = cell.className || "";
+              cell.parentNode.replaceChild(th, cell);
+            }
+            if (cell.removeAttribute) cell.removeAttribute("style");
+          } catch(e){}
+        });
+      }
+
+      // --- Force-clear header background on 1st tbody row if table has THEAD ---
+      if (tbl.classList.contains("has-thead")) {
+        const firstTbodyRow = tbl.querySelector("tbody > tr");
+        if (firstTbodyRow && !firstTbodyRow.classList.contains("sanitised-header")) {
+          Array.from(firstTbodyRow.children).forEach(cell => {
+            try {
+              cell.style.setProperty("background-color", "transparent", "important");
+              cell.style.setProperty("font-weight", "normal", "important");
+              cell.style.setProperty("text-decoration", "none", "important");
+            } catch(e){}
+          });
+        }
+      }
+
+      // --- General cell cleanups ---
+      Array.from(tbl.querySelectorAll("td, th")).forEach(cell => {
+        try {
+          cell.style.boxSizing = "border-box";
+        } catch(e){}
+      });
+
+      // --- Accessibility role ---
+      if (!tbl.hasAttribute("role")) tbl.setAttribute("role", "table");
+    });
   }
-});
+
+  // --- Run after DOM ready and attach to Anki's update hook ---
+  function onReady(fn){
+    if (document.readyState === "complete" || document.readyState === "interactive") {
+      setTimeout(fn, 1);
+    } else {
+      document.addEventListener("DOMContentLoaded", fn);
+    }
+  }
+
+  onReady(sanitiseTables);
+  if (typeof onUpdateHook !== "undefined" && Array.isArray(onUpdateHook)) {
+    onUpdateHook.push(sanitiseTables);
+  }
+
+  // re-run shortly after load for late-rendered content (safety for AnkiMobile)
+  setTimeout(sanitiseTables, 150);
+})();
 </script>
 
 <!--
