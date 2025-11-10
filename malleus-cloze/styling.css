@@ -702,6 +702,23 @@ table.sanitised th[style*="text-align: justify"] {
   text-align: justify !important;
 }
 
+table.sanitised th[colspan],
+table.sanitised td[colspan] {
+  text-align: center !important;
+  width: auto !important;
+  max-width: none !important;
+  white-space: normal !important;
+}
+
+table.sanitised tr.sanitised-header + tr.sanitised-header th,
+table.sanitised tr.sanitised-header + tr.sanitised-header td {
+  border-top: none !important;
+}
+
+table.sanitised col {
+  min-width: 6ch;
+}
+
 /*
 ANKIHUB_END
 Text below this comment will not be modified by AnkiHub or AnKing add-ons.
