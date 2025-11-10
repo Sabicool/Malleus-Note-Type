@@ -681,6 +681,27 @@ table.sanitised th.no-border {
   }
 }
 
+/* --- Preserve user-set cell alignment --- */
+table.sanitised td[style*="text-align"],
+table.sanitised th[style*="text-align"] {
+  text-align: inherit !important;
+}
+
+table.sanitised td[style*="text-align: center"],
+table.sanitised th[style*="text-align: center"] {
+  text-align: center !important;
+}
+
+table.sanitised td[style*="text-align: right"],
+table.sanitised th[style*="text-align: right"] {
+  text-align: right !important;
+}
+
+table.sanitised td[style*="text-align: justify"],
+table.sanitised th[style*="text-align: justify"] {
+  text-align: justify !important;
+}
+
 /*
 ANKIHUB_END
 Text below this comment will not be modified by AnkiHub or AnKing add-ons.
