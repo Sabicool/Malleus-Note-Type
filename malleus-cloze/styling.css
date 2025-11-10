@@ -704,6 +704,44 @@ table.sanitised th {
   vertical-align: middle !important;
 }
 
+/* ──────────────────────────────────────────────
+   ✅ Bullet indentation fixes
+   Handles both inside and outside table lists
+   ────────────────────────────────────────────── */
+
+/* --- 1️⃣ Lists OUTSIDE of tables --- */
+:not(table) ul,
+:not(table) ol {
+  margin-left: 1.5em;          /* classic indent */
+  padding-left: 1.5em;
+  list-style-position: outside;
+}
+
+:not(table) li {
+  margin-top: 0.25em;
+  margin-bottom: 0.25em;
+}
+
+/* --- 2️⃣ Lists INSIDE sanitised tables --- */
+table.sanitised ul,
+table.sanitised ol {
+  margin-left: 1.25em;
+  padding-left: 1.25em;
+  list-style-position: outside; /* keep bullet indent */
+}
+
+table.sanitised li {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+  line-height: 1.4;
+}
+
+/* Optional polish for nested bullets (sub-levels slightly indented more) */
+table.sanitised ul ul,
+:not(table) ul ul {
+  margin-left: 1.25em;
+}
+
 /*
 ANKIHUB_END
 Text below this comment will not be modified by AnkiHub or AnKing add-ons.
