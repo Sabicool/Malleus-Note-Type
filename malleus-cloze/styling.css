@@ -566,295 +566,119 @@ ul li::before {
   }
 }
 
-/* ~~~~~~~~~TABLE STYLES~~~~~~~~~ */
+/* ~~~~~~~~~ Standardised Table Sanitiser Styling ~~~~~~~~~ */
 
-/* Responsive wrapper for sanitized tables */
-.table-wrapper.sanitised-wrapper {
+/* Root variables for both light and dark modes */
+:root {
+  --table-border: rgba(0, 0, 0, 0.15);
+  --table-bg: rgba(0, 0, 0, 0.02);
+  --header-bg: rgba(0, 0, 0, 0.08);
+  --header-text: inherit;
+  --table-text: inherit;
+  --cell-padding: 0.45em;
+  --corner-radius: 6px;
+  --font-size: inherit;
+}
+
+body.night-mode, .night-mode {
+  --table-border: rgba(255, 255, 255, 0.15);
+  --table-bg: rgba(255, 255, 255, 0.03);
+  --header-bg: rgba(255, 255, 255, 0.08);
+  --table-text: #fff;
+  --header-text: #fff;
+}
+
+/* Wrapper for responsiveness */
+.table-wrapper,
+.sanitised-wrapper {
   width: 100%;
   max-width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  box-sizing: border-box;
+  border-radius: var(--corner-radius);
+  margin: 0.5em 0;
+  background: transparent;
 }
 
-/* Base table styling applied only to tables the JS marked as sanitized */
+/* Base sanitised table */
 table.sanitised {
   width: 100% !important;
-  max-width: 100% !important;
-  margin: 1em auto;
-  border-collapse: collapse;
-  table-layout: auto !important;
-  font-size: clamp(0.7rem, 1.2vw, 1rem);
-  background-color: #ffffff;
-  border: 1px solid black;
-  word-break: break-word;
-  overflow-wrap: anywhere;
-  color: #000000 !important;
+  max-width: 100%;
+  border-collapse: collapse !important;
+  border-spacing: 0 !important;
+  table-layout: auto !important; /* <-- adaptive layout */
+  background: var(--table-bg);
+  font-size: var(--font-size);
+  color: var(--table-text);
+  border: 1px solid var(--table-border);
   box-sizing: border-box;
 }
 
-/* Cells and headers */
-table.sanitised th,
-table.sanitised td {
-  border: 1px solid black;
-  padding: clamp(0.2rem, 1vw, 1rem);
-  text-align: center;
-  vertical-align: middle;
-  font-style: normal;
-  white-space: normal;
-  color: #000000 !important;
-  overflow-wrap: anywhere;
-  word-break: break-word;
-}
-
-/* Header row styling (preferred: <thead> / <th>) */
-table.sanitised thead,
-table.sanitised thead tr,
+/* Responsive columns */
+table.sanitised td,
 table.sanitised th {
-  background-color: #eeeeee !important;
-  color: #000000 !important;
-  font-size: inherit !important;
+  min-width: 6ch;    /* prevents too-narrow squeeze */
+  max-width: 40ch;   /* prevents one column from dominating */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal !important;
+}
+
+/* Generic cell styles */
+table.sanitised td,
+table.sanitised th {
+  padding: var(--cell-padding) !important;
+  border: 1px solid var(--table-border) !important;
+  text-align: left !important;
+  vertical-align: top !important;
+  box-sizing: border-box;
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  hyphens: auto;
+  color: var(--table-text) !important;
+  font-weight: normal !important; /* reset all cells to normal by default */
+  background: transparent !important;
+}
+
+/* Apply to first/header row only */
+table.sanitised tr.sanitised-header th,
+table.sanitised tr.sanitised-header td {
+  background: var(--header-bg) !important;
+  color: var(--header-text) !important;
   font-weight: bold !important;
-  text-decoration: underline;
-  line-height: 1.3;
-  vertical-align: middle;
-}
-
-/* Fallback: if table has no thead/th, style first row of first tbody */
-table.sanitised > tbody:first-of-type > tr:first-of-type > td {
-  background-color: #eeeeee !important;
-  color: #000000 !important;
-  font-weight: bold !important;
-  text-decoration: underline;
-}
-
-/* Force all text inside sanitized tables to inherit table colour */
-table.sanitised * {
-  color: inherit !important;
-}
-
-/* Links inside sanitized tables */
-table.sanitised a {
-  color: #0645ad !important;
   text-decoration: underline !important;
 }
 
-/* Images inside sanitized tables */
-table.sanitised img {
-  max-width: 100% !important;
-  height: auto !important;
-  display: block;
-  margin: 0 auto;
-}
-
-/* Night mode variants (only for sanitized tables) */
-.night_mode table.sanitised,
-.nightMode table.sanitised {
-  background-color: #26252b;
-  color: #ffffff !important;
-  border: 1px solid black;
-}
-
-.night_mode table.sanitised thead,
-.night_mode table.sanitised thead tr,
-.night_mode table.sanitised th,
-.nightMode table.sanitised thead,
-.nightMode table.sanitised thead tr,
-.nightMode table.sanitised th {
-  background-color: #444444 !important;
-  color: #ffffff !important;
-  font-size: inherit !important;
-  font-weight: bold !important;
-  text-decoration: underline;
-  line-height: 1.3;
-}
-
-/* Night mode fallback first row */
-.night_mode table.sanitised > tbody:first-of-type > tr:first-of-type > td,
-.nightMode table.sanitised > tbody:first-of-type > tr:first-of-type > td {
-  background-color: #444444 !important;
-  color: #ffffff !important;
-  font-weight: bold !important;
-  text-decoration: underline;
-}
-
-/* Colspan rows (sanitised) */
-table.sanitised td[colspan] {
-  background-color: #ffffff;
-  color: #000000;
-  border-top: 1px solid black;
-  border-bottom: 1px solid black;
-  padding-top: 1vw;
-  padding-bottom: 1vw;
-}
-.night_mode table.sanitised td[colspan],
-.nightMode table.sanitised td[colspan] {
-  background-color: #26252b;
-  color: #ffffff !important;
-}
-
-/* Left/right column borders */
-table.sanitised td:first-child, table.sanitised th:first-child {
-  border-left: 1px solid black;
-}
-table.sanitised td:last-child, table.sanitised th:last-child {
-  border-right: 1px solid black;
-}
-
-/* Handle <col> and <colgroup> widths for sanitized tables */
-table.sanitised col, table.sanitised colgroup {
-  width: auto !important;
-  min-width: 0 !important;
-}
-
-/* Mobile adjustments */
-@media (max-width: 600px) {
-  table.sanitised {
-    font-size: clamp(0.6rem, 2.5vw, 0.9rem);
-  }
-  table.sanitised th,
-  table.sanitised td {
-    padding: 0.3em;
-  }
-}
-
-/* ✅ Apply all table formatting to all non-cloze fields explicitly */
-#Extra table,
-#Missed-Questions table,
-#Personal-Notes table,
-.ExtraResourceContent table,
-#content-source table {
-  width: 100% !important;
-  max-width: 100% !important;
-  border-collapse: collapse;
-  margin: 1em auto;
-  border: 1px solid black;
-  background-color: #ffffff;
-  color: #000000;
-  table-layout: auto;
-}
-
-/* ✅ Header styling (applies to first row if no <thead>) */
-#Extra table tr:first-child td,
-#Extra table tr:first-child th,
-#Missed-Questions table tr:first-child td,
-#Personal-Notes table tr:first-child td,
-.ExtraResourceContent table tr:first-child td,
-#content-source table tr:first-child td,
-#Extra table tr:first-child th,
-#Missed-Questions table tr:first-child th,
-#Personal-Notes table tr:first-child th,
-.ExtraResourceContent table tr:first-child th,
-#content-source table tr:first-child th {
-  background-color: #eeeeee !important;
-  font-weight: bold !important;
-  text-decoration: underline;
-  color: #000000 !important;
-}
-
-/* ✅ Night mode variants */
-.nightMode #Extra table,
-.night_mode #Extra table,
-.nightMode #Missed-Questions table,
-.night_mode #Missed-Questions table,
-.nightMode #Personal-Notes table,
-.night_mode #Personal-Notes table,
-.nightMode .ExtraResourceContent table,
-.night_mode .ExtraResourceContent table,
-.nightMode #content-source table,
-.night_mode #content-source table {
-  background-color: #26252b !important;
-  color: #ffffff !important;
-  border-color: #ffffff !important;
-}
-
-.nightMode #Extra table tr:first-child td,
-.night_mode #Extra table tr:first-child td,
-.nightMode #Missed-Questions table tr:first-child td,
-.night_mode #Missed-Questions table tr:first-child td,
-.nightMode #Personal-Notes table tr:first-child td,
-.night_mode #Personal-Notes table tr:first-child td,
-.nightMode .ExtraResourceContent table tr:first-child td,
-.night_mode .ExtraResourceContent table tr:first-child td,
-.nightMode #content-source table tr:first-child td,
-.night_mode #content-source table tr:first-child td,
-.nightMode #Extra table tr:first-child th,
-.night_mode #Extra table tr:first-child th,
-.nightMode #Missed-Questions table tr:first-child th,
-.night_mode #Missed-Questions table tr:first-child th,
-.nightMode #Personal-Notes table tr:first-child th,
-.night_mode #Personal-Notes table tr:first-child th,
-.nightMode .ExtraResourceContent table tr:first-child th,
-.night_mode .ExtraResourceContent table tr:first-child th,
-.nightMode #content-source table tr:first-child th,
-.night_mode #content-source table tr:first-child th {
-  background-color: #444444 !important;
-  color: #ffffff !important;
-  font-weight: bold !important;
-  text-decoration: underline;
-}
-
-/* ───── Protect tables explicitly marked with id="noSanitise" ───── */
-/* This block must come after the existing table rules. */
-
-table#noSanitise,
-#Extra table#noSanitise,
-#Missed-Questions table#noSanitise,
-#Personal-Notes table#noSanitise,
-.ExtraResourceContent table#noSanitise,
-#content-oxhbk table#noSanitise,
-#content-amboss table#noSanitise,
-#content-fa table#noSanitise,
-#content-etg table#noSanitise,
-#content-toc table#noSanitise,
-#content-ar table#noSanitise,
-#content-source table#noSanitise {
-  /* Revert to author/inline styles where possible and make highly specific */
-  all: revert !important;
-  border-collapse: collapse !important;
-  width: auto !important;
-  max-width: none !important;
+/* Explicitly reset all non-header rows (esp. first column) */
+table.sanitised tr:not(.sanitised-header) th,
+table.sanitised tr:not(.sanitised-header) td {
   background: transparent !important;
-  color: inherit !important;
-  padding: initial !important;
-  margin: initial !important;
-  table-layout: auto !important;
-}
-
-/* Also protect header-first-row styling that targets first-child rows */
-#Extra table#noSanitise tr:first-child td,
-#Extra table#noSanitise tr:first-child th,
-#Missed-Questions table#noSanitise tr:first-child td,
-#Personal-Notes table#noSanitise tr:first-child td,
-.ExtraResourceContent table#noSanitise tr:first-child td,
-#content-source table#noSanitise tr:first-child td,
-#Extra table#noSanitise tr:first-child th,
-#Missed-Questions table#noSanitise tr:first-child th,
-#Personal-Notes table#noSanitise tr:first-child th,
-.ExtraResourceContent table#noSanitise tr:first-child th,
-#content-source table#noSanitise tr:first-child th {
-  background: transparent !important;
+  color: var(--table-text) !important;
   font-weight: normal !important;
   text-decoration: none !important;
-  color: inherit !important;
 }
 
-/* Night mode counterpart */
-.night_mode table#noSanitise,
-.nightMode table#noSanitise,
-.night_mode #Extra table#noSanitise,
-.nightMode #Extra table#noSanitise,
-.night_mode #Missed-Questions table#noSanitise,
-.nightMode #Missed-Questions table#noSanitise,
-.night_mode #Personal-Notes table#noSanitise,
-.nightMode #Personal-Notes table#noSanitise,
-.night_mode .ExtraResourceContent table#noSanitise,
-.nightMode .ExtraResourceContent table#noSanitise,
-.night_mode #content-source table#noSanitise,
-.nightMode #content-source table#noSanitise {
-  all: revert !important;
-  background: transparent !important;
-  color: inherit !important;
+/* Prevent first column from inheriting header formatting */
+table.sanitised tr:not(.sanitised-header) td:first-child,
+table.sanitised tr:not(.sanitised-header) th:first-child {
+  font-weight: normal !important;
+  color: var(--table-text) !important;
+}
+
+/* Borders and spacing */
+table.sanitised td.no-border,
+table.sanitised th.no-border {
+  border: none !important;
+}
+
+/* Smaller padding on tiny screens */
+@media (max-width: 420px) {
+  table.sanitised td,
+  table.sanitised th {
+    padding: calc(var(--cell-padding) * 0.75) !important;
+    font-size: 0.95em;
+  }
 }
 
 /*
