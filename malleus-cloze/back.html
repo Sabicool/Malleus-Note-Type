@@ -726,12 +726,19 @@
       // --- Force-clear header background on 1st tbody row if table has THEAD ---
       if (tbl.classList.contains("has-thead")) {
         const firstTbodyRow = tbl.querySelector("tbody > tr");
-        if (firstTbodyRow && !firstTbodyRow.classList.contains("sanitised-header")) {
-          Array.from(firstTbodyRow.children).forEach(cell => {
-            try {
-              cell.style.setProperty("background-color", "transparent", "important");
-              cell.style.setProperty("font-weight", "normal", "important");
-              cell.style.setProperty("text-decoration", "none", "important");
+if (cell.tagName && cell.tagName.toLowerCase() === "td") {
+  const th = document.createElement("th");
+  while (cell.firstChild) th.appendChild(cell.firstChild);
+  th.className = cell.className || "";
+
+  // ✅ Preserve important structural + alignment attributes
+  if (cell.hasAttribute("colspan")) th.setAttribute("colspan", cell.getAttribute("colspan"));
+  if (cell.hasAttribute("rowspan")) th.setAttribute("rowspan", cell.getAttribute("rowspan"));
+  if (cell.hasAttribute("align")) th.setAttribute("align", cell.getAttribute("align"));
+  if (cell.style.textAlign) th.style.textAlign = cell.style.textAlign;
+
+  cell.parentNode.replaceChild(th, cell);
+}
             } catch(e){}
           });
         }
