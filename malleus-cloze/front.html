@@ -779,13 +779,13 @@
     }
 </script>
 
-<!-- TABLE SANITISER (id="noSanitise" exclusion) -->
+<!-- TABLE SANITISER (id="noSanitise" exclusion, preserves text alignment) -->
 <script>
 (function(){
   function sanitiseTables() {
     const tables = Array.from(document.querySelectorAll("table"));
     tables.forEach(tbl => {
-      // --- Skip cloze or opt-out tables ---
+      // --- Skip exclusions ---
       if (
         tbl.id === "noSanitise" ||
         tbl.classList.contains("noSanitise") ||
@@ -793,18 +793,32 @@
         tbl.querySelector(".cloze")
       ) return;
 
-      // --- Remove legacy attributes but preserve <col> widths/styles ---
-      const removeAttrs = ["style","width","height","border","cellpadding","cellspacing","bgcolor","align","valign"];
-      [tbl, ...tbl.querySelectorAll("*")].forEach(el => {
-        const tag = el.tagName ? el.tagName.toLowerCase() : "";
-        removeAttrs.forEach(a => {
-          // keep col widths/styles
-          if ((tag === "col" || tag === "colgroup") && (a === "width" || a === "style")) return;
-          try { el.removeAttribute && el.removeAttribute(a); } catch(e){}
-        });
+      // --- Preserve alignment info before wiping inline styles ---
+      Array.from(tbl.querySelectorAll("td, th")).forEach(cell => {
+        let alignValue = null;
+
+        // 1️⃣ check old-school align attribute
+        if (cell.hasAttribute("align")) {
+          alignValue = cell.getAttribute("align").trim().toLowerCase();
+        }
+
+        // 2️⃣ check inline text-align in style attribute
+        if (!alignValue && cell.hasAttribute("style")) {
+          const m = cell.getAttribute("style").match(/text-align\s*:\s*([a-z-]+)/i);
+          if (m) alignValue = m[1].toLowerCase();
+        }
+
+        // 3️⃣ store detected alignment for later
+        if (alignValue) cell.setAttribute("data-preserve-align", alignValue);
       });
 
-      // --- Responsive wrapper ---
+      // --- Remove inline and legacy attributes ---
+      const removeAttrs = ["style","width","height","border","cellpadding","cellspacing","bgcolor","align","valign"];
+      [tbl, ...tbl.querySelectorAll("*")].forEach(el => {
+        removeAttrs.forEach(a => { try { el.removeAttribute(a); } catch(e){} });
+      });
+
+      // --- Wrap table for mobile responsiveness ---
       if (!tbl.parentElement || !tbl.parentElement.classList.contains("sanitised-wrapper")) {
         const wrap = document.createElement("div");
         wrap.className = "table-wrapper sanitised-wrapper";
@@ -812,137 +826,94 @@
         wrap.appendChild(tbl);
       }
 
+      // --- Add base class ---
       tbl.classList.add("sanitised");
 
-// --- Detect header rows ---
-const hasHead = tbl.querySelector("thead");
-const totalCols = tbl.querySelectorAll("col").length || (tbl.querySelector("tr")?.cells.length ?? 0);
-let headerRows = [];
+      // --- Detect if table has THEAD (robust + case-insensitive) ---
+      const hasHead = Array.from(tbl.children).some(
+        el => el.tagName && el.tagName.toLowerCase() === "thead"
+      );
+      if (hasHead) tbl.classList.add("has-thead");
+      else tbl.classList.remove("has-thead");
 
-// Clear existing header markers
-Array.from(tbl.querySelectorAll("tr")).forEach(r => r.classList.remove("sanitised-header", "sanitised-superheader"));
+      // --- Clear any old header markings ---
+      Array.from(tbl.querySelectorAll("tr")).forEach(r => r.classList.remove("sanitised-header"));
 
-if (hasHead) {
-  headerRows = Array.from(tbl.querySelectorAll("thead > tr"));
-} else {
-  const rows = Array.from(tbl.querySelectorAll("tbody > tr, tr"));
-  if (rows.length > 0) {
-    const firstRow = rows[0];
-    const firstCell = firstRow.cells[0];
-    const firstRowFullSpan =
-      firstCell &&
-      firstCell.hasAttribute("colspan") &&
-      parseInt(firstCell.getAttribute("colspan")) >= totalCols;
+      // --- Determine the true header row ---
+      let headerRow = tbl.querySelector("thead > tr") ||
+                      tbl.querySelector("tbody > tr") ||
+                      tbl.querySelector("tr");
+      if (headerRow) {
+        headerRow.classList.add("sanitised-header");
 
-    if (firstRowFullSpan) {
-      // Always treat a full-width row as superheader, even if it's <td>
-      firstRow.classList.add("sanitised-header", "sanitised-superheader");
-
-      // Promote <td> → <th> inside that row
-      Array.from(firstRow.children).forEach(cell => {
-        if (cell.tagName.toLowerCase() === "td") {
-          const th = document.createElement("th");
-          while (cell.firstChild) th.appendChild(cell.firstChild);
-          if (cell.hasAttributes()) {
-            Array.from(cell.attributes).forEach(a => th.setAttribute(a.name, a.value));
-          }
-          cell.parentNode.replaceChild(th, cell);
-        }
-      });
-
-      headerRows = [firstRow];
-    } else if (rows.length > 1) {
-      rows[1].classList.add("sanitised-header");
-      headerRows = [rows[1]];
-    } else {
-      firstRow.classList.add("sanitised-header");
-      headerRows = [firstRow];
-    }
-  }
-}
-      // --- Convert header cells (<td>→<th>), preserve attributes & alignment ---
-      headerRows.forEach(row => {
-        row.classList.add("sanitised-header");
-        Array.from(row.children).forEach(cell => {
+        // Convert TDs in header row to THs (semantic, optional)
+        Array.from(headerRow.children).forEach(cell => {
           if (!cell) return;
           try {
-            const attrs = [];
-            for (let i=0;i<cell.attributes.length;i++){
-              const at = cell.attributes[i];
-              attrs.push({ name: at.name, value: at.value });
-            }
-
-            // --- Capture alignment before converting ---
-            let savedAlign = null;
-            if (cell.hasAttribute("align")) savedAlign = cell.getAttribute("align");
-            if (cell.hasAttribute("style")) {
-              const styleVal = cell.getAttribute("style");
-              const match = styleVal.match(/text-align\s*:\s*([a-z]+)/i);
-              if (match) savedAlign = match[1];
-            }
-
-            // replace TD→TH while keeping attributes
             if (cell.tagName && cell.tagName.toLowerCase() === "td") {
               const th = document.createElement("th");
-              attrs.forEach(a => {
-                try { th.setAttribute(a.name, a.value); } catch(e){}
-              });
               while (cell.firstChild) th.appendChild(cell.firstChild);
-              if (!th.className && cell.className) th.className = cell.className;
+              th.className = cell.className || "";
               cell.parentNode.replaceChild(th, cell);
-              cell = th;
-            } else {
-              attrs.forEach(a => { try { if (!cell.hasAttribute(a.name)) cell.setAttribute(a.name, a.value); } catch(e){} });
-            }
-
-            // --- Reapply saved alignment ---
-            if (savedAlign) cell.style.textAlign = savedAlign;
-
-            // Remove inline style now that we preserved alignment
-            if (cell.hasAttribute("style")) {
-              const styleVal = cell.getAttribute("style");
-              const alignMatch = styleVal.match(/text-align\s*:\s*([a-z]+)/i);
-              cell.removeAttribute("style");
-              if (alignMatch) cell.style.textAlign = alignMatch[1];
             }
           } catch(e){}
         });
-      });
+      }
 
-      // --- Fix merged header cells (colspan) ---
-      Array.from(tbl.querySelectorAll("th[colspan], td[colspan]")).forEach(cell => {
-        if (!cell.style.textAlign) cell.style.textAlign = "center"; // only if not already preserved
-        cell.style.whiteSpace = "normal";
-      });
-
-      // --- Box sizing for all cells ---
-      Array.from(tbl.querySelectorAll("td, th")).forEach(cell => {
-        cell.style.boxSizing = "border-box";
-      });
-
-      // --- Remove rigid equal-widths if all cols are equal (restore natural sizing) ---
-      try {
-        const cols = tbl.querySelectorAll("col");
-        if (cols.length > 1) {
-          const widths = Array.from(cols).map(c => parseFloat((c.style.width || "").replace("%","")) || 0);
-          const allEqual = widths.every(w => Math.abs(w - widths[0]) < 0.1);
-          if (allEqual) cols.forEach(c => c.style.removeProperty("width"));
+      // --- Force-clear header background on 1st tbody row if table has THEAD ---
+      if (tbl.classList.contains("has-thead")) {
+        const firstTbodyRow = tbl.querySelector("tbody > tr");
+        if (firstTbodyRow && !firstTbodyRow.classList.contains("sanitised-header")) {
+          Array.from(firstTbodyRow.children).forEach(cell => {
+            try {
+              cell.style.setProperty("background-color", "transparent", "important");
+              cell.style.setProperty("font-weight", "normal", "important");
+              cell.style.setProperty("text-decoration", "none", "important");
+            } catch(e){}
+          });
         }
-      } catch(e){}
+      }
+
+      // --- General cell cleanups ---
+      Array.from(tbl.querySelectorAll("td, th")).forEach(cell => {
+        try {
+          cell.style.boxSizing = "border-box";
+          cell.style.verticalAlign = "middle";
+        } catch(e){}
+      });
+
+      // --- Reapply preserved alignments using !important ---
+      Array.from(tbl.querySelectorAll("[data-preserve-align]")).forEach(cell => {
+        const alignValue = cell.getAttribute("data-preserve-align");
+        if (alignValue) {
+          const v = alignValue.toLowerCase();
+          const cssVal = (v === "start") ? "left" : (v === "end" ? "right" : v);
+          cell.style.setProperty("text-align", cssVal, "important");
+        }
+        cell.removeAttribute("data-preserve-align");
+      });
 
       // --- Accessibility role ---
-      if (!tbl.hasAttribute("role")) tbl.setAttribute("role","table");
+      if (!tbl.hasAttribute("role")) tbl.setAttribute("role", "table");
     });
   }
 
-  // --- Run after DOM ready & on updates ---
+  // --- Run after DOM ready and attach to Anki's update hook ---
   function onReady(fn){
-    if (document.readyState === "complete" || document.readyState === "interactive") setTimeout(fn,1);
-    else document.addEventListener("DOMContentLoaded", fn);
+    if (document.readyState === "complete" || document.readyState === "interactive") {
+      setTimeout(fn, 1);
+    } else {
+      document.addEventListener("DOMContentLoaded", fn);
+    }
   }
+
   onReady(sanitiseTables);
-  if (typeof onUpdateHook !== "undefined" && Array.isArray(onUpdateHook)) onUpdateHook.push(sanitiseTables);
-  setTimeout(sanitiseTables, 200);
+  if (typeof onUpdateHook !== "undefined" && Array.isArray(onUpdateHook)) {
+    onUpdateHook.push(sanitiseTables);
+  }
+
+  // re-run shortly after load for late-rendered content (safety for AnkiMobile)
+  setTimeout(sanitiseTables, 150);
 })();
 </script>
 
