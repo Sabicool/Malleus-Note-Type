@@ -850,12 +850,19 @@
         Array.from(headerRow.children).forEach(cell => {
           if (!cell) return;
           try {
-            if (cell.tagName && cell.tagName.toLowerCase() === "td") {
-              const th = document.createElement("th");
-              while (cell.firstChild) th.appendChild(cell.firstChild);
-              th.className = cell.className || "";
-              cell.parentNode.replaceChild(th, cell);
-            }
+if (cell.tagName && cell.tagName.toLowerCase() === "td") {
+  const th = document.createElement("th");
+  while (cell.firstChild) th.appendChild(cell.firstChild);
+  th.className = cell.className || "";
+
+  // ✅ Preserve important structural + alignment attributes
+  if (cell.hasAttribute("colspan")) th.setAttribute("colspan", cell.getAttribute("colspan"));
+  if (cell.hasAttribute("rowspan")) th.setAttribute("rowspan", cell.getAttribute("rowspan"));
+  if (cell.hasAttribute("align")) th.setAttribute("align", cell.getAttribute("align"));
+  if (cell.style.textAlign) th.style.textAlign = cell.style.textAlign;
+
+  cell.parentNode.replaceChild(th, cell);
+}
           } catch(e){}
         });
       }
