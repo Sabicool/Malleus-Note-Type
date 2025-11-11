@@ -677,18 +677,52 @@
 
       tbl.classList.add("sanitised");
 
-      // --- Detect header rows ---
-      const hasHead = Array.from(tbl.children).some(el => el.tagName && el.tagName.toLowerCase() === "thead");
-      if (hasHead) tbl.classList.add("has-thead"); else tbl.classList.remove("has-thead");
-      Array.from(tbl.querySelectorAll("tr")).forEach(r => r.classList.remove("sanitised-header"));
+ // --- Detect header rows ---
+const hasHead = tbl.querySelector("thead");
+const totalCols = tbl.querySelectorAll("col").length || (tbl.querySelector("tr")?.cells.length ?? 0);
+let headerRows = [];
 
-      let headerRows = [];
-      if (tbl.querySelector("thead")) {
-        headerRows = Array.from(tbl.querySelectorAll("thead > tr"));
-      } else {
-        const firstRow = tbl.querySelector("tbody > tr") || tbl.querySelector("tr");
-        if (firstRow) headerRows = [firstRow];
-      }
+// Clear existing header markers
+Array.from(tbl.querySelectorAll("tr")).forEach(r => r.classList.remove("sanitised-header", "sanitised-superheader"));
+
+if (hasHead) {
+  headerRows = Array.from(tbl.querySelectorAll("thead > tr"));
+} else {
+  const rows = Array.from(tbl.querySelectorAll("tbody > tr, tr"));
+  if (rows.length > 0) {
+    const firstRow = rows[0];
+    const firstCell = firstRow.cells[0];
+    const firstRowFullSpan =
+      firstCell &&
+      firstCell.hasAttribute("colspan") &&
+      parseInt(firstCell.getAttribute("colspan")) >= totalCols;
+
+    if (firstRowFullSpan) {
+      // Always treat a full-width row as superheader, even if it's <td>
+      firstRow.classList.add("sanitised-header", "sanitised-superheader");
+
+      // Promote <td> → <th> inside that row
+      Array.from(firstRow.children).forEach(cell => {
+        if (cell.tagName.toLowerCase() === "td") {
+          const th = document.createElement("th");
+          while (cell.firstChild) th.appendChild(cell.firstChild);
+          if (cell.hasAttributes()) {
+            Array.from(cell.attributes).forEach(a => th.setAttribute(a.name, a.value));
+          }
+          cell.parentNode.replaceChild(th, cell);
+        }
+      });
+
+      headerRows = [firstRow];
+    } else if (rows.length > 1) {
+      rows[1].classList.add("sanitised-header");
+      headerRows = [rows[1]];
+    } else {
+      firstRow.classList.add("sanitised-header");
+      headerRows = [firstRow];
+    }
+  }
+}
 
       // --- Convert header cells (<td>→<th>), preserve attributes & alignment ---
       headerRows.forEach(row => {
