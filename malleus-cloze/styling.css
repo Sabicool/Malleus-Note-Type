@@ -608,13 +608,12 @@ table.sanitised {
   border-spacing: 0 !important;
   table-layout: auto !important; /* <-- adaptive layout */
   background: var(--table-bg);
-  font-size: var(--font-size);
   color: var(--table-text);
   border: 1px solid var(--table-border);
   box-sizing: border-box;
 }
 
-/* Responsive columns */
+/* Generic cell styles including responsive columns */
 table.sanitised td,
 table.sanitised th {
   min-width: 6ch;    /* prevents too-narrow squeeze */
@@ -622,11 +621,6 @@ table.sanitised th {
   word-wrap: break-word;
   overflow-wrap: break-word;
   white-space: normal !important;
-}
-
-/* Generic cell styles */
-table.sanitised td,
-table.sanitised th {
   padding: var(--cell-padding) !important;
   border: 1px solid var(--table-border) !important;
   text-align: left !important;
@@ -635,10 +629,17 @@ table.sanitised th {
   white-space: normal !important;
   word-wrap: break-word !important;
   overflow-wrap: break-word !important;
+  vertical-align: middle !important;
   hyphens: auto;
   color: var(--table-text) !important;
   font-weight: normal !important; /* reset all cells to normal by default */
   background: transparent !important;
+}
+
+table.sanitised,
+table.sanitised td,
+table.sanitised th {
+    font-size: clamp(12px, 1.7vw, 18px) !important;
 }
 
 /* Apply to first/header row only */
