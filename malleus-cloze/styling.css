@@ -510,7 +510,7 @@ ol, ul {
 
 /* List items */
 ol li, ul li {
-  margin: 0.4em 0;              /* Space between list items */
+  margin: 0em 0;                /* Vertical space between list items */
   word-wrap: break-word;        /* Prevents long words from breaking layout */
 }
 
