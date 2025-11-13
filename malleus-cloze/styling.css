@@ -527,7 +527,8 @@ ol li::marker {
 ul {
   list-style: none;             /* Remove browser bullets */
   margin-top: 0;
-  margin-bottom: 0;
+  display: list-item;   /* ensures proper block-like behavior */
+  margin-bottom: 1em;   /* space after each list item (line break effect) */
   padding-left: 0em;          /* Space for custom dash */
 }
 
