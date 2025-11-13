@@ -597,7 +597,7 @@ body.night-mode, .night-mode {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   border-radius: var(--corner-radius);
-  margin: 0.5em 0;
+  margin: 1em 0;
   background: transparent;
 }
 
