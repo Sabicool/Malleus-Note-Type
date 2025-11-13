@@ -1,4 +1,4 @@
-    <!-- IMPORTANT INFO:
+<!-- IMPORTANT INFO:
         Changing settings within the userSettings variable below will *not* work, as changes will be reset
         when syncing with AnkiHub. To change settings copy the below code from the line saying USER CONFIG
         until the line saying USER CONFIG END. Then scroll to the very bottom beneath the ankihub end comment
@@ -726,19 +726,12 @@
       // --- Force-clear header background on 1st tbody row if table has THEAD ---
       if (tbl.classList.contains("has-thead")) {
         const firstTbodyRow = tbl.querySelector("tbody > tr");
-if (cell.tagName && cell.tagName.toLowerCase() === "td") {
-  const th = document.createElement("th");
-  while (cell.firstChild) th.appendChild(cell.firstChild);
-  th.className = cell.className || "";
-
-  // ✅ Preserve important structural + alignment attributes
-  if (cell.hasAttribute("colspan")) th.setAttribute("colspan", cell.getAttribute("colspan"));
-  if (cell.hasAttribute("rowspan")) th.setAttribute("rowspan", cell.getAttribute("rowspan"));
-  if (cell.hasAttribute("align")) th.setAttribute("align", cell.getAttribute("align"));
-  if (cell.style.textAlign) th.style.textAlign = cell.style.textAlign;
-
-  cell.parentNode.replaceChild(th, cell);
-}
+        if (firstTbodyRow && !firstTbodyRow.classList.contains("sanitised-header")) {
+          Array.from(firstTbodyRow.children).forEach(cell => {
+            try {
+              cell.style.setProperty("background-color", "transparent", "important");
+              cell.style.setProperty("font-weight", "normal", "important");
+              cell.style.setProperty("text-decoration", "none", "important");
             } catch(e){}
           });
         }
@@ -824,8 +817,65 @@ if (cell.tagName && cell.tagName.toLowerCase() === "td") {
 
     </script>
 
+<!-- BEGIN ANKIHUB MODFICATIONS -->
+{{#ankihub_id}}
+<a class='ankihub-view-note'
+    href='https://app.ankihub.net/decks/notes/{{ankihub_id}}'>
+    View Note on AnkiHub
+</a>
+
+<style>
+.ankihub-view-note {
+    display: none;
+}
+
+.mobile .ankihub-view-note
+  {
+    display: block;
+    left: 50%;
+    margin-right: -50%;
+    padding: 8px;
+    border-radius: 50px;
+    background-color: #cde3f8;
+    font-size: 12px;
+    color: black;
+    text-decoration: none;
+}
+
+/* AnkiDroid (Android)
+The button is fixed to the bottom of the screen. */
+.android .ankihub-view-note {
+    position: fixed;
+    bottom: 5px;
+    transform: translate(-50%, -50%);
+}
+
+/* AnkiMobile (IPhone)
+position: fixed doesn't work on AnkiMobile, so the button is just below the content instead. */
+.iphone .ankihub-view-note,
+.ipad .ankihub-view-note {
+    position: relative;
+    transform: translate(-50%, 0);
+    width: fit-content;
+    margin-top: 20px;
+}
+</style>
+
+<script>
+    if(document.querySelector("html").classList.contains("android")) {
+        // Add a margin to the bottom of the card content so that the button doesn't
+        // overlap the content.
+        var container = document.querySelector('#qa');
+        var button = document.querySelector('.ankihub-view-note');
+        container.style.marginBottom = 2 * button.offsetHeight + "px";
+    }
+</script>
+
+{{/ankihub_id}}
+<!-- END ANKIHUB MODFICATIONS -->
+
 <!--
 ANKIHUB_END
 Text below this comment will not be modified by AnkiHub or AnKing add-ons.
 Do not edit or remove this comment if you want to protect the content below.
-  -->
+-->
