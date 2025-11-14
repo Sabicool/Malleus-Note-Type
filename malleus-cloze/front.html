@@ -829,7 +829,7 @@
       // --- Add base class ---
       tbl.classList.add("sanitised");
 
-      // --- Detect if table has THEAD (robust + case-insensitive) ---
+      // --- Detect if table has THEAD ---
       const hasHead = Array.from(tbl.children).some(
         el => el.tagName && el.tagName.toLowerCase() === "thead"
       );
@@ -843,24 +843,44 @@
       let headerRow = tbl.querySelector("thead > tr") ||
                       tbl.querySelector("tbody > tr") ||
                       tbl.querySelector("tr");
+
       if (headerRow) {
         headerRow.classList.add("sanitised-header");
 
-        // Convert TDs in header row to THs (semantic, optional)
+        // ⭐⭐⭐ FIXED: Convert <td> in header row → <th>, but PRESERVE colspan/rowspan/alignment ⭐⭐⭐
         Array.from(headerRow.children).forEach(cell => {
           if (!cell) return;
+
           try {
             if (cell.tagName && cell.tagName.toLowerCase() === "td") {
+
               const th = document.createElement("th");
-              while (cell.firstChild) th.appendChild(cell.firstChild);
+
+              // Preserve colspan and rowspan
+              if (cell.hasAttribute("colspan"))
+                th.setAttribute("colspan", cell.getAttribute("colspan"));
+              if (cell.hasAttribute("rowspan"))
+                th.setAttribute("rowspan", cell.getAttribute("rowspan"));
+
+              // Preserve alignment via attribute
+              const computedAlign = window.getComputedStyle(cell).textAlign;
+              if (computedAlign)
+                th.setAttribute("data-preserve-align", computedAlign);
+
+              // Copy class
               th.className = cell.className || "";
+
+              // Move children
+              while (cell.firstChild) th.appendChild(cell.firstChild);
+
+              // Replace TD → TH
               cell.parentNode.replaceChild(th, cell);
             }
           } catch(e){}
         });
       }
 
-      // --- Force-clear header background on 1st tbody row if table has THEAD ---
+      // --- If THEAD exists, ensure first body row is NOT styled as header ---
       if (tbl.classList.contains("has-thead")) {
         const firstTbodyRow = tbl.querySelector("tbody > tr");
         if (firstTbodyRow && !firstTbodyRow.classList.contains("sanitised-header")) {
@@ -912,7 +932,7 @@
     onUpdateHook.push(sanitiseTables);
   }
 
-  // re-run shortly after load for late-rendered content (safety for AnkiMobile)
+  // rerun shortly after load for late-rendered content (safety for AnkiMobile)
   setTimeout(sanitiseTables, 150);
 })();
 </script>
