@@ -785,13 +785,15 @@
   function sanitiseTables() {
     const tables = Array.from(document.querySelectorAll("table"));
     tables.forEach(tbl => {
-      // --- Skip exclusions ---
-      if (
-        tbl.id === "noSanitise" ||
-        tbl.classList.contains("noSanitise") ||
-        tbl.dataset.noSanitise !== undefined ||
-        tbl.querySelector(".cloze")
-      ) return;
+       
+         // --- Skip exclusions (future-proof) ---
+        const EXCLUDE_KEY = "noformat";
+        const hasExclusion =
+                tbl.id === EXCLUDE_KEY ||
+                tbl.classList.contains(EXCLUDE_KEY) ||
+                tbl.getAttribute(`data-${EXCLUDE_KEY}`) !== null;
+
+        if (hasExclusion || tbl.querySelector(".cloze")) return;
 
       // --- Preserve alignment info before wiping inline styles ---
       Array.from(tbl.querySelectorAll("td, th")).forEach(cell => {
