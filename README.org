@@ -1,6 +1,6 @@
 #+title: Malleus Note Type
 
-This is the note type for the [[www.malleus.org.au][Malleus Clinical Medicine Project]], an Anki Deck designed for Australian medical students. Please see the website for more details.
+This is the note type for the [[https://www.malleus.org.au][Malleus Clinical Medicine Project]], an Anki Deck designed for Australian medical students. Please see the website for more details.
 
 We aim to create multiple note types to cover different use cases with each note type having particular features.
 #+begin_src sh :results output :exports results
