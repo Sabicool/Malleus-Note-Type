@@ -742,6 +742,12 @@ table.sanitised li {
   line-height: 1.4;
 }
 
+table.sanitised ul, ol {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+  line-height: 1.4;
+}
+
 table.sanitised ul ul,
 :not(table) ul ul {
   margin-left: 1.25em;
