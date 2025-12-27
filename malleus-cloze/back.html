@@ -133,12 +133,16 @@
 
         <!-- Extra FIELDS -->
         <div class="container">
-            {{#Extra}}
-            <div class="element" id="Extra">
-                <h2>Extra</h2>
-                <div>{{edit:Extra}}</div>
-            </div>
-            {{/Extra}}
+		{{#Extra}}
+		<div class="element" id="Extra">
+    		<h2>Extra</h2>
+    		<div>
+                {{edit:Extra}}
+        {{#Extra (Synced)}}<span class="synced-inline">{{edit:Extra (Synced)}}</span>{{/Extra (Synced)}}
+        </div>
+</div>
+                {{/Extra}}
+
 
             {{#Personal Notes}}
             <div class="element" id="Personal-Notes">
@@ -155,83 +159,66 @@
             {{/Missed Questions}}
         </div>
 
-        <div id="ExtraResourceButtonContainer">
-            {{#Oxford Handbook}}
-            <button id="button-oxhbk" class="ExtraResourceButton" onclick="toggleHintBtn('oxhbk')">
-                <img src="d39e680dc4a1e29f855a47be2f580a2f.jpg" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle"> Oxford Handbook</div>
-            </button>
-            {{/Oxford Handbook}}
+<div id="ExtraResourceButtonContainer">
+
+    {{#eTG Complete}}
+    <button id="button-etg" class="ExtraResourceButton" onclick="toggleHintBtn('etg')">
+        <img src="1272e8a1e0f5ac2a32f302d746e8965e.png" class="ExtraResourceButtonImg">
+        <div class="ExtraResourceButtonTitle">Therapeutic Guidelines</div>
+    </button>
+    {{/eTG Complete}}
+
+    {{#Talley & O'Connor}}
+    <button id="button-toc" class="ExtraResourceButton" onclick="toggleHintBtn('toc')">
+        <img src="cf24f9c713eca6618e1527a309dacb5f.jpg" class="ExtraResourceButtonImg">
+        <div class="ExtraResourceButtonTitle">Talley & O'Connor</div>
+    </button>
+    {{/Talley & O'Connor}}
+
+    {{#Additional Resources}}
+    <button id="button-ar" class="ExtraResourceButton" onclick="toggleHintBtn('ar')">
+        <img src="dfe79fd09cf10172a32d40b2128b2536.webp" class="ExtraResourceButtonImg">
+        <div class="ExtraResourceButtonTitle">Additional Resources</div>
+    </button>
+    {{/Additional Resources}}
+
+    {{#Source}}
+    <button id="button-source" class="ExtraResourceButton" onclick="toggleHintBtn('source')">
+        <img src="dfe79fd09cf10172a32d40b2128b2536.webp" class="ExtraResourceButtonImg">
+        <div class="ExtraResourceButtonTitle">Source</div>
+    </button>
+    {{/Source}}
+
+    <button id="button-tags" class="ExtraResourceButton" style="display:none" onclick="toggleTagVisibility()">
+        <div class="TagsButtonContent">🏷️ Tags</div>
+    </button>
+
+</div>
 
 
-            {{#AMBOSS}}
-            <button id="button-amboss" class="ExtraResourceButton" onclick="toggleHintBtn('amboss')">
-                <img src="4dc9613d1822dba3774a95e2efa2df17.png" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">AMBOSS</div>
-            </button>
-            {{/AMBOSS}}
+<div id="ExtraResourceContentContainer" class="container">
 
+    <div id="content-etg" class="ExtraResourceContent element" style="display:none">
+        {{eTG Complete}}
+    </div>
 
-            {{#First Aid}}
-            <button id="button-fa" class="ExtraResourceButton" onclick="toggleHintBtn('fa')">
-                <img src="df312922ce486335b8623ff3c2f54455.png" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">First Aid</div>
-            </button>
-            {{/First Aid}}
+    <div id="content-toc" class="ExtraResourceContent element" style="display:none">
+        {{Talley & O'Connor}}
+    </div>
 
+    <div id="content-ar" class="ExtraResourceContent element" style="display:none">
+        {{Additional Resources}}
+{{#Additional Resources (Synced)}}
+    <span class="synced-inline"><br>{{Additional Resources (Synced)}}</span>
+{{/Additional Resources (Synced)}}
 
-            {{#eTG Complete}}
-            <button id="button-etg" class="ExtraResourceButton" onclick="toggleHintBtn('etg')">
-                <img src="1272e8a1e0f5ac2a32f302d746e8965e.png" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">eTG</div>
-            </button>
-            {{/eTG Complete}}
+    </div>
 
-            {{#Talley & O'Connor}}
-            <button id="button-toc" class="ExtraResourceButton" onclick="toggleHintBtn('toc')">
-                <img src="cf24f9c713eca6618e1527a309dacb5f.jpg" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">Talley O'Connor</div>
-            </button>
-            {{/Talley & O'Connor}}
+    <div id="content-source" class="ExtraResourceContent element" style="display:none">
+        {{Source}}
+    </div>
 
-            {{#Additional Resources}}
-            <button id="button-ar" class="ExtraResourceButton" onclick="toggleHintBtn('ar')">
-                <img src="dfe79fd09cf10172a32d40b2128b2536.webp" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">Additional Resources</div>
-            </button>
-            {{/Additional Resources}}
-
-            {{#Source}}
-            <button id="button-source" class="ExtraResourceButton" onclick="toggleHintBtn('source')">
-                <img src="dfe79fd09cf10172a32d40b2128b2536.webp" class="ExtraResourceButtonImg"> <div class="ExtraResourceButtonTitle">Source</div>
-            </button>
-            {{/Source}}
-
-
-            <button id="button-tags" class="ExtraResourceButton"  style="display:none" onclick="toggleTagVisibility()">
-                <div class="TagsButtonContent">🏷️ Tags</div>
-            </button>
-        </div>
-
-            <div id="ExtraResourceContentContainer" class="container">
-                {{#Oxford Handbook}}
-                <div id="content-oxhbk" class="ExtraResourceContent element" style="display:none">
-                    {{Oxford Handbook}}
-                </div>
-                {{/Oxford Handbook}}
-                <div id="content-amboss" class="ExtraResourceContent element" style="display:none">
-                    {{AMBOSS}}
-                </div>
-                <div id="content-fa" class="ExtraResourceContent element" style="display:none">
-                    {{First Aid}}
-                </div>
-                <div id="content-etg" class="ExtraResourceContent element" style="display:none">
-                    {{eTG Complete}}
-                </div>
-                <div id="content-toc" class="ExtraResourceContent element" style="display:none">
-                    {{Talley & O'Connor}}
-                </div>
-                <div id="content-ar" class="ExtraResourceContent element" style="display:none">
-                    {{Additional Resources}}
-                </div>
-                <div id="content-source" class="ExtraResourceContent element" style="display:none">
-                    {{Source}}
-                </div>
-        </div>
+</div>
 
 
     <!-- HINT BUTTONS SETUP -->
