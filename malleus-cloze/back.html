@@ -131,18 +131,38 @@
     var numTagLevelsToShow = -1;
     </script>
 
-        <!-- Extra FIELDS -->
+       <!-- Extra FIELDS -->
         <div class="container">
-		{{#Extra}}
-		<div class="element" id="Extra">
-    		<h2>Extra</h2>
-    		<div>
-                {{edit:Extra}}
-        {{#Extra (Synced)}}<span class="synced-inline">{{edit:Extra (Synced)}}</span>{{/Extra (Synced)}}
-        </div>
-</div>
-                {{/Extra}}
+<div class="container">
 
+<!-- Case 1: Extra has content -->
+{{#Extra}}
+<div class="element" id="Extra">
+    <h2>Extra</h2>
+    <div>
+        {{Extra}}
+        {{#Extra (Synced)}}
+        <div class="synced-inline">
+            {{Extra (Synced)}}
+        </div>
+        {{/Extra (Synced)}}
+    </div>
+</div>
+{{/Extra}}
+
+<!-- Case 2: Extra is empty but Extra (Synced) has content -->
+{{^Extra}}{{#Extra (Synced)}}
+<div class="element" id="Extra">
+    <h2>Extra</h2>
+    <div>
+        <div class="synced-inline">
+            {{Extra (Synced)}}
+        </div>
+    </div>
+</div>
+{{/Extra (Synced)}}{{/Extra}}
+
+</div>
 
             {{#Personal Notes}}
             <div class="element" id="Personal-Notes">
@@ -175,12 +195,19 @@
     </button>
     {{/Talley & O'Connor}}
 
-    {{#Additional Resources}}
-    <button id="button-ar" class="ExtraResourceButton" onclick="toggleHintBtn('ar')">
-        <img src="dfe79fd09cf10172a32d40b2128b2536.webp" class="ExtraResourceButtonImg">
-        <div class="ExtraResourceButtonTitle">Additional Resources</div>
-    </button>
-    {{/Additional Resources}}
+  {{#Additional Resources}}
+<button id="button-ar" class="ExtraResourceButton" onclick="toggleHintBtn('ar')">
+    <img src="dfe79fd09cf10172a32d40b2128b2536.webp" class="ExtraResourceButtonImg">
+    <div class="ExtraResourceButtonTitle">Additional Resources</div>
+</button>
+{{/Additional Resources}}
+
+{{^Additional Resources}}{{#Additional Resources (Synced)}}
+<button id="button-ar" class="ExtraResourceButton" onclick="toggleHintBtn('ar')">
+    <img src="dfe79fd09cf10172a32d40b2128b2536.webp" class="ExtraResourceButtonImg">
+    <div class="ExtraResourceButtonTitle">Additional Resources</div>
+</button>
+{{/Additional Resources (Synced)}}{{/Additional Resources}}
 
     {{#Source}}
     <button id="button-source" class="ExtraResourceButton" onclick="toggleHintBtn('source')">
@@ -206,20 +233,28 @@
         {{Talley & O'Connor}}
     </div>
 
-    <div id="content-ar" class="ExtraResourceContent element" style="display:none">
-        {{Additional Resources}}
-{{#Additional Resources (Synced)}}
-    <span class="synced-inline"><br>{{Additional Resources (Synced)}}</span>
-{{/Additional Resources (Synced)}}
+<div id="content-ar" class="ExtraResourceContent element" style="display:none">
+    {{Additional Resources}}
 
-    </div>
+    {{#Additional Resources}}
+        {{#Additional Resources (Synced)}}
+            <span class="synced-inline"><br>{{Additional Resources (Synced)}}</span>
+        {{/Additional Resources (Synced)}}
+    {{/Additional Resources}}
+
+    {{^Additional Resources}}
+        {{#Additional Resources (Synced)}}
+            <span class="synced-inline">{{Additional Resources (Synced)}}</span>
+        {{/Additional Resources (Synced)}}
+    {{/Additional Resources}}
+</div>
+
 
     <div id="content-source" class="ExtraResourceContent element" style="display:none">
         {{Source}}
     </div>
 
 </div>
-
 
     <!-- HINT BUTTONS SETUP -->
     <script>
