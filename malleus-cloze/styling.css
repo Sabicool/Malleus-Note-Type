@@ -202,11 +202,17 @@
     .figure-citation{
         font-size: 10pt !important;
         font-style: italic !important;
+        margin-bottom: 1em;
     }
 
     .figure-header{
         margin-bottom: 0.5em;
         font-size: 22px !important;
+    }
+
+    /*Remove the bottom margin from elements preceding a figure citation*/
+    *:has(+.figure-citation) {
+        margin-bottom:0;
     }
 
 /*USER CONFIG - until this line ---------------------------------------------------------------------------------------*/
@@ -289,6 +295,20 @@ img {
     max-height: none; /*Allows for very tall imgs e.g. eTG complete */
     margin-top: 0.3em; /* Consistent vertical spacing */
     margin-bottom: 0.3em;         
+}
+
+.img-group {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-height: none; /*Allows for very tall imgs e.g. eTG complete */
+    margin-top: 0.3em; /* Consistent vertical spacing */
+    margin-bottom: 0.3em;
+}
+
+.img-group > img {
+    margin: 0;
 }
 
 .element.elementEnlarged {
@@ -521,7 +541,6 @@ ol {
 
 ol li::marker {
   font-weight: bold;            /* Emphasize list numbers */
-  color: #1e66f5;               /* Blue numbering for contrast */
 }
 
 ul {
@@ -537,6 +556,12 @@ ul li {
   padding-left: 1.3em;          /* Space between dash and text */
   text-align: left;             /* Ensures wrapped text aligns properly */
 }
+
+/* Quick fix for nested unordered lists */
+ul > ul {
+    margin-bottom: 0;
+}
+
 
 /* Custom dash marker for unordered list items */
 ul li::before {
@@ -597,7 +622,6 @@ body.night-mode, .night-mode {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   border-radius: var(--corner-radius);
-  margin: 1em 0;
   background: transparent;
 }
 
@@ -610,6 +634,7 @@ table.sanitised {
   table-layout: auto !important; /* <-- adaptive layout */
   background: var(--table-bg);
   color: var(--table-text);
+  margin: 1em 0;
   border: 1px solid var(--table-border);
   box-sizing: border-box;
 }
