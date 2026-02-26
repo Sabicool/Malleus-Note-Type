@@ -861,6 +861,46 @@
 
     </script>
 
+<!-- AUTOWRAP MATHJAX RENDERS -->
+
+<script>
+function scaleMathJaxBlocks() {
+    const containers = document.querySelectorAll('.element mjx-container[display="true"]');
+    
+    containers.forEach(container => {
+        const parent = container.parentElement;
+        if (!parent) return;
+
+        // Reset any previous scaling
+        container.style.transform = "";
+        container.style.transformOrigin = "";
+        container.style.width = "";
+        
+        const parentWidth = parent.clientWidth;
+        const mathWidth = container.scrollWidth;
+
+        if (mathWidth > parentWidth) {
+            const scale = parentWidth / mathWidth;
+            container.style.transform = `scale(${scale})`;
+            container.style.transformOrigin = "left top";
+            container.style.width = mathWidth + "px";
+        }
+    });
+}
+
+// Run after MathJax typesets
+if (typeof MathJax !== "undefined") {
+    MathJax.typesetPromise().then(() => {
+        scaleMathJaxBlocks();
+    });
+} else {
+    setTimeout(scaleMathJaxBlocks, 500);
+}
+
+// Re-run on window resize
+window.addEventListener("resize", scaleMathJaxBlocks);
+</script>
+
 <!-- BEGIN ANKIHUB MODFICATIONS -->
 {{#ankihub_id}}
 <a class='ankihub-view-note'
