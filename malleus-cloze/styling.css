@@ -801,6 +801,42 @@ img + br + i {
   margin-top: 2px;
 }
 
+/* --- Curved table borders fix --- */
+
+table.sanitised {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  border-radius: 10px !important;
+  overflow: hidden;
+}
+
+/* Round the outer corners only */
+table.sanitised tr:first-child th:first-child {
+  border-top-left-radius: 10px;
+}
+
+table.sanitised tr:first-child th:last-child {
+  border-top-right-radius: 10px;
+}
+
+table.sanitised tr:last-child td:first-child {
+  border-bottom-left-radius: 10px;
+}
+
+table.sanitised tr:last-child td:last-child {
+  border-bottom-right-radius: 10px;
+}
+
+/* --- Improve underline spacing --- */
+
+u,
+.element > h2,
+table.sanitised tr.sanitised-header th,
+table.sanitised tr.sanitised-header td {
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 1.5px;
+}
+
 /*
 ANKIHUB_END
 Text below this comment will not be modified by AnkiHub or AnKing add-ons.
