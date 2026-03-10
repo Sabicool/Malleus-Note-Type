@@ -778,6 +778,29 @@ table.sanitised ul ul,
   margin-left: 1.25em;
 }
 
+/* --- Fix the gap between images and citations --- */
+
+/* Remove baseline image gap */
+img {
+  vertical-align: middle;
+  margin-bottom: 0;
+}
+
+/* Only remove the break if an image is immediately followed by italic citation text */
+img + br + i {
+  margin-top: 0;
+}
+
+img + br + i::before {
+  content: "";
+}
+
+/* Tighten citation spacing */
+img + br + i {
+  display: inline-block;
+  margin-top: 2px;
+}
+
 /*
 ANKIHUB_END
 Text below this comment will not be modified by AnkiHub or AnKing add-ons.
