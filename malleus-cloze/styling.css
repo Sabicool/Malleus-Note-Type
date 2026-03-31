@@ -778,27 +778,43 @@ table.sanitised ul ul,
   margin-left: 1.25em;
 }
 
-/* --- Fix the gap between images and citations --- */
+/* --- Fix image → citation spacing --- */
 
-/* Remove baseline image gap */
+/* Make images behave predictably */
 img {
-  vertical-align: middle;
-  margin-bottom: 0;
+  display: block;
+  margin: 0.4em auto 0.2em auto; /* small consistent gap below images */
 }
 
-/* Only remove the break if an image is immediately followed by italic citation text */
-img + br + i {
-  margin-top: 0;
+/* Remove extra space from containers holding images */
+img + br {
+  display: none; /* removes fake spacing from <br> */
 }
 
-img + br + i::before {
-  content: "";
+/* Citation block styling */
+i span {
+  display: block;
+  margin-top: 0.8em;
+  line-height: 1.35;
 }
 
-/* Tighten citation spacing */
-img + br + i {
-  display: inline-block;
-  margin-top: 2px;
+/* Kill spacing caused by divs inside citation */
+i span div {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Tighten spacing between lines inside citation */
+i span br {
+  line-height: 1.2;
+}
+
+/* Optional: slightly nicer citation appearance */
+.figure-citation,
+i span {
+  font-size: 10pt !important;
+  font-style: italic;
+  opacity: 0.9;
 }
 
 /* --- Curved table borders fix --- */
