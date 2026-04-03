@@ -814,124 +814,14 @@ table.sanitised tr.sanitised-header td {
   text-decoration-thickness: 1.5px;
 }
 
-/* =========================
-   CITATION FORMATTING FIXES
-   ========================= */
+/* --- Citation code fix --- */
 
-/* --- IMAGE SPACING --- */
-
-img {
-  display: inline-block;
-  margin: 0.4em auto 0  auto !important;
-}
-
-/* Remove artificial spacing from <br> after images */
-img + br {
-  display: none;
-}
-
-/* Remove spacing from containers holding only images */
-div:has(> img) {
-  margin-bottom: 0 !important;
-  padding-bottom: 0 !important;
-}
-
-/* Pull citation tightly under image */
-img + i {
-  margin-top: 0.05em !important;
-}
-
-/* --- CITATION BLOCK NORMALISATION --- */
-
-/* Treat each citation as a tight block */
-i {
-  display: block;
-  margin: 0.15em 0;
-}
-
-/* Remove spacing between stacked citations */
-i + i {
-  margin-top: 0.05em !important;
-}
-
-/* Remove stray <br> between citations */
-i + br {
-  display: none;
-}
-
-/* --- FIX BROKEN HTML STRUCTURE --- */
-
-/* Convert inner div (invalid inside span) into inline text */
-i span div {
-  display: inline !important;
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-/* Make citation behave like a single inline string */
-i span {
-  display: inline !important;
-  line-height: 1.3;
-  white-space: nowrap;
-}
-
-/* Remove spacing artifacts inside citation */
-i span br {
-  display: none;
-}
-
-/* --- PREVENT UGLY LINE BREAKS --- */
-
-/* Keep attribution elements together */
-i a,
-.int-own-work {
-  white-space: nowrap;
-}
-
-/* Prevent awkward word breaking */
-i span,
-i span * {
-  word-break: normal !important;
-  overflow-wrap: normal !important;
-}
-
-/* --- PREVENT CITATION OVERFLOW OUTSIDE CONTAINER --- */
-
-/* Keep citation within parent width */
-i {
-  max-width: 100%;
-  overflow-wrap: break-word;
-}
-
-/* Allow wrapping ONLY when needed (instead of overflow) */
-i span {
-  max-width: 100%;
-  white-space: normal !important;   /* override nowrap */
-  overflow-wrap: anywhere;          /* break long lines safely */
-  word-break: break-word;
-}
-
-/* Keep key elements grouped nicely */
-i a,
-.int-own-work {
-  white-space: nowrap;
-}
-
-/* --- OPTIONAL POLISH --- */
-
-i {
-  font-size: 10pt;
-  font-style: italic;
-  opacity: 0.9;
-}
-
-/* --- MOBILE FALLBACK --- */
-
-/* Allow wrapping on small screens to prevent overflow */
-@media (max-width: 500px) {
-  i span {
-    white-space: normal !important;
-  }
+img + br + i,
+img + br + i > span {
+    display: block;
+    margin-top: -0.5em;
+    font-size: 10pt;
+    font-style: italic;
 }
 
 /*
