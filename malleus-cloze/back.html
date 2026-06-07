@@ -965,4 +965,971 @@ position: fixed doesn't work on AnkiMobile, so the button is just below the cont
 ANKIHUB_END
 Text below this comment will not be modified by AnkiHub or AnKing add-ons.
 Do not edit or remove this comment if you want to protect the content below.
+--><!-- IMPORTANT INFO:
+        Changing settings within the userSettings variable below will *not* work, as changes will be reset
+        when syncing with AnkiHub. To change settings copy the below code from the line saying USER CONFIG
+        until the line saying USER CONFIG END. Then scroll to the very bottom beneath the ankihub end comment
+        and paste it there. Changing the settings there will overwrite the default settings below.
+        Feel free to reach out on the Malleus Discord if you have any troubles.
+        At some point in the future we may develop an addon to make card config easier.
+
+        UserSettings supports platform platform specific options:
+        e.g. true = on all platforms
+            false = not on all platforms
+            ["AnkiDesktop", "AnkiDroid"] = Desktop and Android, and not ios ("AnkiMobile") or website ("AnkiWeb")
+
+        ADVANCED:
+        for settings that aren't a simple true/false, you can do your options platform specific like so:
+        clozeHider: {"AnkiDesktop":[...], "AnkiMobile":"(.)"}
+    -->
+
+    <!-- USER CONFIG - copy from this line -------------------------------------------------------------------------------->
+    <script>
+        var userSettings = {
+            keyboardShortcut_Show_Next_Additional_Resource: "KeyN", // this key cycles through the extra resources buttons
+
+            keyboardShortcut_ShowTags: "KeyC", //this key toggles tag visibility on and off
+            
+            // "all", "off", ["AnkiDesktop", "AnkiDroid", "AnkiMobile", "AnkiWeb"] 
+            ShowTagsByDefault: "off", // When off, tags can be shown using the keyboardshorcut above
+            TagButton: "all",  // This shows a button that toggles tags on and off next to the extra resources buttons.
+            debug: false,
+
+            DoubleClickToEnlargeImg: true
+        }
+    </script>
+    <!-- USER CONFIG END - until this line -------------------------------------------------------------------------------->
+
+    <div class="container">
+        <div id="clozecontainer" class="element">
+            {{cloze:Text}}
+        </div>
+    </div>
+
+    <!-- Functions for reading userSettings -->
+    <script>
+    // Detects where the script is being executed
+    function detectAnkiPlatform() {
+            if (window.anki && window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.cb !== undefined) {
+                return "AnkiMobile";
+            } else if (document.querySelector("span.align-middle") && document.querySelector("span.align-middle").textContent.includes("AnkiWeb")) {
+                return "AnkiWeb";
+            } else if (typeof AnkiDroidJS !== "undefined") {
+                return "AnkiDroid";
+            } else if (typeof pycmd !== "undefined") {
+                return "AnkiDesktop";
+            } else {
+                return "Unknown";
+            }
+        }
+
+        var platform = detectAnkiPlatform(); // "ankiMobile", "AnkiWeb", "AnkiDroid", "AnkiDesktop", "Unknown"
+        console.log(platform);
+        
+            function isPlainObject(value) {
+                return value !== null && value.constructor === Object;
+            }
+
+            function getUserSetting(settingName){
+            preference = userSettings[settingName]
+
+            if (typeof(preference) === "boolean" || typeof(preference) === "number") return preference;
+            if (preference === "all") return true;
+            if (preference === "off") return false;
+            if (typeof(preference) === "string") return preference
+
+
+            if (Array.isArray(preference)) {
+                return preference.includes(platform)}
+
+
+            // If it is an object e.g. {ankiMobile: "keyN", ankiWeb: "keyP", Fallback: "keyN"}
+            try{
+                if (isPlainObject(preference)){
+                    preferenceOnThisPlatform = preference[platform]
+                    if (preferenceOnThisPlatform === undefined){
+                        return preference["Fallback"]
+                    }
+                    else {
+                        return preferenceOnThisPlatform;
+                    }
+                }
+            }
+            catch(err)
+            {
+                return preference; 
+            }
+        }
+
+    </script>
+
+    <div id=DEBUG style="display: none; color:red"></div>
+    <script>
+        //DEBUG INFO LOG
+        function DEBUGLOG(err)
+        {
+            if (!getUserSetting("debug")) {
+                return;
+            };
+            debugElement = document.getElementById('DEBUG')
+            debugElement.textContent = err;
+            debugElement.style = "display: block; color: red";
+        }
+
+        window.ankingAddEventListener('error', (event) => {
+            const errorDetails = `Global Error:
+            Message: ${event.message}
+            Source: ${event.filename}
+            Line: ${event.lineno}
+            Column: ${event.colno}
+            Error Object: ${event.error ? event.error.stack : 'N/A'}
+        `;
+        DEBUGLOG(errorDetails);
+        });
+    </script>
+
+
+    <script>
+    //When pressing a button for additional information e.g. eTG, it will automatically scroll down so the revealed content is in view
+    var ScrollToButton = true;     
+
+    // numTagLevelsToShow = -1 means it will show tags without "Malleus_CM::" at the beginning
+    var tagStrToRemove = "#Malleus_CM"
+    var numTagLevelsToShow = -1;
+    </script>
+
+       <!-- Extra FIELDS -->
+        <div class="container">
+<div class="container">
+
+<!-- Case 1: Extra has content -->
+{{#Extra}}
+<div class="element" id="Extra">
+    <h2>Extra</h2>
+    <div>
+        {{Extra}}
+        {{#Extra (Synced)}}
+        <div class="synced-inline">
+            {{Extra (Synced)}}
+        </div>
+        {{/Extra (Synced)}}
+    </div>
+</div>
+{{/Extra}}
+
+<!-- Case 2: Extra is empty but Extra (Synced) has content -->
+{{^Extra}}{{#Extra (Synced)}}
+<div class="element" id="Extra">
+    <h2>Extra</h2>
+    <div>
+        <div class="synced-inline">
+            {{Extra (Synced)}}
+        </div>
+    </div>
+</div>
+{{/Extra (Synced)}}{{/Extra}}
+
+</div>
+
+            {{#Personal Notes}}
+            <div class="element" id="Personal-Notes">
+            <h2>Personal Notes</h2>
+            <div>{{edit:Personal Notes}}</div>
+            </div>
+            {{/Personal Notes}}
+
+            {{#Missed Questions}}
+            <div class="element" id="Missed-Questions">
+                <h2>Missed Questions</h2>
+            <div>{{edit:Missed Questions}}</div>
+            </div>
+            {{/Missed Questions}}
+        </div>
+
+<div id="ExtraResourceButtonContainer">
+
+    {{#eTG Complete}}
+    <button id="button-etg" class="ExtraResourceButton" onclick="toggleHintBtn('etg')">
+        <img src="1272e8a1e0f5ac2a32f302d746e8965e.png" class="ExtraResourceButtonImg">
+        <div class="ExtraResourceButtonTitle">Therapeutic Guidelines</div>
+    </button>
+    {{/eTG Complete}}
+
+    {{#Talley & O'Connor}}
+    <button id="button-toc" class="ExtraResourceButton" onclick="toggleHintBtn('toc')">
+        <img src="cf24f9c713eca6618e1527a309dacb5f.jpg" class="ExtraResourceButtonImg">
+        <div class="ExtraResourceButtonTitle">Talley & O'Connor</div>
+    </button>
+    {{/Talley & O'Connor}}
+
+  {{#Additional Resources}}
+<button id="button-ar" class="ExtraResourceButton" onclick="toggleHintBtn('ar')">
+    <img src="dfe79fd09cf10172a32d40b2128b2536.webp" class="ExtraResourceButtonImg">
+    <div class="ExtraResourceButtonTitle">Additional Resources</div>
+</button>
+{{/Additional Resources}}
+
+{{^Additional Resources}}{{#Additional Resources (Synced)}}
+<button id="button-ar" class="ExtraResourceButton" onclick="toggleHintBtn('ar')">
+    <img src="dfe79fd09cf10172a32d40b2128b2536.webp" class="ExtraResourceButtonImg">
+    <div class="ExtraResourceButtonTitle">Additional Resources</div>
+</button>
+{{/Additional Resources (Synced)}}{{/Additional Resources}}
+
+    {{#Source}}
+    <button id="button-source" class="ExtraResourceButton" onclick="toggleHintBtn('source')">
+        <img src="dfe79fd09cf10172a32d40b2128b2536.webp" class="ExtraResourceButtonImg">
+        <div class="ExtraResourceButtonTitle">Source</div>
+    </button>
+    {{/Source}}
+
+    <button id="button-tags" class="ExtraResourceButton" style="display:none" onclick="toggleTagVisibility()">
+        <div class="TagsButtonContent">🏷️ Tags</div>
+    </button>
+
+</div>
+
+
+<div id="ExtraResourceContentContainer" class="container">
+
+    {{#eTG Complete}}
+    <div id="content-etg" class="ExtraResourceContent element" style="display:none">
+        {{eTG Complete}}
+        <p style="margin: 4px 0 0 0; line-height: 1.3;"><i><span style="font-size: 0.8pt;">Please see the complete <a href="https://www.tg.org.au/" style="text-decoration: underline;">Therapeutic Guidelines</a> topic page for full context and clinical guidance.<br>Images reproduced with kind permission of Therapeutic Guidelines Limited.</span></i></p>
+    </div>
+    {{/eTG Complete}}
+
+    <div id="content-toc" class="ExtraResourceContent element" style="display:none">
+        {{Talley & O'Connor}}
+    </div>
+
+<div id="content-ar" class="ExtraResourceContent element" style="display:none">
+    {{Additional Resources}}
+
+    {{#Additional Resources}}
+        {{#Additional Resources (Synced)}}
+            <span class="synced-inline"><br>{{Additional Resources (Synced)}}</span>
+        {{/Additional Resources (Synced)}}
+    {{/Additional Resources}}
+
+    {{^Additional Resources}}
+        {{#Additional Resources (Synced)}}
+            <span class="synced-inline">{{Additional Resources (Synced)}}</span>
+        {{/Additional Resources (Synced)}}
+    {{/Additional Resources}}
+</div>
+
+
+    <div id="content-source" class="ExtraResourceContent element" style="display:none">
+        {{Source}}
+    </div>
+
+</div>
+
+    <!-- HINT BUTTONS SETUP -->
+    <script>
+    currentHintContainerId = null;
+    currentHintBtn = null;
+    currentHintContent = null;
+
+
+    window.toggleHintBtn = function(containerId, noScrolling=false)
+    {
+        const hintButton = document.getElementById("button-"+containerId)
+        const hintContent = document.getElementById("content-"+containerId)
+
+        if (currentHintContainerId === containerId) { //They are toggling the current hintbtn off.
+            hintButton.classList.remove("expanded-button")
+            hintContent.style.display = "none";
+            currentHintContainerId = null;
+            currentHintBtn = null;
+            currentHintContent = null;
+        }
+
+        else
+        {
+            //Toggle on the new hint
+            hintButton.classList.add("expanded-button");
+            hintContent.style.display = "block"
+
+            if (currentHintContainerId !== null){//Toggle off the current hint
+                currentHintBtn.classList.remove("expanded-button")
+                currentHintContent.style.display = "none";
+            }
+
+            //Set the current hint as the new hint
+            currentHintContent = hintContent;
+            currentHintBtn = hintButton;
+            currentHintContainerId = containerId;
+
+            if (ScrollToButton && !noScrolling) {
+                hintButton.scrollIntoView({
+                behavior: "smooth", // "auto" for instant scrolling
+                block: "start",
+                inline: "nearest"
+                });
+            }
+        }
+    }
+
+    function getHintButtonOrder(){
+        hintButtonNodes = document.getElementById("ExtraResourceButtonContainer").children;
+        hintButtonNames = []
+        for (var i=0; i<hintButtonNodes.length - 1; i++){ //-1 so the tags button is not included.
+            resourceName = hintButtonNodes[i].id.substr(7)
+            hintButtonNames.push(resourceName)
+        }
+
+        return(hintButtonNames)
+    }
+
+    hintButtonOrder = null;
+    window.toggleNextButton = function(){
+        if (hintButtonOrder === null) {
+            hintButtonOrder = getHintButtonOrder();
+        }
+
+        if (currentHintContainerId === null) {
+            newHintIndex = 0; // The first one
+        }
+        else {
+            currentHintIndex = hintButtonOrder.indexOf(currentHintContainerId)
+
+            newHintIndex = (currentHintIndex + 1) % hintButtonOrder.length // The modulo operator means if its at the end, it will go to the begining
+        }
+
+        toggleHintBtn(hintButtonOrder[newHintIndex])
+    }
+    </script>
+
+    <!-- CLICKABLE COLORFUL TAGS (click functionality requires Clickable Tags addon to be installed)
+    https://ankiweb.net/shared/info/1739176371 -->
+    {{#Tags}}
+    <div id="tags-container" style="display: none">{{clickable::Tags}}</div>
+    <script>
+        var tagContainer = document.getElementById("tags-container");
+        var tagsAlreadyGenerated = false;
+
+        function generateColorfulTags(){
+            if (tagsAlreadyGenerated) {return};
+
+            if (tagContainer.childElementCount == 0) {
+                var tagList = tagContainer.innerHTML.split(" ");
+                var kbdList = [];
+                var newTagContent = document.createElement("div");
+
+
+            for (var i = 0; i < tagList.length; i++) {
+                var newTag = document.createElement("kbd");
+                var tag = tagList[i];
+
+                // numTagLevelsToShow == 0 means the whole tag should be shown
+                tagSplit = tag.split('::')
+                if (tagSplit[0] == tagStrToRemove){ //if the tag parent is #Malleus_CM we remove it
+                    tagSplit = tagSplit.slice(-numTagLevelsToShow)
+                }
+                tag = tagSplit.join("::&#8203;");
+
+                newTag.innerHTML = tag;
+                newTagContent.append(newTag)
+            }
+
+            tagContainer.innerHTML = newTagContent.innerHTML;
+            tagContainer.style.cursor = "default";
+            }
+            tagsAlreadyGenerated = true;
+        }
+
+        tagButton = document.getElementById("button-tags")
+        function toggleTagVisibility() {
+
+            if (tagContainer.style.display === "none") {
+                generateColorfulTags();
+                tagContainer.style.display = "block";
+                tagButton.classList.add("expanded-button")
+            } else {
+                tagContainer.style.display = "none";
+                tagButton.classList.remove("expanded-button")
+        }
+    }
+
+
+
+        //By using a callback setTimeout, this function will run after the rest of the javascript is run.
+        // This means that by the time it runs a userSettings variable added at the bottom will overwrite it.
+        function respectUserSettings() {
+            if (getUserSetting("ShowTagsByDefault"))
+            {
+                toggleTagVisibility();
+            }
+
+            if (getUserSetting("TagButton"))
+            {
+                document.getElementById("button-tags").style = "display:block";
+            }
+        }
+        setTimeout(respectUserSettings, 0);
+
+
+    </script>
+    {{/Tags}}
+
+
+
+    <!-- Handle keyboard shortcuts -->
+
+    <!-- NOT-PERSISTING EVENT LISTENER -->
+    <script>
+        if (window.ankingEventListeners) {
+            for (const listener of ankingEventListeners) {
+                const type = listener[0]
+                const handler = listener[1]
+                document.removeEventListener(type, handler)
+        }
+        }
+        window.ankingEventListeners = []
+
+        window.ankingAddEventListener = function(type, handler) {
+            document.addEventListener(type, handler)
+            window.ankingEventListeners.push([type, handler])
+        }
+    </script>
+
+    <script>
+    window.ankingAddEventListener("keydown", (event) => {
+
+            if (event.repeat) return // Is true if the key is held down for long enough that it automatically repeats
+
+            if (event.ctrlKey || event.altKey || event.shiftKey) return; //Prevents e.g. ctrl+c copy toggling tags.
+
+            if (event.code == getUserSetting("keyboardShortcut_ShowTags")){
+                toggleTagVisibility();
+
+            }
+            else if (event.code == getUserSetting("keyboardShortcut_Show_Next_Additional_Resource")){
+                toggleNextButton();
+            }
+    })
+    </script>
+
+
+    <!-- Code for element magnification on double click -->
+    <!-- Code for element magnification on double click -->
+    <script>
+        if(getUserSetting("DoubleClickToEnlargeImg")){
+            var elements = document.getElementsByTagName("img")
+            
+            for (var i=0; i < elements.length; i++){
+                elements[i].ondblclick = function(clickevent)
+                {
+                    var parentElement = clickevent.currentTarget.closest(".element")
+                    if (parentElement) {
+                        parentElement.classList.toggle("elementEnlarged")
+                    }
+                }
+            }
+        }
+    </script>
+
+
+
+
+
+    <!-- Include the Persistence script -->
+
+    <script>
+    // v1.1.8 - https://github.com/SimonLammer/anki-persistence/blob/584396fea9dea0921011671a47a0fdda19265e62/script.js
+    if(void 0===window.Persistence){var e="github.com/SimonLammer/anki-persistence/",t="_default";if(window.Persistence_sessionStorage=function(){var i=!1;try{"object"==typeof window.sessionStorage&&(i=!0,this.clear=function(){for(var t=0;t<sessionStorage.length;t++){var i=sessionStorage.key(t);0==i.indexOf(e)&&(sessionStorage.removeItem(i),t--)}},this.setItem=function(i,n){void 0==n&&(n=i,i=t),sessionStorage.setItem(e+i,JSON.stringify(n))},this.getItem=function(i){return void 0==i&&(i=t),JSON.parse(sessionStorage.getItem(e+i))},this.removeItem=function(i){void 0==i&&(i=t),sessionStorage.removeItem(e+i)},this.getAllKeys=function(){for(var t=[],i=Object.keys(sessionStorage),n=0;n<i.length;n++){var s=i[n];0==s.indexOf(e)&&t.push(s.substring(e.length,s.length))}return t.sort()})}catch(n){}this.isAvailable=function(){return i}},window.Persistence_windowKey=function(i){var n=window[i],s=!1;"object"==typeof n&&(s=!0,this.clear=function(){n[e]={}},this.setItem=function(i,s){void 0==s&&(s=i,i=t),n[e][i]=s},this.getItem=function(i){return void 0==i&&(i=t),void 0==n[e][i]?null:n[e][i]},this.removeItem=function(i){void 0==i&&(i=t),delete n[e][i]},this.getAllKeys=function(){return Object.keys(n[e])},void 0==n[e]&&this.clear()),this.isAvailable=function(){return s}},window.Persistence=new Persistence_sessionStorage,Persistence.isAvailable()||(window.Persistence=new Persistence_windowKey("py")),!Persistence.isAvailable()){var i=window.location.toString().indexOf("title"),n=window.location.toString().indexOf("main",i);i>0&&n>0&&n-i<10&&(window.Persistence=new Persistence_windowKey("qt"))}}
+    </script>
+
+    <!-- Randomisation -->
+    <script>
+        function generateSeededRandom(seed) {
+            let hash = 0;
+            for (let i = 0; i < seed.length; i++) {
+                hash = ((hash << 5) - hash) + seed.charCodeAt(i);
+                hash |= 0;
+            }
+            return () => {
+                hash = Math.abs((hash * 9301 + 49297) % 233280);
+                return hash / 233280;
+            };
+        }
+
+        function processContent() {
+            const content = document.getElementById('clozecontainer');
+            let processedText = content.innerHTML;
+
+            // Retrieve the seed
+            let seed;if (typeof Persistence !== 'undefined' && Persistence !== null && Persistence.isAvailable()) {
+                try {
+                    seed = Persistence.getItem("seed");
+                    if (seed) {
+                        Persistence.removeItem("seed"); // Clear the seed for the next card
+                    } else {
+                        // If seed is null or undefined, use the date fallback
+                        const now = new Date();
+                        seed = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}${String(now.getHours()).padStart(2, '0')}`;
+                    }
+                } catch (e) {
+                    // If any error occurs during persistence operations, use the date fallback
+                    const now = new Date();
+                    seed = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}${String(now.getHours()).padStart(2, '0')}`;
+                }
+            } else {
+                // Fallback: Use date and hour as seed when Persistence is not available
+                const now = new Date();
+                seed = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}${String(now.getHours()).padStart(2, '0')}`;
+            }
+            const random = generateSeededRandom(seed);
+            let totalScore = 0;
+            const scoredReplacements = [];
+            
+            // Random from list
+            processedText = processedText.replace(
+                /\[randomlist:([^\]]+)\]/g,
+                (match, options) => {
+                    const optionsList = options.split(',').map(option => option.trim());
+                    const selectedIndex = Math.floor(random() * optionsList.length);
+                    return optionsList[selectedIndex];
+                }
+            );
+
+            // Process standalone random numbers
+            processedText = processedText.replace(
+                /\[random:(-?\d+\.?\d*),(-?\d+\.?\d*),(\d+)\]/g,
+                (match, min, max, decimals) => {
+                    const minNum = parseFloat(min);
+                    const maxNum = parseFloat(max);
+                    const value = minNum + random() * (maxNum - minNum);
+                    return value.toFixed(parseInt(decimals));
+                }
+            );
+
+            // First pass: collect all scored elements and calculate total score
+            let tempText = processedText;
+
+            // Process scored lists
+            tempText = tempText.replace(
+                /\[scoredlist:([^\]]+)\]/g,
+                (match, params) => {
+                    const options = params.split(',').map(item => {
+                        const [text, score] = item.split(':').map(s => s.trim());
+                        const scoreNum = parseInt(score);
+                        return { text, score: isNaN(scoreNum) ? 0 : scoreNum };
+                    });
+
+                    const selectedIndex = Math.floor(random() * options.length);
+                    const selected = options[selectedIndex];
+                    totalScore += selected.score;
+
+                    scoredReplacements.push({
+                        original: match,
+                        replacement: selected.text
+                    });
+
+                    return match; // Keep original for now
+                }
+            );
+
+            // Process scored numbers
+            tempText = tempText.replace(
+                /\[scorednumber:([^\]]+)\]/g,
+                (match, params) => {
+                    const parts = params.split(':');
+                    if (parts.length !== 3) return match;
+
+                    const thresholds = parts[0].split(',').map(parseFloat);
+                    const decimals = parseInt(parts[1]);
+                    const scores = parts[2].split(',').map(s => {
+                        const num = parseInt(s.trim());
+                        return isNaN(num) ? 0 : num;
+                    });
+
+                    // Generate random value within the full range
+                    const minVal = thresholds[0];
+                    const maxVal = thresholds[thresholds.length - 1];
+                    const value = minVal + random() * (maxVal - minVal);
+
+                    // Determine which score bracket this falls into
+                    let selectedScore = scores[scores.length - 1]; // default to last score
+                    for (let i = 0; i < thresholds.length - 1; i++) {
+                        if (value >= thresholds[i] && value < thresholds[i + 1]) {
+                            selectedScore = scores[i];
+                            break;
+                        }
+                    }
+
+                    totalScore += selectedScore;
+
+                    scoredReplacements.push({
+                        original: match,
+                        replacement: value.toFixed(decimals)
+                    });
+
+                    return match; // Keep original for now
+                }
+            );
+
+            // Second pass: apply all replacements
+            for (const replacement of scoredReplacements) {
+                processedText = processedText.replace(replacement.original, replacement.replacement);
+            }
+
+            // Process score display - just show the calculated total
+            processedText = processedText.replace(
+                /\[showscore(?::\d+(?:,\d+)?)?\]/g,
+                () => {
+                    // Add some debugging to see what's happening
+                    console.log('Total score calculated:', totalScore);
+                    console.log('Type of totalScore:', typeof totalScore);
+                    return isNaN(totalScore) ? '0' : totalScore.toString();
+                }
+            );
+
+            // Process answer by score
+            processedText = processedText.replace(
+                /\[answerbyscore:([^\]]+)\]/g,
+                (match, params) => {
+                    const segments = params.split(':');
+                    let result = '';
+
+                    for (let i = 0; i < segments.length; i += 2) {
+                        if (i + 1 >= segments.length) break;
+
+                        const rangePart = segments[i];
+                        const text = segments[i + 1];
+                        const range = rangePart.split(',').map(Number);
+
+                        if (range.length === 1) {
+                            if (totalScore === range[0]) {
+                                result = text;
+                                break;
+                            }
+                        } else if (range.length === 2) {
+                            if (totalScore >= range[0] && totalScore <= range[1]) {
+                                result = text;
+                                break;
+                            }
+                        }
+                    }
+
+                    return result;
+                }
+            );
+
+            content.innerHTML = processedText;
+        }
+
+        processContent();
+    </script>
+
+<!-- IMAGE BLUR -->
+<script>
+    for (const image of document.querySelectorAll(".blur")) {
+        image.classList.add("tappable");
+        image.addEventListener("click", () => {
+            image.classList.toggle("blur");
+        });
+    }
+</script>
+
+<!-- TABLE SANITISER (id="noSanitise" exclusion, preserves text alignment) -->
+<script>
+(function(){
+  function sanitiseTables() {
+    const tables = Array.from(document.querySelectorAll("table"));
+    tables.forEach(tbl => {
+
+        // --- Skip exclusions (future-proof) ---
+        const EXCLUDE_KEY = "noformat";
+        const hasExclusion =
+                tbl.id === EXCLUDE_KEY ||
+                tbl.classList.contains(EXCLUDE_KEY) ||
+                tbl.getAttribute(`data-${EXCLUDE_KEY}`) !== null;
+
+        if (hasExclusion || tbl.querySelector(".cloze")) return;
+
+      // --- Preserve alignment info before wiping inline styles ---
+      Array.from(tbl.querySelectorAll("td, th")).forEach(cell => {
+        let alignValue = null;
+
+        // 1️⃣ check old-school align attribute
+        if (cell.hasAttribute("align")) {
+          alignValue = cell.getAttribute("align").trim().toLowerCase();
+        }
+
+        // 2️⃣ check inline text-align in style attribute
+        if (!alignValue && cell.hasAttribute("style")) {
+          const m = cell.getAttribute("style").match(/text-align\s*:\s*([a-z-]+)/i);
+          if (m) alignValue = m[1].toLowerCase();
+        }
+
+        // 3️⃣ store detected alignment for later
+        if (alignValue) cell.setAttribute("data-preserve-align", alignValue);
+      });
+
+      // --- Remove inline and legacy attributes ---
+      const removeAttrs = ["style","width","height","border","cellpadding","cellspacing","bgcolor","align","valign"];
+      [tbl, ...tbl.querySelectorAll("*")].forEach(el => {
+        removeAttrs.forEach(a => { try { el.removeAttribute(a); } catch(e){} });
+      });
+
+      // --- Wrap table for mobile responsiveness ---
+      if (!tbl.parentElement || !tbl.parentElement.classList.contains("sanitised-wrapper")) {
+        const wrap = document.createElement("div");
+        wrap.className = "table-wrapper sanitised-wrapper";
+        tbl.parentNode.insertBefore(wrap, tbl);
+        wrap.appendChild(tbl);
+      }
+
+      // --- Add base class ---
+      tbl.classList.add("sanitised");
+
+      // --- Detect if table has THEAD ---
+      const hasHead = Array.from(tbl.children).some(
+        el => el.tagName && el.tagName.toLowerCase() === "thead"
+      );
+      if (hasHead) tbl.classList.add("has-thead");
+      else tbl.classList.remove("has-thead");
+
+      // --- Clear any old header markings ---
+      Array.from(tbl.querySelectorAll("tr")).forEach(r => r.classList.remove("sanitised-header"));
+
+      // --- Determine the true header row ---
+      let headerRow = tbl.querySelector("thead > tr") ||
+                      tbl.querySelector("tbody > tr") ||
+                      tbl.querySelector("tr");
+
+      if (headerRow) {
+        headerRow.classList.add("sanitised-header");
+
+        // ⭐⭐⭐ FIXED: Convert <td> in header row → <th>, but PRESERVE colspan/rowspan/alignment ⭐⭐⭐
+        Array.from(headerRow.children).forEach(cell => {
+          if (!cell) return;
+
+          try {
+            if (cell.tagName && cell.tagName.toLowerCase() === "td") {
+
+              const th = document.createElement("th");
+
+              // Preserve colspan and rowspan
+              if (cell.hasAttribute("colspan"))
+                th.setAttribute("colspan", cell.getAttribute("colspan"));
+              if (cell.hasAttribute("rowspan"))
+                th.setAttribute("rowspan", cell.getAttribute("rowspan"));
+
+              // Preserve alignment via attribute
+              const computedAlign = window.getComputedStyle(cell).textAlign;
+              if (computedAlign)
+                th.setAttribute("data-preserve-align", computedAlign);
+
+              // Copy class
+              th.className = cell.className || "";
+
+              // Move children
+              while (cell.firstChild) th.appendChild(cell.firstChild);
+
+              // Replace TD → TH
+              cell.parentNode.replaceChild(th, cell);
+            }
+          } catch(e){}
+        });
+      }
+
+      // --- If THEAD exists, ensure first body row is NOT styled as header ---
+      if (tbl.classList.contains("has-thead")) {
+        const firstTbodyRow = tbl.querySelector("tbody > tr");
+        if (firstTbodyRow && !firstTbodyRow.classList.contains("sanitised-header")) {
+          Array.from(firstTbodyRow.children).forEach(cell => {
+            try {
+              cell.style.setProperty("background-color", "transparent", "important");
+              cell.style.setProperty("font-weight", "normal", "important");
+              cell.style.setProperty("text-decoration", "none", "important");
+            } catch(e){}
+          });
+        }
+      }
+
+      // --- General cell cleanups ---
+      Array.from(tbl.querySelectorAll("td, th")).forEach(cell => {
+        try {
+          cell.style.boxSizing = "border-box";
+          cell.style.verticalAlign = "middle";
+        } catch(e){}
+      });
+
+      // --- Reapply preserved alignments using !important ---
+      Array.from(tbl.querySelectorAll("[data-preserve-align]")).forEach(cell => {
+        const alignValue = cell.getAttribute("data-preserve-align");
+        if (alignValue) {
+          const v = alignValue.toLowerCase();
+          const cssVal = (v === "start") ? "left" : (v === "end" ? "right" : v);
+          cell.style.setProperty("text-align", cssVal, "important");
+        }
+        cell.removeAttribute("data-preserve-align");
+      });
+
+      // --- Accessibility role ---
+      if (!tbl.hasAttribute("role")) tbl.setAttribute("role", "table");
+    });
+  }
+
+  // --- Run after DOM ready and attach to Anki's update hook ---
+  function onReady(fn){
+    if (document.readyState === "complete" || document.readyState === "interactive") {
+      setTimeout(fn, 1);
+    } else {
+      document.addEventListener("DOMContentLoaded", fn);
+    }
+  }
+
+  onReady(sanitiseTables);
+  if (typeof onUpdateHook !== "undefined" && Array.isArray(onUpdateHook)) {
+    onUpdateHook.push(sanitiseTables);
+  }
+
+  // rerun shortly after load for late-rendered content (safety for AnkiMobile)
+  setTimeout(sanitiseTables, 150);
+})();
+</script>
+
+<!-- CONTENT SCROLL -->
+
+    <script>
+
+    function isElementInViewport(el) {
+        const rect = el.getBoundingClientRect();
+        return (
+            rect.left >= 0 &&
+            rect.right <= window.innerWidth &&
+            rect.bottom <= window.innerHeight &&
+            rect.top >= 0
+        );
+    }
+
+    setTimeout(() => {
+    clozes = document.querySelectorAll(".cloze")
+    lastCloze = clozes[clozes.length - 1]
+
+    const rect = lastCloze.getBoundingClientRect();
+    const buffer = window.innerHeight * 0.2; // require 20% out of view
+    const isFarBelow = rect.bottom - window.innerHeight > buffer;
+    const isFarAbove = rect.top < -buffer;
+
+    if (isFarBelow || isFarAbove) {
+
+        console.log("element not in viewport, scrolling")
+        lastCloze.scrollIntoView({
+                behavior: "smooth", // "auto" for instant scrolling
+                block: "center",
+                inline: "nearest"
+        });
+    }
+    }, 200)
+
+
+    </script>
+
+<!-- AUTOWRAP MATHJAX RENDERS -->
+
+<script>
+function scaleMathJaxBlocks() {
+    const containers = document.querySelectorAll('.element mjx-container[display="true"]');
+    
+    containers.forEach(container => {
+        const parent = container.parentElement;
+        if (!parent) return;
+
+        // Reset any previous scaling
+        container.style.transform = "";
+        container.style.transformOrigin = "";
+        container.style.width = "";
+        
+        const parentWidth = parent.clientWidth;
+        const mathWidth = container.scrollWidth;
+
+        if (mathWidth > parentWidth) {
+            const scale = parentWidth / mathWidth;
+            container.style.transform = `scale(${scale})`;
+            container.style.transformOrigin = "left top";
+            container.style.width = mathWidth + "px";
+        }
+    });
+}
+
+// Run after MathJax typesets
+if (typeof MathJax !== "undefined") {
+    MathJax.typesetPromise().then(() => {
+        scaleMathJaxBlocks();
+    });
+} else {
+    setTimeout(scaleMathJaxBlocks, 500);
+}
+
+// Re-run on window resize
+window.addEventListener("resize", scaleMathJaxBlocks);
+</script>
+
+<!-- BEGIN ANKIHUB MODFICATIONS -->
+{{#ankihub_id}}
+<a class='ankihub-view-note'
+    href='https://app.ankihub.net/decks/notes/{{ankihub_id}}'>
+    View Note on AnkiHub
+</a>
+
+<style>
+.ankihub-view-note {
+    display: none;
+}
+
+.mobile .ankihub-view-note
+  {
+    display: block;
+    left: 50%;
+    margin-right: -50%;
+    padding: 8px;
+    border-radius: 50px;
+    background-color: #cde3f8;
+    font-size: 12px;
+    color: black;
+    text-decoration: none;
+}
+
+/* AnkiDroid (Android)
+The button is fixed to the bottom of the screen. */
+.android .ankihub-view-note {
+    position: fixed;
+    bottom: 5px;
+    transform: translate(-50%, -50%);
+}
+
+/* AnkiMobile (IPhone)
+position: fixed doesn't work on AnkiMobile, so the button is just below the content instead. */
+.iphone .ankihub-view-note,
+.ipad .ankihub-view-note {
+    position: relative;
+    transform: translate(-50%, 0);
+    width: fit-content;
+    margin-top: 20px;
+}
+</style>
+
+<script>
+    if(document.querySelector("html").classList.contains("android")) {
+        // Add a margin to the bottom of the card content so that the button doesn't
+        // overlap the content.
+        var container = document.querySelector('#qa');
+        var button = document.querySelector('.ankihub-view-note');
+        container.style.marginBottom = 2 * button.offsetHeight + "px";
+    }
+</script>
+
+{{/ankihub_id}}
+<!-- END ANKIHUB MODFICATIONS -->
+
+<!--
+ANKIHUB_END
+Text below this comment will not be modified by AnkiHub or AnKing add-ons.
+Do not edit or remove this comment if you want to protect the content below.
 -->
