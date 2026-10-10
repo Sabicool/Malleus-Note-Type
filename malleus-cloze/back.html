@@ -135,6 +135,28 @@
         <div class="container">
 <div class="container">
 
+        <!-- OUTDATED GUIDELINE WARNING -->
+<div id="outdated-guideline-warning" class="outdated-guideline-warning" style="display: none;">
+    <strong>⚠️ Outdated guideline</strong>
+    <div>
+        Please note this card has been flagged as obsolete based on an outdated guideline that has been superseded. Please consider unsuspending the latest cards on this topic under #Guidelines and suspending these old cards.
+    </div>
+</div>
+
+<script>
+(function () {
+    var outdatedTag = "#Malleus_CM::!TO_DO!::Outdated_Guideline";
+    var tags = "{{Tags}}".split(/\s+/);
+
+    if (tags.includes(outdatedTag)) {
+        var warning = document.getElementById("outdated-guideline-warning");
+        if (warning) {
+            warning.style.display = "block";
+        }
+    }
+})();
+</script>
+
 <!-- Case 1: Extra has content -->
 {{#Extra}}
 <div class="element" id="Extra">
