@@ -33,6 +33,37 @@
     </script>
     <!-- USER CONFIG END - until this line -------------------------------------------------------------------------------->
 
+<!-- COUNTRY-SPECIFIC CARD LABELS -->
+<div id="country-card-label" class="country-card-label" style="display: none;"></div>
+
+<script>
+(function () {
+    var tags = "{{Tags}}".split(/\s+/);
+
+    var isAUS = tags.includes(
+        "#Malleus_CM::#Card_Feature::AUS_Only"
+    );
+    var isNZ = tags.includes(
+        "#Malleus_CM::#Card_Feature::NZ_Only"
+    );
+
+    var label = document.getElementById("country-card-label");
+
+    if (!label) return;
+
+    if (isAUS && !isNZ) {
+        label.textContent = "🇦🇺 AUS";
+        label.style.display = "inline-flex";
+        label.classList.add("country-card-label-aus");
+    } else if (isNZ && !isAUS) {
+        label.textContent = "🇳🇿 NZ";
+        label.style.display = "inline-flex";
+        label.classList.add("country-card-label-nz");
+    }
+})();
+</script>
+
+
     <div class="container">
         <div id="clozecontainer" class="element">
             {{cloze:Text}}
