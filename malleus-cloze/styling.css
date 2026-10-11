@@ -888,6 +888,14 @@ img + br + i > span {
     color: #d66b75;
 }
 
+
+/* Outdated guideline title banner */
+.outdated-guideline-title {
+    color: #ef4444;
+    border-color: rgba(220, 38, 38, 0.4);
+    background-color: rgba(220, 38, 38, 0.10);
+}
+
 /*
 ANKIHUB_END
 Text below this comment will not be modified by AnkiHub or AnKing add-ons.
