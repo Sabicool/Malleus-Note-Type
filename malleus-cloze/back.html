@@ -33,6 +33,9 @@
     </script>
     <!-- USER CONFIG END - until this line -------------------------------------------------------------------------------->
 
+    <div class="container">
+        <div id="clozecontainer" class="element">
+                
 <!-- COUNTRY-SPECIFIC CARD LABELS -->
 <div id="country-card-label" class="country-card-label" style="display: none;"></div>
 
@@ -52,20 +55,17 @@
     if (!label) return;
 
     if (isAUS && !isNZ) {
-        label.textContent = "🇦🇺 AUS";
+        label.textContent = "🇦🇺 AUS SPECIFIC";
         label.style.display = "inline-flex";
         label.classList.add("country-card-label-aus");
     } else if (isNZ && !isAUS) {
-        label.textContent = "🇳🇿 NZ";
+        label.textContent = "🇳🇿 NZ SPECIFIC";
         label.style.display = "inline-flex";
         label.classList.add("country-card-label-nz");
     }
 })();
 </script>
-
-
-    <div class="container">
-        <div id="clozecontainer" class="element">
+                
             {{cloze:Text}}
         </div>
     </div>
