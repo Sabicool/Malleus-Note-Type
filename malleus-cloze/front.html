@@ -39,6 +39,68 @@
 
 <div class="container">
     <div id="clozecontainer" class="element">
+
+<!-- OUTDATED GUIDELINE WARNING -->
+
+<!-- Compact banner at the top of the card -->
+<div id="outdated-guideline-title"
+     class="country-card-label outdated-guideline-title"
+     style="display: none;">
+    ⚠️ OUTDATED GUIDELINE
+</div>
+
+<script>
+
+(function () {
+    var outdatedTag = "#Malleus_CM::!TO_DO!::Outdated_Guideline";
+    var tags = "{{Tags}}".split(/\s+/);
+
+    if (!tags.includes(outdatedTag)) return;
+
+    var title = document.getElementById("outdated-guideline-title");
+    var warning = document.getElementById("outdated-guideline-warning");
+
+    if (title) {
+        title.style.display = "flex";
+    }
+
+    if (warning) {
+        warning.style.display = "block";
+    }
+})();
+
+</script>
+
+<!-- COUNTRY-SPECIFIC CARD LABELS -->
+<div id="country-card-label" class="country-card-label" style="display: none;"></div>
+
+<script>
+(function () {
+    var tags = "{{Tags}}".split(/\s+/);
+
+    var isAUS = tags.includes(
+        "#Malleus_CM::#Card_Feature::AUS_Only"
+    );
+    var isNZ = tags.includes(
+        "#Malleus_CM::#Card_Feature::NZ_Only"
+    );
+
+    var label = document.getElementById("country-card-label");
+
+    if (!label) return;
+
+    if (isAUS && !isNZ) {
+        label.textContent = "🇦🇺 AUS SPECIFIC";
+        label.style.display = "inline-flex";
+        label.classList.add("country-card-label-aus");
+    } else if (isNZ && !isAUS) {
+        label.textContent = "🇳🇿 NZ SPECIFIC";
+        label.style.display = "inline-flex";
+        label.classList.add("country-card-label-nz");
+    }
+})();
+</script>
+         
         <div id="text">
             {{cloze:Text}}
         </div>
