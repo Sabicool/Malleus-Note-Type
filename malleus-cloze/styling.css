@@ -1,10 +1,9 @@
 /* IMPORTANT INFO:
-    Changing settings below will *not* work, as changes will be reset when syncing with AnkiHub.
-    To change settings copy the below code from the line saying USER CONFIG
-    until the line saying USER CONFIG END. Then scroll to the very bottom beneath the ankihub end comment
-    and paste it there. Changing the settings there will overwrite the default settings below.
-    Feel free to reach out on the Malleus Discord if you have any troubles.
-    At some point in the future we may develop an addon to make card config easier. */
+    Changing settings below will *not* stick, as changes will be reset when syncing
+    with AnkiCollab. AnkiCollab does not yet support keeping personal customisations across syncs;
+    once it does, these instructions will be updated with how to keep your own settings.
+    Until then, any edits you make here will be lost on the next sync.
+    Feel free to reach out on the Malleus Discord if you have any troubles. */
 
 
 /*USER CONFIG - copy from this line -----------------------------------------------------------------------------------*/
@@ -895,9 +894,3 @@ img + br + i > span {
     border-color: rgba(220, 38, 38, 0.4);
     background-color: rgba(220, 38, 38, 0.10);
 }
-
-/*
-ANKIHUB_END
-Text below this comment will not be modified by AnkiHub or AnKing add-ons.
-Do not edit or remove this comment if you want to protect the content below.
-*/
