@@ -823,6 +823,33 @@ img + br + i > span {
     font-style: italic;
 }
 
+/* Citation add-on: reduce excess spacing around embedded images */
+span[style*="font-size: 10pt"]:has(img) {
+    display: block;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1.2 !important;
+}
+
+/* Remove excess spacing from nested image containers */
+span[style*="font-size: 10pt"] div:has(img) {
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 0 !important;
+}
+
+/* Keep images compact within citation blocks */
+span[style*="font-size: 10pt"] div img {
+    display: block;
+    margin-top: 0.1 !important;
+    margin-bottom: 0.1 !important;
+}
+
+/* Keep the actual citation text readable */
+span[style*="font-size: 10pt"] span {
+    line-height: 1.2 !important;
+}
+
 /* Outdated guideline warning */
 .outdated-guideline-warning {
     box-sizing: border-box;
